@@ -20,7 +20,7 @@ Channel: qv059jer
 | 16 | Text Area | 8985:334025 | done | Textarea on inputVariants + size/shape cva; REST dump 429 |
 | 17 | Divider | 7060:312915 | done | 1 retry (hex in comments); Separator cva + SeparatorGroup/Label/Icon slots |
 | 18 | Tooltip | 4313:31796 | done | shadcn tooltip (Base UI) + cva variant/layout, Heading/Row/Label/Value/Dot slots; REST dump 429 |
-| 19 | Progress | 4313:34129 | todo | ui/progress.tsx exists, no preview page |
+| 19 | Progress | 4313:34129 | done | 1 retry (dark: cva key renamed); Line/Circle/Half/Percent/Dot on Base UI progress; REST dump 429 |
 | 20 | Slider | 4313:51976 | todo |  |
 | 21 | Steps | 4313:48088 | todo |  |
 | 22 | Loader | 9402:26498 | todo |  |

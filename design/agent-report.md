@@ -30,3 +30,4 @@
 2026-10-29 Text Area: done — Textarea rewritten onto Input's inputVariants + size/shape cva (Rounded/Pilled x 4 sizes x 6 states); native resize grip, hex→token colors (REST 429), see CLAUDE.md Known gaps
 2026-10-29 Divider: done — Separator extended (cva, bg-base-150) + SeparatorGroup/SeparatorLabel/SeparatorIcon slots composing Button/ButtonGroup, 7 Types x horizontal/vertical; 1 retry (hex in comments); REST dump 429, hex→token, Material icons, see CLAUDE.md Known gaps
 2026-10-29 Tooltip: done — shadcn tooltip base, 3 styles x 3 layouts x 4 sides, first-pass approve; colors hex-matched (REST 429), arrow/shadow from exports
+2026-10-29 Progress: done — Line/Circular/Half/Percent/Dot built on Base UI progress cva; 1 retry (dark: cva key); REST dump 429, hex matched to tokens

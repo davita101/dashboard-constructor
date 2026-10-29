@@ -80,7 +80,8 @@ function ActivityContentBody(props: ActivityContentProps) {
           <Progress
             value={props.progress ?? 60}
             aria-label="Playback progress"
-            className="flex-1 **:data-[slot=progress-indicator]:rounded-full **:data-[slot=progress-indicator]:bg-primary-600 **:data-[slot=progress-track]:bg-base-100"
+            color="primary"
+            className="flex-1"
           />
           <IconButton src="/icons/material-volume-up.svg" label="Volume" />
         </>
@@ -109,7 +110,7 @@ function ActivityContentBody(props: ActivityContentProps) {
             <Progress
               value={props.progress ?? 60}
               aria-label="Playback progress"
-              className="**:data-[slot=progress-indicator]:rounded-full **:data-[slot=progress-indicator]:bg-white **:data-[slot=progress-track]:bg-white-alpha-30"
+              color="white"
             />
             <div className={cn(textClass, "flex justify-between font-bold text-white")}>
               <span>{props.currentTime}</span>
