@@ -1,3 +1,14 @@
+## Run summary — 2026-10-30 (stopped: FIGMA DOWN — wrong page open, REST 429)
+
+- Done: 19 · Blocked: 0 · Remaining (todo): 57
+- Blocked: none
+- Commits on branch (`main..HEAD`): 29
+- Stopped at Slider (#20). TalkToFigma is reachable on channel `qv059jer`, but Figma has page "Forms: Radio" (8985:338003) open. The plugin only exposes the current page: `set_focus`, `set_selections`, `get_nodes_info`, `scan_nodes_by_types` and `get_local_components` all return "Error executing command" for 4313:51976. The REST fallback (`pnpm figma:pages` / `pnpm figma:fetch`) returns `429 Rate limit exceeded` (two navigator attempts). The row is back to `todo` and no files were left behind. This blocks every remaining row, so the run stopped instead of marking 57 rows blocked.
+
+**Fix before next run:** in Figma desktop, open the **Slider** page (4313:51976) of Commerce Constructor 7.7, with the TalkToFigma plugin running on channel `qv059jer`. The plugin can't switch pages itself, so for unattended runs either open each queued page before its session starts, or load all pages in the file so the plugin can read them. Also let the Figma REST rate limit reset, or check `FIGMA_TOKEN`; `figma:fetch` has been 429 since Input.
+
+---
+
 ## Run summary — 2026-10-29 (stopped: FIGMA DOWN, 2nd time)
 
 - Done: 15 · Blocked: 0 · Remaining (todo): 62
@@ -31,3 +42,4 @@
 2026-10-29 Divider: done — Separator extended (cva, bg-base-150) + SeparatorGroup/SeparatorLabel/SeparatorIcon slots composing Button/ButtonGroup, 7 Types x horizontal/vertical; 1 retry (hex in comments); REST dump 429, hex→token, Material icons, see CLAUDE.md Known gaps
 2026-10-29 Tooltip: done — shadcn tooltip base, 3 styles x 3 layouts x 4 sides, first-pass approve; colors hex-matched (REST 429), arrow/shadow from exports
 2026-10-29 Progress: done — Line/Circular/Half/Percent/Dot built on Base UI progress cva; 1 retry (dark: cva key); REST dump 429, hex matched to tokens
+2026-10-30 Slider: not started — Figma page not open (plugin reads current page only) + REST 429, row reset to todo
