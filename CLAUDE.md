@@ -97,7 +97,7 @@ Mapping rules for code:
 - Fonts not loaded: `layout.tsx` still loads Geist; Inter / Playfair Display / Roboto / Merriweather / Ms Madi need `next/font` wired to `--font-family-*`.
 - Figma icon SVGs have a hardcoded fill (`#808080`), so they don't follow dark mode.
 - Code Connect not set up (TalkToFigma can't do it; needs the official Figma MCP).
-- No blur or effect-shadow tokens: `backdrop-blur-[15px]` (Figma background blur 30) and `shadow-[0_1px_2px_0_var(--shadow-*)]` for `Shadows/*/1` are unverified literals in `button.tsx` / `alert.tsx`.
+- No blur or effect-shadow tokens: the 15px backdrop blur (Figma background blur 30) and the `0 1px 2px` shadow on `--shadow-<color>` for `Shadows/<color>/1` are unverified literals in `button.tsx` / `alert.tsx`.
 - `ActivityIcon` Deadline check mark is hand-drawn from a PNG export (TalkToFigma exports SVG as PNG); swap in the Figma vector when the Figma MCP is available.
 
 ## Skills to use
