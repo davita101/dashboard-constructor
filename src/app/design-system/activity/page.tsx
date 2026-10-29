@@ -52,10 +52,10 @@ export default function ActivityPreviewPage() {
                 text="Awesome video! A well-crafted UI truly enhances the overall user experience. Keep up the great work!"
               />
               <ActivityFooter>
-                <Button variant="dark" size="micro">
+                <Button variant="dark" size="24">
                   Replay
                 </Button>
-                <Button variant="base-ghost" size="micro">
+                <Button variant="ghost" size="24">
                   Dismiss
                 </Button>
               </ActivityFooter>

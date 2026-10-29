@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button"
 // Figma Alert-Default ("toast message"): an inline pill alert, not a Base UI toast notification.
 // Which button each type uses:
 const actionVariant = {
-  default: "base-outline",
+  default: "outline",
   "primary-soft": "primary-soft",
   "success-soft": "success-soft",
   "warning-soft": "warning-soft",
@@ -61,7 +61,7 @@ export function AlertToast({
       {(actionLabel || dismissible) && (
         <AlertAction>
           {actionLabel && (
-            <Button variant={actionVariant[variant]} size="nano" onClick={onAction}>
+            <Button variant={actionVariant[variant]} size="20" onClick={onAction}>
               {actionLabel}
             </Button>
           )}

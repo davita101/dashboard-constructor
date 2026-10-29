@@ -78,7 +78,7 @@ function ActivityForm({
             <ToolButton src="/icons/material-mic-none.svg" label="Record voice message" />
             <ToolButton src="/icons/material-mood.svg" label="Add emoji" />
           </div>
-          <Button type="submit" variant="base-outline" size="micro">
+          <Button type="submit" variant="outline" size="24">
             Send
           </Button>
         </div>

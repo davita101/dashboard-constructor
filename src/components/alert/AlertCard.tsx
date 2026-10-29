@@ -22,7 +22,7 @@ type CardVariant = Exclude<AlertVariant, "white">
 
 // Figma Alert-Buttons: primary + secondary button per type
 const buttonVariants = {
-  default: ["base-outline", "base-ghost"],
+  default: ["outline", "ghost"],
   "primary-soft": ["primary", "primary-soft"],
   "success-soft": ["success", "success-soft"],
   "warning-soft": ["warning", "warning-soft"],
@@ -97,12 +97,12 @@ export function AlertCard({
         {(primaryLabel || secondaryLabel) && (
           <AlertFooter>
             {primaryLabel && (
-              <Button variant={primaryVariant} size="pill" onClick={onPrimary}>
+              <Button variant={primaryVariant} size="28" onClick={onPrimary}>
                 {primaryLabel}
               </Button>
             )}
             {secondaryLabel && (
-              <Button variant={secondaryVariant} size="pill" onClick={onSecondary ?? close}>
+              <Button variant={secondaryVariant} size="28" onClick={onSecondary ?? close}>
                 {secondaryLabel}
               </Button>
             )}

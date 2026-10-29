@@ -73,7 +73,7 @@ function BannerClose({ className, ...props }: React.ComponentProps<typeof Button
     <Button
       data-slot="banner-close"
       variant="dark"
-      size="icon-round"
+      size="icon-24"
       aria-label="Close"
       className={cn("absolute -top-2 -right-2", className)}
       {...props}
