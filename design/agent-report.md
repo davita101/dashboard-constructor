@@ -1,2 +1,3 @@
 2026-10-29 Input: done — Input/InputGroup/Field/Label/Kbd shipped (commit 50cfc96); colors hex-matched (figma:fetch 429), Checkbox/Radio/Switcher/Select/Country/Payment/Colors slots pending; graphify-out is gitignored so graph update not committed
 2026-10-29 Checkbox: done — 4 Figma sets (Checkbox, Checkbox-Text, Checkbox-Text-Card, Checkbox-Card); 1 retry; Material check + hand-drawn minus glyphs, hex→token colors (REST dump 429), see CLAUDE.md Known gaps
+2026-10-29 Radio: done — RadioGroup (Base UI) + RadioField + RadioCard; resumed after previous session died mid-build
