@@ -1,0 +1,1 @@
+2026-10-29 Input: done — Input/InputGroup/Field/Label/Kbd shipped (commit 50cfc96); colors hex-matched (figma:fetch 429), Checkbox/Radio/Switcher/Select/Country/Payment/Colors slots pending; graphify-out is gitignored so graph update not committed
