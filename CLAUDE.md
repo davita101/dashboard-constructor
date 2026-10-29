@@ -106,6 +106,7 @@ Mapping rules for code:
 - No blur or effect-shadow tokens: the 15px backdrop blur (Figma background blur 30) and the `0 1px 2px` shadow on `--shadow-<color>` for `Shadows/<color>/1` are unverified literals in `button.tsx` / `alert.tsx`.
 - Breadcrumb: Figma Breadcrumb-Group shows every item as Default; `BreadcrumbTrail` renders the last item as Selected (current page). The Arrow `Active` state has no usage in Figma, so the trail never picks it. Icon glyphs are `base-500` on Base badges (Figma `#808080`).
 - Button: shadows are `Shadows/<color>/1` on every state (Figma uses `/3` on a few Hover variants). Figma's Icon-type 16 uses r6; `icon-16` uses r4 (Round type). `ButtonCounter` takes the badge size and style explicitly (map per variant/size is in `/design-system/button`). Figma names two soft sets wrongly (`Danger-Button` 11696:366102 = `danger-soft`, `Success-Soft-Button` 11698:377667 = `warning-soft`).
+- Button Group: group `size`/`shape` must match its Buttons' (no context). Items overlap by 1px everywhere; Figma's Rounded Type=Default 60 uses a 1px gap instead (group 10px narrower). Not added with `shadcn add` (it would overwrite `separator.tsx`); `ButtonGroupText` from upstream is left out (not in Figma).
 - `ActivityIcon` Deadline check mark is hand-drawn from a PNG export (TalkToFigma exports SVG as PNG); swap in the Figma vector when the Figma MCP is available.
 
 ## Skills to use
