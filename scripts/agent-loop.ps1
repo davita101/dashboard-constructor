@@ -12,7 +12,9 @@ for ($i = 1; $i -le $Max; $i++) {
   $log = "design/agent-logs/{0:yyyyMMdd-HHmmss}.log" -f (Get-Date)
   Write-Host "[$i] session started -> $log"
 
-  $out = claude -p --agent director --permission-mode auto "Run one session: build exactly one component, then stop." 2>&1 | Tee-Object -FilePath $log | Out-String
+  $out = claude -p --agent director --permission-mode auto "Run one session: build exactly one component, then stop." 2>&1 | Out-String
+  $out | Out-File -FilePath $log -Encoding utf8
+  Write-Host ($out.Trim() -split "`n" | Select-Object -Last 3)
 
   if ($out -match "QUEUE EMPTY") { Write-Host "Queue empty. Done."; break }
   if ($out -match "FIGMA DOWN") { Write-Host "Figma disconnected. Stopping."; break }

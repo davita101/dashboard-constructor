@@ -46,3 +46,6 @@ next-env.d.ts
 
 # Figma REST dumps (regenerate with pnpm figma:fetch)
 /design/figma-dump/
+
+# agent loop session logs
+/design/agent-logs/

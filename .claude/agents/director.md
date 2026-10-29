@@ -45,10 +45,10 @@ Status is one of `todo`, `in-progress`, `done`, `blocked`. Update it after every
    - Every Figma part listed in the spec maps to a shadcn primitive or a `cva` slot in `src/components/ui`, per CLAUDE.md.
    - The builder's report says the browser check at `/design-system/<slug>` matched the Figma export with no console errors.
 9. **Decide.**
-   - Approve → `pnpm build`; if green, commit only the component's files (`git add <paths>`, never `git add -A`) with message `Add <Component> component from Figma` plus the attribution trailer from the session, set row `done`.
+   - Approve → `pnpm build`; if green, set row `done`, append the report line (step 11) now, and commit the component's files together with `design/agent-queue.md` and `design/agent-report.md` (`git add <paths>`, never `git add -A`) with message `Add <Component> component from Figma` plus the attribution trailer from the session. One commit per component, no separate report commit.
    - Reject → send `component-builder` again with a precise list of failures. Max 2 retries. After the third failure, `git restore`/`git clean` only that component's paths, set row `blocked` with the reason.
-10. **Update graph.** After a commit, invoke the `graphify` skill with `src --update` so the next session's query sees the new component. Commit `graphify-out/` changes as `Update graphify graph for <Component>`.
-11. Append one line to `design/agent-report.md` (`<date> <Component>: done|blocked — <reason>`), print `COMPONENT DONE`, and stop.
+10. **Update graph.** After a commit, invoke the `graphify` skill with `. --update` (always the repo root, never a subfolder, or graphify forgets the other files) so the next session's query sees the new component. `graphify-out/` is gitignored: do not commit it.
+11. Report line in `design/agent-report.md`: `<date> <Component>: done|blocked — <reason>` (for `done` it is already in the commit; for `blocked`, append and commit it with the queue). Print `COMPONENT DONE` and stop.
 
 ## Rules
 

@@ -26,7 +26,7 @@ You navigate the Commerce Constructor 7.7 file open in the user's Figma desktop 
 
 1. Get the page's component set ids from `pnpm figma:pages` (filter by the page id). TalkToFigma reads and exports nodes on **any** page by id; only `set_focus` fails off the open page, so call `set_focus` on the first set only if `get_document_info` shows that page is open, and ignore its error otherwise.
 2. `get_nodes_info` on each component set (never `get_node_info` on the page id: the output is several MB). `export_node_as_image` of each set (PNG, scale 1; lower it if huge) to see it.
-3. If `design/figma-dump/<page-id>/tree.txt` is missing, run `pnpm figma:fetch <page-id>` (use `-` in the id, e.g. `321-0`). Read the sections for these sets: token names, layout and padding that TalkToFigma lacks.
+3. If `design/figma-dump/<page-id>/tree.txt` is missing, run `pnpm figma:fetch <page-id>`. On a 429 (rate limit) wait with `Start-Sleep -Seconds 120` and retry, up to 4 times, before giving up and listing it under Gaps; token names from the dump beat hex guesses, so the wait is worth it. Use `-` in the id, e.g. `321-0`. Read the sections for these sets: token names, layout and padding that TalkToFigma lacks.
 4. Write `design/handoff/<slug>/spec.md`:
    - Figma node id, page id, component name, slug.
    - Variant properties and every value (size, state, type, …).
