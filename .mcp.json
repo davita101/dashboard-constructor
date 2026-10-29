@@ -6,6 +6,14 @@
         "shadcn@latest",
         "mcp"
       ]
+    },
+    "TalkToFigma": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "bunx",
+        "cursor-talk-to-figma-mcp@latest"
+      ]
     }
   }
 }

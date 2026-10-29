@@ -43,3 +43,6 @@ next-env.d.ts
 # local tooling output
 /graphify-out/
 /scaffold-tmp/
+
+# Figma REST dumps (regenerate with pnpm figma:fetch)
+/design/figma-dump/

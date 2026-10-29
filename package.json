@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "tokens": "node scripts/build-tokens.mjs"
+    "tokens": "node scripts/build-tokens.mjs",
+    "figma:fetch": "node scripts/figma-fetch.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
