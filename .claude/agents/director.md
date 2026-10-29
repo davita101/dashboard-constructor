@@ -45,14 +45,14 @@ Status is one of `todo`, `in-progress`, `done`, `blocked`. Update it after every
    - Every Figma part listed in the spec maps to a shadcn primitive or a `cva` slot in `src/components/ui`, per CLAUDE.md.
    - The builder's report says the browser check at `/design-system/<slug>` matched the Figma export with no console errors.
 9. **Decide.**
-   - Approve → `pnpm build`; if green, set row `done`, append the report line (step 11) now, and commit the component's files together with `design/agent-queue.md` and `design/agent-report.md` (`git add <paths>`, never `git add -A`) with message `Add <Component> component from Figma` plus the attribution trailer from the session. One commit per component, no separate report commit.
+   - Approve → `pnpm build`; if green, set row `done`, append the report line (step 11) now, and commit the component's files together with `design/agent-queue.md` and `design/agent-report.md` (`git add <paths>`, never `git add -A`) with message `Add <Component> component from Figma` plus the attribution trailer from the session. One commit per component, no separate report commit. Then `git push origin <current branch>` (the user asked for a push after every component). If the push fails, note it in the report line and keep going; the next session's push carries it.
    - Reject → send `component-builder` again with a precise list of failures. Max 2 retries. After the third failure, `git restore`/`git clean` only that component's paths, set row `blocked` with the reason.
 10. **Update graph.** After a commit, invoke the `graphify` skill with `. --update` (always the repo root, never a subfolder, or graphify forgets the other files) so the next session's query sees the new component. `graphify-out/` is gitignored: do not commit it.
-11. Report line in `design/agent-report.md`: `<date> <Component>: done|blocked — <reason>` (for `done` it is already in the commit; for `blocked`, append and commit it with the queue). Print `COMPONENT DONE` and stop.
+11. Report line in `design/agent-report.md`: `<date> <Component>: done|blocked — <reason>` (for `done` it is already in the commit; for `blocked`, append and commit it with the queue, then push). Print `COMPONENT DONE` and stop.
 
 ## Rules
 
-- Never `git push`, never touch `main`, never force anything, never delete files outside the current component's paths.
+- Push only the current branch, only with plain `git push origin <branch>`: never push `main`, never `--force`, never touch `main`, never force anything, never delete files outside the current component's paths.
 - Never edit `src/styles/` (generated) or `design/tokens/`.
 - Missing token / unclear Figma → builder records it in CLAUDE.md "Known gaps" and the component still ships; that is not a reason to block.
 - Workers run one at a time: they share Figma and the dev server.
