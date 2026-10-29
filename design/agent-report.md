@@ -27,3 +27,4 @@
 2026-10-29 Radio: done — RadioGroup (Base UI) + RadioField + RadioCard; resumed after previous session died mid-build
 2026-10-29 Switcher: done — Switch (Base UI, cva color/size) + SwitchField (text/text-card) + SwitchCard; hex→token colors (figma:pages 429), On Disabled from export, knob shadow not built, see CLAUDE.md Known gaps
 2026-10-29 Text Area: not started — FIGMA DOWN at fetch, row reset to todo
+2026-10-29 Text Area: done — Textarea rewritten onto Input's inputVariants + size/shape cva (Rounded/Pilled x 4 sizes x 6 states); native resize grip, hex→token colors (REST 429), see CLAUDE.md Known gaps

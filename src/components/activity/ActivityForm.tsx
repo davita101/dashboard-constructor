@@ -70,7 +70,7 @@ function ActivityForm({
           name="message"
           aria-label="Message"
           placeholder={placeholder}
-          className="min-h-0 flex-1 resize-none rounded-none border-0 bg-transparent pt-4 pr-6 pb-0 pl-4 font-default text-10 leading-16 font-semibold tracking-default text-base-800 shadow-none placeholder:text-base-700 focus-visible:ring-0 md:text-10 dark:bg-transparent"
+          className="min-h-0 flex-1 resize-none rounded-none border-0 bg-transparent pt-4 pr-6 pb-0 pl-4 font-default text-10 leading-16 font-semibold tracking-default text-base-800 shadow-none outline-none placeholder:text-base-700"
         />
         <div className="flex items-center justify-between px-3 pb-3">
           <div className="flex items-center gap-2">

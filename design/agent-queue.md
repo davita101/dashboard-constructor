@@ -17,7 +17,7 @@ Channel: qv059jer
 | 13 | Checkbox | 8985:336791 | done | 1 retry (dark: cva key renamed) |
 | 14 | Radio | 8985:338003 | done | resumed from dead session; Input radio slot not wired |
 | 15 | Switcher | 8985:342542 | done | Input switcher slot not wired |
-| 16 | Text Area | 8985:334025 | todo | ui/textarea.tsx exists, no preview page |
+| 16 | Text Area | 8985:334025 | done | Textarea on inputVariants + size/shape cva; REST dump 429 |
 | 17 | Divider | 7060:312915 | todo | ui/separator.tsx exists |
 | 18 | Tooltip | 4313:31796 | todo |  |
 | 19 | Progress | 4313:34129 | todo | ui/progress.tsx exists, no preview page |
