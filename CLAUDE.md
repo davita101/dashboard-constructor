@@ -19,7 +19,8 @@ E-commerce site built from the **Commerce Constructor 7.7** Figma design system.
 ### Per-component checklist (mandatory, in order)
 
 1. **Read Figma with TalkToFigma** (`mcp__TalkToFigma__*`) — always, not the official Figma MCP. `get_document_info` → `get_nodes_info` on the component sets → `export_node_as_image` for visual reference. For token names, layout and padding use the dump in `design/figma-dump/<page-id>/tree.txt` (`pnpm figma:fetch <node-id>`, needs `FIGMA_TOKEN`); icon SVGs are in its `assets/`.
-2. **Load the `shadcn` skill** before writing code. Run `pnpm dlx shadcn@latest docs <name>` and `pnpm dlx shadcn@latest search @shadcn -q <name>`; add the base with `pnpm exec shadcn add <name>` and fix its `cn` import.
+2. **Invoke the `shadcn` skill (Skill tool) before writing any component code — every component, every time, even if shadcn was used earlier in the session or the base is already installed.** Running the shadcn CLI alone does not count. Then run `pnpm dlx shadcn@latest docs <name>` and `pnpm dlx shadcn@latest search @shadcn -q <name>`; add the base with `pnpm exec shadcn add <name>` and fix its `cn` import.
+   - Before writing, list every part of the Figma component and the shadcn component it maps to. A part with no shadcn match is built in shadcn style in `src/components/ui` (`cva` + `cn`), never as a styled `div`/`span` in a domain component.
 3. **Write code** following the skill's rules (below) and the Component rule.
 4. **Audit** against the rules: `pnpm exec tsc --noEmit`, `pnpm lint`, and grep the new files for `space-[xy]-`, `w-N h-N`, `dark:`, hex colors.
 5. **Check in the browser** at `/design-system/<component>` against the Figma export (all variants, interactions, no console errors), then `pnpm build`.
@@ -28,6 +29,7 @@ shadcn rules that bit us before:
 - Dividers use `Separator` (Figma `Divider-Horizontal`), never `border-b` divs or `<hr>`.
 - `className` is for layout only. Colors, sizes, radii of a shadcn component go in its `cva` variants (add a variant/size to `button.tsx`), not in a consumer's `className`.
 - Sub-parts of a component (icon, close, separator) are slots in the `ui/` file (`AlertClose`, `AlertSeparator`), so domain components just compose them.
+- Variants of the same shape are variants of the shadcn component, not new wrappers: Profile and logo tiles are `Avatar` `frame` variants, not a styled `<span>` around `next/image`.
 - "Toast" in shadcn means a Base UI notification (`toast` component). Figma's inline "toast message" alerts are `Alert`, not toasts.
 
 ## Design tokens
@@ -96,6 +98,9 @@ Mapping rules for code:
 - shadcn vars not mapped to tokens (see Mapping rules).
 - Fonts not loaded: `layout.tsx` still loads Geist; Inter / Playfair Display / Roboto / Merriweather / Ms Madi need `next/font` wired to `--font-family-*`.
 - Figma icon SVGs have a hardcoded fill (`#808080`), so they don't follow dark mode.
+- Avatars: Figma "Progress" ring and the "Badge-Square-Pilled" counter overlay are not implemented (TalkToFigma gives no arc/stroke-weight data; Badge component not built yet). Story ring assumes a 2px stroke.
+- `VerifyIcon` uses Material's `verified` path (`public/icons/material-verified.svg`) because TalkToFigma can't export the vector; badge colors assume the palette's 500 shade. Verify both against Figma when the official MCP or `FIGMA_TOKEN` is available.
+- TalkToFigma doesn't report layer visibility or stroke weights: check exports to see which layers are on by default.
 - Code Connect not set up (TalkToFigma can't do it; needs the official Figma MCP).
 - No blur or effect-shadow tokens: the 15px backdrop blur (Figma background blur 30) and the `0 1px 2px` shadow on `--shadow-<color>` for `Shadows/<color>/1` are unverified literals in `button.tsx` / `alert.tsx`.
 - `ActivityIcon` Deadline check mark is hand-drawn from a PNG export (TalkToFigma exports SVG as PNG); swap in the Figma vector when the Figma MCP is available.
