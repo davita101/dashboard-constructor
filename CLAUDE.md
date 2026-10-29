@@ -13,8 +13,22 @@ E-commerce site built from the **Commerce Constructor 7.7** Figma design system.
 
 1. **Figma first** — build components in Figma (Commerce Constructor 7.7 file), bound to the existing variables. Use skills `figma:figma-use` and `figma:figma-generate-library`.
 2. **Tokens → code** — generate Tailwind theme + CSS variables from the Figma variables export.
-3. **Components → code** — implement each Figma component with `figma:figma-design-to-code`, reusing/extending shadcn/ui primitives. Link with `figma:figma-code-connect`.
+3. **Components → code** — implement each Figma component, reusing/extending shadcn/ui primitives. Link with `figma:figma-code-connect` (needs the official Figma MCP).
 4. **Pages** — compose pages from components only.
+
+### Per-component checklist (mandatory, in order)
+
+1. **Read Figma with TalkToFigma** (`mcp__TalkToFigma__*`) — always, not the official Figma MCP. `get_document_info` → `get_nodes_info` on the component sets → `export_node_as_image` for visual reference. For token names, layout and padding use the dump in `design/figma-dump/<page-id>/tree.txt` (`pnpm figma:fetch <node-id>`, needs `FIGMA_TOKEN`); icon SVGs are in its `assets/`.
+2. **Load the `shadcn` skill** before writing code. Run `pnpm dlx shadcn@latest docs <name>` and `pnpm dlx shadcn@latest search @shadcn -q <name>`; add the base with `pnpm exec shadcn add <name>` and fix its `cn` import.
+3. **Write code** following the skill's rules (below) and the Component rule.
+4. **Audit** against the rules: `pnpm exec tsc --noEmit`, `pnpm lint`, and grep the new files for `space-[xy]-`, `w-N h-N`, `dark:`, hex colors.
+5. **Check in the browser** at `/design-system/<component>` against the Figma export (all variants, interactions, no console errors), then `pnpm build`.
+
+shadcn rules that bit us before:
+- Dividers use `Separator` (Figma `Divider-Horizontal`), never `border-b` divs or `<hr>`.
+- `className` is for layout only. Colors, sizes, radii of a shadcn component go in its `cva` variants (add a variant/size to `button.tsx`), not in a consumer's `className`.
+- Sub-parts of a component (icon, close, separator) are slots in the `ui/` file (`AlertClose`, `AlertSeparator`), so domain components just compose them.
+- "Toast" in shadcn means a Base UI notification (`toast` component). Figma's inline "toast message" alerts are `Alert`, not toasts.
 
 ## Design tokens
 
@@ -75,19 +89,23 @@ Mapping rules for code:
 - Accessible by default: semantic HTML, keyboard support, visible focus, alt text.
 - Responsive: mobile-first, container max width from `Max Width` tokens.
 - Icons: use the Figma icon asset (download via `get_design_context`, save to `public/icons/`), not a lucide look-alike, when the design specifies one.
+- Single-color icons that must follow a variant or dark mode: render the SVG as a CSS mask so the token sets the color — `bg-<token> mask-[url(/icons/x.svg)] mask-contain mask-center mask-no-repeat` (see `AlertIcon`).
 
 ## Known gaps (update when fixed)
 
 - shadcn vars not mapped to tokens (see Mapping rules).
 - Fonts not loaded: `layout.tsx` still loads Geist; Inter / Playfair Display / Roboto / Merriweather / Ms Madi need `next/font` wired to `--font-family-*`.
 - Figma icon SVGs have a hardcoded fill (`#808080`), so they don't follow dark mode.
+- Code Connect not set up (TalkToFigma can't do it; needs the official Figma MCP).
+- No blur or effect-shadow tokens: `backdrop-blur-[15px]` (Figma background blur 30) and `shadow-[0_1px_2px_0_var(--shadow-*)]` for `Shadows/*/1` are unverified literals in `button.tsx` / `alert.tsx`.
 - `ActivityIcon` Deadline check mark is hand-drawn from a PNG export (TalkToFigma exports SVG as PNG); swap in the Figma vector when the Figma MCP is available.
 
 ## Skills to use
 
 - `shadcn` (official, `npx skills add shadcn/ui`) — shadcn/ui components, CLI, `components.json`-aware
 - `figma:figma-use`, `figma:figma-generate-library` — build components/variables in Figma
-- `figma:figma-design-to-code` — implement Figma nodes in code
+- TalkToFigma MCP (`.mcp.json`) — **always** use it to read Figma (see Per-component checklist)
+- `figma:figma-design-to-code` — implement Figma nodes in code (official Figma MCP only)
 - `figma:figma-code-connect` — map Figma components to code
 - `frontend-ui-engineering`, `ui-styling`, `vercel:react-best-practices` — UI code quality
 - `vercel:deploy` — deploy
