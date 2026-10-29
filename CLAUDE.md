@@ -104,6 +104,7 @@ Mapping rules for code:
 - TalkToFigma doesn't report layer visibility or stroke weights: check exports to see which layers are on by default.
 - Code Connect not set up (TalkToFigma can't do it; needs the official Figma MCP).
 - No blur or effect-shadow tokens: the 15px backdrop blur (Figma background blur 30) and the `0 1px 2px` shadow on `--shadow-<color>` for `Shadows/<color>/1` are unverified literals in `button.tsx` / `alert.tsx`.
+- Breadcrumb: Figma Breadcrumb-Group shows every item as Default; `BreadcrumbTrail` renders the last item as Selected (current page). The Arrow `Active` state has no usage in Figma, so the trail never picks it. Icon glyphs are `base-500` on Base badges (Figma `#808080`).
 - `ActivityIcon` Deadline check mark is hand-drawn from a PNG export (TalkToFigma exports SVG as PNG); swap in the Figma vector when the Figma MCP is available.
 
 ## Skills to use
