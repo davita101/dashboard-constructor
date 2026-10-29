@@ -98,7 +98,8 @@ Mapping rules for code:
 - shadcn vars not mapped to tokens (see Mapping rules).
 - Fonts not loaded: `layout.tsx` still loads Geist; Inter / Playfair Display / Roboto / Merriweather / Ms Madi need `next/font` wired to `--font-family-*`.
 - Figma icon SVGs have a hardcoded fill (`#808080`), so they don't follow dark mode.
-- Avatars: Figma "Progress" ring and the "Badge-Square-Pilled" counter overlay are not implemented (TalkToFigma gives no arc/stroke-weight data; Badge component not built yet). Story ring assumes a 2px stroke.
+- Avatars: Figma "Progress" ring and the "Badge-Square-Pilled" counter overlay are not implemented (TalkToFigma gives no arc/stroke-weight data; `Badge size="square-12"` now exists to build the overlay). Story ring assumes a 2px stroke.
+- Badge: token names were recovered by matching Figma hex values to Light-mode tokens (TalkToFigma gives no variable names), so a shade could be a same-hex neighbour. Icons and the dot use the text color (Figma icons are one shade off: `-50` on solid, `-600` on soft). Shadows assume `Shadows/<color>/1` on solid styles only. Badge-Square-Rounded 60 uses 14/24 text (Figma: 11/20) and Badge-Icon-Rounded 16 uses r6 (Figma: r4).
 - `VerifyIcon` uses Material's `verified` path (`public/icons/material-verified.svg`) because TalkToFigma can't export the vector; badge colors assume the palette's 500 shade. Verify both against Figma when the official MCP or `FIGMA_TOKEN` is available.
 - TalkToFigma doesn't report layer visibility or stroke weights: check exports to see which layers are on by default.
 - Code Connect not set up (TalkToFigma can't do it; needs the official Figma MCP).

@@ -62,6 +62,8 @@ const buttonVariants = cva(
         "icon-lg": "size-9",
         // Figma 16px icon (material-close)
         "icon-micro": "size-4 rounded-r4 p-0",
+        // Figma 24px round icon button (Banner close), 12px icon
+        "icon-round": "size-6 rounded-r32 p-0",
         // Figma 24px pill: 8px + 4px text padding, Bold 700/10
         micro:
           "h-6 gap-1 rounded-r32 px-3 font-default text-10 leading-16 font-bold tracking-default",
