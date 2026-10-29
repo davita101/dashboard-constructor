@@ -147,7 +147,15 @@ export default function ActivityPreviewPage() {
                 <div key={size} className="flex items-center gap-5">
                   {activityTypes.map((type) => (
                     <span key={type} className="flex w-8 justify-start">
-                      <ActivityIcon type={type} variant={variant} corner={corner} size={size} />
+                      <ActivityIcon
+                        type={type}
+                        variant={variant}
+                        corner={corner}
+                        size={size}
+                        src={avatarSrc}
+                        initials="M"
+                        alt={author}
+                      />
                     </span>
                   ))}
                 </div>

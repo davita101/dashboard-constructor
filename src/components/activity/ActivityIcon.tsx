@@ -2,9 +2,11 @@ import Image from "next/image"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 // Commerce Constructor 7.7 — Activity-Icon-Component (Figma 11109:1497)
 // Type × Size (32 / 24 / 20) × Corner (Pilled / Rounded) × Style (Soft / Fill)
+// Avatar Image / Avatar Text types render the shadcn Avatar instead of a glyph.
 
 const tones = {
   green: {
@@ -76,11 +78,28 @@ const activityTypeTone = {
   done: "green",
   calendar: "violet",
   assign: "teal",
+  "start-date": "yellow",
+  deadline: "green",
 } as const satisfies Record<string, keyof typeof tones>
 
-type ActivityType = keyof typeof activityTypeTone
+type GlyphType = keyof typeof activityTypeTone
 
-const activityTypes = Object.keys(activityTypeTone) as ActivityType[]
+const avatarTypes = ["avatar-image", "avatar-text"] as const
+
+type AvatarType = (typeof avatarTypes)[number]
+
+type ActivityType = GlyphType | AvatarType
+
+const activityTypes = [...Object.keys(activityTypeTone), ...avatarTypes] as ActivityType[]
+
+const isAvatarType = (type: ActivityType): type is AvatarType =>
+  (avatarTypes as readonly string[]).includes(type)
+
+// Avatar-Text fill: primary tone (Figma #3b82f6 / #357af3 → #235ee6 in the Blue theme)
+const avatarTextTone = {
+  soft: "from-primary-alpha-5 to-primary-alpha-15 text-primary-600 outline -outline-offset-1 outline-primary-alpha-20",
+  fill: "from-primary-525 to-primary-625 text-white",
+} as const
 
 const activityIconVariants = cva(
   "inline-flex shrink-0 items-center justify-center bg-linear-to-b outline -outline-offset-1",
@@ -110,6 +129,12 @@ type ActivityIconProps = Omit<React.ComponentProps<"span">, "children"> &
   VariantProps<typeof activityIconVariants> & {
     type: ActivityType
     variant?: "soft" | "fill"
+    /** Avatar Image: photo URL. Falls back to `initials` if it fails to load. */
+    src?: string
+    /** Avatar Text: initials shown in the avatar. */
+    initials?: string
+    /** Accessible name for the avatar types. */
+    alt?: string
   }
 
 function ActivityIcon({
@@ -117,9 +142,45 @@ function ActivityIcon({
   variant = "soft",
   size = "default",
   corner,
+  src,
+  initials,
+  alt = "",
   className,
   ...props
 }: ActivityIconProps) {
+  if (isAvatarType(type)) {
+    const fallback = (
+      <AvatarFallback
+        className={cn(
+          "rounded-[inherit] bg-linear-to-b font-default font-bold tracking-default",
+          size === "default" ? "text-10 leading-16" : "text-8 leading-12",
+          avatarTextTone[variant]
+        )}
+      >
+        {initials}
+      </AvatarFallback>
+    )
+
+    return (
+      <Avatar
+        data-type={type}
+        className={cn(
+          activityIconVariants({ size, corner }),
+          "bg-transparent p-0 outline-none after:hidden",
+          // Figma: Avatar Image keeps the 8px corner at 24px
+          type === "avatar-image" && corner === "rounded" && size === "sm" && "rounded-r8",
+          className
+        )}
+        {...(props as Omit<React.ComponentProps<typeof Avatar>, "children">)}
+      >
+        {type === "avatar-image" && src && (
+          <AvatarImage src={src} alt={alt} className="rounded-[inherit]" />
+        )}
+        {fallback}
+      </Avatar>
+    )
+  }
+
   return (
     <span
       data-slot="activity-icon"
