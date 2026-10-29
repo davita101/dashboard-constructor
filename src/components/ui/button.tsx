@@ -17,6 +17,11 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",
+        // Commerce Constructor 7.7 buttons (Figma Dark-Button / Ghost-Button / Outline-Button)
+        dark: "border-base-775 bg-linear-to-b from-base-800 to-base-900 text-base-0 shadow-[0_1px_2px_0_var(--shadow-base)] hover:from-base-700 hover:to-base-800",
+        "base-ghost": "text-base-700 hover:bg-base-alpha-5",
+        "base-outline":
+          "border-base-70 bg-linear-to-b from-base-0 to-base-20 text-base-800 shadow-[0_1px_2px_0_var(--shadow-base)] hover:to-base-70",
       },
       size: {
         default:
@@ -30,6 +35,9 @@ const buttonVariants = cva(
         "icon-sm":
           "size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg",
         "icon-lg": "size-9",
+        // Figma 24px pill: 8px + 4px text padding, Bold 700/10
+        micro:
+          "h-6 gap-1 rounded-r32 px-3 font-default text-10 leading-16 font-bold tracking-default",
       },
     },
     defaultVariants: {

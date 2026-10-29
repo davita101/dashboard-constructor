@@ -81,6 +81,7 @@ Mapping rules for code:
 - shadcn vars not mapped to tokens (see Mapping rules).
 - Fonts not loaded: `layout.tsx` still loads Geist; Inter / Playfair Display / Roboto / Merriweather / Ms Madi need `next/font` wired to `--font-family-*`.
 - Figma icon SVGs have a hardcoded fill (`#808080`), so they don't follow dark mode.
+- `ActivityIcon` is missing Figma types Start Date, Deadline, Avatar Image, Avatar Text (not fetched: Figma MCP rate limit). Rounded corner at 24/20px uses `r6` — unverified against Figma.
 
 ## Skills to use
 
