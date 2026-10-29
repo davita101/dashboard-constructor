@@ -15,7 +15,7 @@ You navigate the Commerce Constructor 7.7 file open in the user's Figma desktop 
 
 ## Task A — build or refresh the queue
 
-1. Run `pnpm figma:pages`. It lists every page and its component sets over the REST API (`<page id>\t<page name>\t<node id>\t<set name>`). TalkToFigma only sees the page open in Figma, so never rely on `get_document_info` for the page list.
+1. The queue already exists; only rebuild it when asked. Run `pnpm figma:pages` (REST, may be rate limited for days: if 429, keep the existing queue and say so). It lists every page and its component sets over the REST API (`<page id>\t<page name>\t<node id>\t<set name>`). TalkToFigma only sees the page open in Figma, so never rely on `get_document_info` for the page list.
 2. One queue row per Figma **page** (one page = one component = one `/design-system/<slug>`); the Figma node column holds the page id. Slug: kebab-case of the page name without `❖`, `Forms:`, `Navigate:` prefixes, singular (`Alerts` → `alert`, `Forms: Checkbox` → `checkbox`).
 3. Queue **every** page, nothing is skipped. Icon and logo pages (`Icons (…)`, `Logotypes`) become icon/logo components fed by SVGs from `pnpm figma:fetch` assets; template pages (`Sing In, Sing Up, …`, `Mockups`) become composites built from the components already done, so queue them last.
 4. Mark rows `done` whose slug already exists as `src/app/design-system/<slug>/`. Keep existing rows and their statuses; only append new ones.
@@ -24,9 +24,9 @@ You navigate the Commerce Constructor 7.7 file open in the user's Figma desktop 
 
 ## Task B — fetch one component
 
-1. Get the page's component set ids from `pnpm figma:pages` (filter by the page id). TalkToFigma reads and exports nodes on **any** page by id; only `set_focus` fails off the open page, so call `set_focus` on the first set only if `get_document_info` shows that page is open, and ignore its error otherwise.
-2. `get_nodes_info` on each component set (never `get_node_info` on the page id: the output is several MB). `export_node_as_image` of each set (PNG, scale 1; lower it if huge) to see it.
-3. If `design/figma-dump/<page-id>/tree.txt` is missing, run `pnpm figma:fetch <page-id>`. On a 429 (rate limit) wait with `Start-Sleep -Seconds 120` and retry, up to 4 times, before giving up and listing it under Gaps; token names from the dump beat hex guesses, so the wait is worth it. Use `-` in the id, e.g. `321-0`. Read the sections for these sets: token names, layout and padding that TalkToFigma lacks.
+1. **Open the page in Figma:** `set_focus` on the page id from the queue. The local plugin switches the user's Figma to that page. Then `get_document_info`: it must show that page as `currentPage`, and its `COMPONENT_SET` children are the sets to fetch. If `set_focus` errors, retry once after `join_channel`; if it still fails, reply `FIGMA DOWN: <error>`.
+2. `set_focus` on the first component set so it is visible. `get_nodes_info` on each component set (never `get_node_info` on the page id: the output is several MB). `export_node_as_image` of each set (PNG, scale 1; lower it if huge) to see it.
+3. Use `design/figma-dump/<page-id>/tree.txt` if it exists (token names, layout, padding that TalkToFigma lacks). Otherwise try `pnpm figma:fetch <page-id>` (`-` in the id, e.g. `321-0`) **once**; the REST API is on the Starter plan and a 429 can last days, so on 429 do not wait or retry: resolve colors by matching hex to Light-mode tokens in `src/styles/color-mode.css` and list it under Gaps.
 4. Write `design/handoff/<slug>/spec.md`:
    - Figma node id, page id, component name, slug.
    - Variant properties and every value (size, state, type, …).
