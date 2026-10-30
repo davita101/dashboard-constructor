@@ -1,11 +1,10 @@
-## Run summary — 2026-10-30 (stopped: FIGMA DOWN at Loader, 2nd attempt)
+## Run summary — 2026-10-30 (stopped: FIGMA DOWN at Loader, 3rd attempt)
 
 - Done: 21 · Blocked: 0 · Remaining (todo): 56
 - Blocked: none
-- Commits on branch (`main..HEAD`): 35
-- Retry session (same day) failed the same way: `set_focus` 9402:26498 → "Error executing command" twice after re-joining `f4y3oxgs`; Figma still on Steps page. The loop will keep stopping here until the page is opened by hand.
-- Stopped at Loader (#22). TalkToFigma connected on channel `f4y3oxgs`, but Figma still has the Steps page (4313:48088) open. `set_focus` on Loader page 9402:26498 failed twice ("Error executing command"), including after a re-join. Row is back to `todo`. Only `design/handoff/loader/graph-context.md` was written; the next Loader session reuses it.
-- **User must fix before next run:** open the **Loader** page (9402:26498) in Figma desktop with the TalkToFigma plugin running on channel `f4y3oxgs`. The plugin reads only the page that is open, so every new component page has to be opened by hand. To fix this for good, make the navigator able to switch pages, or set `FIGMA_TOKEN` and wait out the REST 429 so `pnpm figma:fetch` works.
+- Commits on branch (`main..HEAD`): 36 before this report commit (37 with it)
+- Stopped at Loader (#22) for the third time. The navigator re-joined `f4y3oxgs`, but `set_focus` and `get_nodes_info` on 9402:26498 still fail with "Error executing command". Figma still has the Steps page (4313:48088) open, and no TalkToFigma tool can switch pages. Row is back to `todo`. `design/handoff/loader/graph-context.md` is still valid and will be reused.
+- **User must fix before next run:** open the **Loader** page (9402:26498) in Figma desktop, with the TalkToFigma plugin running on channel `f4y3oxgs`. The plugin reads only the open page, so each new component page has to be opened by hand. Lasting fixes: give the navigator a way to switch pages, or set `FIGMA_TOKEN` and wait out the REST 429 so `pnpm figma:fetch` works. **Consider stopping `scripts/agent-loop.ps1` until then:** every session will stop here.
 - `scripts/agent-loop.ps1` has uncommitted local edits that aren't from this pipeline. Left as is.
 
 ## Run summary — 2026-10-30 (stopped: FIGMA DOWN at Steps)
@@ -68,3 +67,4 @@
 2026-10-30 Steps: not started — FIGMA DOWN (set_focus on 4313:48088 fails, Slider page still open), row reset to todo
 2026-10-30 Steps: done — custom shadcn-style steps.tsx (cva + Separator, Material check mask), 12 sets incl. Steps-Dot; 2 retries (dark: cva key → primary-dark, missing browser check → found/fixed Component-02 selected line color); hex matched to tokens, see CLAUDE.md Known gaps
 2026-10-30 Loader: not started — FIGMA DOWN (set_focus on 9402:26498 fails, Steps page still open), row reset to todo
+2026-10-30 Loader: not started — FIGMA DOWN (3rd try; set_focus/get_nodes_info on 9402:26498 fail, Steps page still open), row reset to todo
