@@ -28,7 +28,7 @@ Channel: m5tvpzo1
 | 24 | Input OTP | 9402:26500 | done | shadcn input-otp restyled to 6 separate slots (cva size 60/48/40 × state) + InputOTPField on Field; first-pass approve |
 | 25 | Counter | 9402:27553 | done | Base UI NumberField + cva (no shadcn base), Counter appearance button/input + slots, Input on InputGroup/Field; first-pass approve |
 | 26 | Status | 9463:285753 | done |  |
-| 27 | Links | 12123:27015 | todo |  |
+| 27 | Links | 12123:27015 | done |  |
 | 28 | Color Input | 12053:26144 | todo | Forms: Color |
 | 29 | Double Input | 11956:50138 | todo | Forms: Double Inputs |
 | 30 | Input Group | 12015:28362 | todo | Forms: Input Groups |
