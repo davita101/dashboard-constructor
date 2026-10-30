@@ -43,3 +43,4 @@
 2026-10-29 Tooltip: done — shadcn tooltip base, 3 styles x 3 layouts x 4 sides, first-pass approve; colors hex-matched (REST 429), arrow/shadow from exports
 2026-10-29 Progress: done — Line/Circular/Half/Percent/Dot built on Base UI progress cva; 1 retry (dark: cva key); REST dump 429, hex matched to tokens
 2026-10-30 Slider: not started — Figma page not open (plugin reads current page only) + REST 429, row reset to todo
+2026-10-30 Slider: done — shadcn slider (Base UI) + cva control/track/range/thumb, SliderThumbValue reuses Tooltip; 8 Slider + 6 Runner + 44 Percent variants; first-pass approve; no REST dump, hex matched to tokens, see CLAUDE.md Known gaps
