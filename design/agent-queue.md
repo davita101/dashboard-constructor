@@ -25,7 +25,7 @@ Channel: m5tvpzo1
 | 21 | Steps | 4313:48088 | done | 2 retries (dark: cva key renamed; browser check redo fixed Component-02 line color); no shadcn stepper, cva + Separator |
 | 22 | Loader | 9402:26498 | done | shadcn spinner (two-tone ring like ProgressCircle) + Loader container cva, 4 sizes; first-pass approve; drop shadow omitted |
 | 23 | Command Key | 9402:26499 | done | shadcn kbd extended (variant/shape/glyph, KbdSeparator, KbdGroup props via cloneElement); first-pass approve |
-| 24 | Input OTP | 9402:26500 | todo |  |
+| 24 | Input OTP | 9402:26500 | done | shadcn input-otp restyled to 6 separate slots (cva size 60/48/40 × state) + InputOTPField on Field; first-pass approve |
 | 25 | Counter | 9402:27553 | todo |  |
 | 26 | Status | 9463:285753 | todo |  |
 | 27 | Links | 12123:27015 | todo |  |
