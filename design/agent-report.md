@@ -56,3 +56,4 @@
 2026-10-30 Slider: not started — Figma page not open (plugin reads current page only) + REST 429, row reset to todo
 2026-10-30 Slider: done — shadcn slider (Base UI) + cva control/track/range/thumb, SliderThumbValue reuses Tooltip; 8 Slider + 6 Runner + 44 Percent variants; first-pass approve; no REST dump, hex matched to tokens, see CLAUDE.md Known gaps
 2026-10-30 Steps: not started — FIGMA DOWN (set_focus on 4313:48088 fails, Slider page still open), row reset to todo
+2026-10-30 Steps: done — custom shadcn-style steps.tsx (cva + Separator, Material check mask), 12 sets incl. Steps-Dot; 2 retries (dark: cva key → primary-dark, missing browser check → found/fixed Component-02 selected line color); hex matched to tokens, see CLAUDE.md Known gaps
