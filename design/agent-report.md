@@ -1,8 +1,9 @@
-## Run summary — 2026-10-30 (stopped: FIGMA DOWN at Loader)
+## Run summary — 2026-10-30 (stopped: FIGMA DOWN at Loader, 2nd attempt)
 
 - Done: 21 · Blocked: 0 · Remaining (todo): 56
 - Blocked: none
-- Commits on branch (`main..HEAD`): 34
+- Commits on branch (`main..HEAD`): 35
+- Retry session (same day) failed the same way: `set_focus` 9402:26498 → "Error executing command" twice after re-joining `f4y3oxgs`; Figma still on Steps page. The loop will keep stopping here until the page is opened by hand.
 - Stopped at Loader (#22). TalkToFigma connected on channel `f4y3oxgs`, but Figma still has the Steps page (4313:48088) open. `set_focus` on Loader page 9402:26498 failed twice ("Error executing command"), including after a re-join. Row is back to `todo`. Only `design/handoff/loader/graph-context.md` was written; the next Loader session reuses it.
 - **User must fix before next run:** open the **Loader** page (9402:26498) in Figma desktop with the TalkToFigma plugin running on channel `f4y3oxgs`. The plugin reads only the page that is open, so every new component page has to be opened by hand. To fix this for good, make the navigator able to switch pages, or set `FIGMA_TOKEN` and wait out the REST 429 so `pnpm figma:fetch` works.
 - `scripts/agent-loop.ps1` has uncommitted local edits that aren't from this pipeline. Left as is.
