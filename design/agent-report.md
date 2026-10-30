@@ -99,3 +99,4 @@
 2026-10-30 Double Input: done — joined/horizontal/vertical cva on InputGroup, gaps in CLAUDE.md
 2026-10-30 Input Group: done — InputGroupJoin/Segment cva on input-group.tsx; gaps in design/known-gaps.md
 2026-10-30 Input Custom: done — InputGroup/Field tone variants, gaps logged
+2026-10-30 File Input: done — tsc/lint/build green, gaps in known-gaps.md
