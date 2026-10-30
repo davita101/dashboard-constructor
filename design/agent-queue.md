@@ -23,7 +23,7 @@ Channel: m5tvpzo1
 | 19 | Progress | 4313:34129 | done | 1 retry (dark: cva key renamed); Line/Circle/Half/Percent/Dot on Base UI progress; REST dump 429 |
 | 20 | Slider | 4313:51976 | done | shadcn slider (Base UI) + cva track/range/thumb, Tooltip value pills; first-pass approve; hex→token
 | 21 | Steps | 4313:48088 | done | 2 retries (dark: cva key renamed; browser check redo fixed Component-02 line color); no shadcn stepper, cva + Separator |
-| 22 | Loader | 9402:26498 | todo |  |
+| 22 | Loader | 9402:26498 | done | shadcn spinner (two-tone ring like ProgressCircle) + Loader container cva, 4 sizes; first-pass approve; drop shadow omitted |
 | 23 | Command Key | 9402:26499 | todo |  |
 | 24 | Input OTP | 9402:26500 | todo |  |
 | 25 | Counter | 9402:27553 | todo |  |

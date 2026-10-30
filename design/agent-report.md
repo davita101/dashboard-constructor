@@ -68,3 +68,5 @@
 2026-10-30 Steps: done — custom shadcn-style steps.tsx (cva + Separator, Material check mask), 12 sets incl. Steps-Dot; 2 retries (dark: cva key → primary-dark, missing browser check → found/fixed Component-02 selected line color); hex matched to tokens, see CLAUDE.md Known gaps
 2026-10-30 Loader: not started — FIGMA DOWN (set_focus on 9402:26498 fails, Steps page still open), row reset to todo
 2026-10-30 Loader: not started — FIGMA DOWN (3rd try; set_focus/get_nodes_info on 9402:26498 fail, Steps page still open), row reset to todo
+
+2026-10-30 Loader: done — shadcn spinner rebuilt as Figma two-tone ring (SVG like ProgressCircle) + Loader container (cva size 48/36/32/20); first-pass approve; no REST dump, hex matched to tokens; near-invisible drop shadow omitted. Known-gaps line pending in CLAUDE.md (protected-file edit not approved): Base primary-alpha-15, Load primary-600, container background-0; ring width 10% of diameter (XS 2.5px) and 180° arc measured from exports; spin speed, inline 16 size and color="current" not in Figma
