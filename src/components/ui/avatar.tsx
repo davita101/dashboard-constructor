@@ -5,6 +5,7 @@ import { Avatar as AvatarPrimitive } from "@base-ui/react/avatar"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { Status } from "@/components/ui/status"
 
 // Figma Avatar-Text / Avatar-Image / Profile / Avatar-Logo / Brand-Logo (Avatars page 4313:42252).
 // Size sets the box, initials type, rounded-corner radius and status dot via CSS vars.
@@ -149,13 +150,22 @@ function AvatarFallback({
   )
 }
 
-/** Figma "Status": online dot, bottom-right. */
-function AvatarBadge({ className, ...props }: React.ComponentProps<"span">) {
+/** Figma "Status" (see `Status`), bottom-right; the avatar size sets its box and inset. */
+function AvatarBadge({
+  className,
+  color = "online",
+  type,
+  border,
+  ...props
+}: React.ComponentProps<typeof Status>) {
   return (
-    <span
+    <Status
       data-slot="avatar-badge"
+      color={color}
+      type={type}
+      border={border}
       className={cn(
-        "absolute right-(--avatar-status-inset) bottom-(--avatar-status-inset) z-10 size-(--avatar-status) rounded-full bg-success-500",
+        "absolute right-(--avatar-status-inset) bottom-(--avatar-status-inset) z-10 size-(--avatar-status)",
         className
       )}
       {...props}

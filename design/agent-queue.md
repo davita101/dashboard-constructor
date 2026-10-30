@@ -27,7 +27,7 @@ Channel: m5tvpzo1
 | 23 | Command Key | 9402:26499 | done | shadcn kbd extended (variant/shape/glyph, KbdSeparator, KbdGroup props via cloneElement); first-pass approve |
 | 24 | Input OTP | 9402:26500 | done | shadcn input-otp restyled to 6 separate slots (cva size 60/48/40 × state) + InputOTPField on Field; first-pass approve |
 | 25 | Counter | 9402:27553 | done | Base UI NumberField + cva (no shadcn base), Counter appearance button/input + slots, Input on InputGroup/Field; first-pass approve |
-| 26 | Status | 9463:285753 | todo |  |
+| 26 | Status | 9463:285753 | done |  |
 | 27 | Links | 12123:27015 | todo |  |
 | 28 | Color Input | 12053:26144 | todo | Forms: Color |
 | 29 | Double Input | 11956:50138 | todo | Forms: Double Inputs |
