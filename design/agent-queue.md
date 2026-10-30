@@ -34,7 +34,7 @@ Channel: fde0bgrx
 | 30 | Input Group | 12015:28362 | done | Forms: Input Groups |
 | 31 | Input Custom | 12509:89789 | done | InputGroup tone white/black + Field tone glass cva; first-pass approve; FIGMA_TOKEN expired, no tree.txt |
 | 32 | File Input | 12015:2400 | done | Forms: File Input; ring 4px + disabled opacity-50 guessed, see known-gaps |
-| 33 | File Upload | 9402:22988 | todo |  |
+| 33 | File Upload | 9402:22988 | done | FileUpload dropzone + Item + Card cva slots, AddFilesCard; icons redrawn (REST token expired); first-pass approve |
 | 34 | Payment Card Input | 12008:2462 | todo |  |
 | 35 | Add Avatar | 11553:28400 | todo | Forms: Add Avatar |
 | 36 | Mail Input | 12273:34772 | todo | Forms: Mail |
