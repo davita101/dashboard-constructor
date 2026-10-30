@@ -101,3 +101,4 @@
 2026-10-30 Input Custom: done — InputGroup/Field tone variants, gaps logged
 2026-10-30 File Input: done — tsc/lint/build green, gaps in known-gaps.md
 2026-10-30 File Upload: done — first-pass approve, gaps in known-gaps.md
+2026-10-31 Payment Card Input: done — PaymentCardBrand slot on input-group/double-input, first-pass approve
