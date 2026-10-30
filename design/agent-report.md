@@ -1,3 +1,11 @@
+## Run summary — 2026-10-30 (stopped: FIGMA DOWN at Double Input)
+
+- Done: 28 · Blocked: 0 · Remaining (todo): 49
+- Blocked: none
+- Commits on branch (`main..HEAD`): 47 before this report commit
+- This run shipped Status (ded97b3), Links (0fea3cb), Color Input (fbbad2b). Stopped at Double Input (#29): TalkToFigma (channel `m5tvpzo1`) timed out for the navigator and for the Director's own export check. Row is back to `todo`; no files left for it.
+- Fix before next run: reopen the Figma desktop file and the TalkToFigma plugin, update `Channel:` in `design/agent-queue.md` if it changed. Commit the pending Known-gaps lines in `CLAUDE.md` (Loader, Command Key, Input OTP, Counter, Status, Links, Color Input, Input swatch note), which sessions left uncommitted on purpose. `node_modules` lacked `input-otp` (fixed with `pnpm install --frozen-lockfile`).
+
 ## Run summary — 2026-10-30 (stopped: FIGMA DOWN at Color Input)
 
 - Done: 27 · Blocked: 0 · Remaining (todo): 50
