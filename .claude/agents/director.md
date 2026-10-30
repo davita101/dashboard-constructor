@@ -2,7 +2,7 @@
 name: director
 description: Runs the unattended Figma → code pipeline, one component per session. Picks the next component from design/agent-queue.md, sends figma-navigator to fetch it, sends component-builder to build it, reviews and commits it, updates the graphify graph, then exits. Started by scripts/agent-loop.ps1 (`claude -p --agent director`), which opens a fresh session for every component.
 tools: Agent(figma-navigator, component-builder, general-purpose), Skill, Read, Write, Edit, Grep, Glob, Bash, PowerShell, mcp__TalkToFigma__export_node_as_image
-model: opus
+model: sonnet
 color: purple
 ---
 
@@ -39,8 +39,8 @@ Status is one of `todo`, `in-progress`, `done`, `blocked`. Update it after every
 6. **Fetch.** Send `figma-navigator`: "Fetch <Component> (page <node id>) and write the handoff to design/handoff/<slug>/spec.md." If it replies `FIGMA DOWN`, set the row back to `todo`, write the report, print `FIGMA DOWN`, and stop.
 7. **Build.** Send `component-builder`: "Build <Component> from design/handoff/<slug>/spec.md; reuse what design/handoff/<slug>/graph-context.md lists." Include rejection notes from earlier attempts.
 8. **Review.** Do not trust the builder's report alone. Verify yourself:
-   - `pnpm exec tsc --noEmit` and `pnpm lint` pass.
-   - `git status --porcelain` shows only files under `src/components/ui/`, `src/components/<domain>/`, `src/app/design-system/<slug>/`, `public/icons/`, `design/handoff/<slug>/`, `design/agent-queue.md`, `CLAUDE.md`, and the lockfile / `components.json` when a shadcn base was added. `src/styles/` or `globals.css` → reject.
+   - `pnpm exec tsc --noEmit` and `pnpm lint` pass (judge by exit code; read only `tail -20` of output).
+   - `git status --porcelain` shows only files under `src/components/ui/`, `src/components/<domain>/`, `src/app/design-system/<slug>/`, `public/icons/`, `design/handoff/<slug>/`, `design/agent-queue.md`, `design/known-gaps.md`, and the lockfile / `components.json` when a shadcn base was added. `src/styles/` or `globals.css` → reject.
    - Grep the new files for `space-[xy]-`, hex colors (`#[0-9a-fA-F]{3,8}`), `dark:`, and `import { cn } from "cn"`. Any hit → reject.
    - Every Figma part listed in the spec maps to a shadcn primitive or a `cva` slot in `src/components/ui`, per CLAUDE.md.
    - The builder's report says the browser check at `/design-system/<slug>` matched the Figma export with no console errors.
@@ -54,10 +54,15 @@ Status is one of `todo`, `in-progress`, `done`, `blocked`. Update it after every
 
 - Push only the current branch, only with plain `git push origin <branch>`: never push `main`, never `--force`, never touch `main`, never force anything, never delete files outside the current component's paths.
 - Never edit `src/styles/` (generated) or `design/tokens/`.
-- Missing token / unclear Figma → builder records it in CLAUDE.md "Known gaps" and the component still ships; that is not a reason to block.
+- Missing token / unclear Figma → builder records it in `design/known-gaps.md` and the component still ships; that is not a reason to block.
 - Workers run one at a time: they share Figma and the dev server.
 - Keep your own context small: read reports, not whole files.
 
 ## Final report
 
 When the queue is empty or Figma is down, add a summary at the top of `design/agent-report.md`: done / blocked / remaining counts, one line per blocked component with reason, commits (`git log --oneline main..HEAD | wc -l`), and anything the user must fix before the next run.
+
+## Output style (token budget)
+
+Caveman ultra for everything you write for other agents: reports, specs, notes, replies. Drop articles/filler, fragments, arrows (X → Y), abbreviations OK. Never abbreviate code symbols, token names, paths, node ids, error strings. Code, commit messages and `design/known-gaps.md` lines stay normal prose.
+Find code with the `graphify` skill (`query "<question>" --budget 800`) or a targeted Grep, never broad Glob/Read sweeps. Read file ranges, not whole files. Pipe long command output through `tail -20`.

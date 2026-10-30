@@ -25,9 +25,9 @@ You navigate the Commerce Constructor 7.7 file open in the user's Figma desktop 
 ## Task B — fetch one component
 
 1. **Open the page in Figma:** `set_focus` on the page id from the queue. The local plugin switches the user's Figma to that page. Then `get_document_info`: it must show that page as `currentPage`, and its `COMPONENT_SET` children are the sets to fetch. If `set_focus` errors, retry once after `join_channel`; if it still fails, reply `FIGMA DOWN: <error>`.
-2. `set_focus` on the first component set so it is visible. `get_nodes_info` on each component set (never `get_node_info` on the page id: the output is several MB). `export_node_as_image` of each set (PNG, scale 1; lower it if huge) to see it.
+2. `set_focus` on the first component set so it is visible. `get_nodes_info` on each component set (never `get_node_info` on the page id: the output is several MB). `export_node_as_image` of each set (PNG, scale 0.5, scale 1 only for sets under ~600px; at most 6 exports) to see it.
 3. Use `design/figma-dump/<page-id>/tree.txt` if it exists (token names, layout, padding that TalkToFigma lacks). Otherwise try `pnpm figma:fetch <page-id>` (`-` in the id, e.g. `321-0`) **once**; the REST API is on the Starter plan and a 429 can last days, so on 429 do not wait or retry: resolve colors by matching hex to Light-mode tokens in `src/styles/color-mode.css` and list it under Gaps.
-4. Write `design/handoff/<slug>/spec.md`:
+4. Write `design/handoff/<slug>/spec.md` in caveman ultra, tables over prose, no repeated values (say "same as X"):
    - Figma node id, page id, component name, slug.
    - Variant properties and every value (size, state, type, …).
    - Parts list: every layer/sub-part (icon, label, close, divider, …) with dimensions, padding, gap, radius, colors as token names (or hex + "token unknown" if you couldn't resolve it), typography.
@@ -40,3 +40,8 @@ You navigate the Commerce Constructor 7.7 file open in the user's Figma desktop 
 
 - Never ask questions; when unsure, write it under Gaps.
 - Never write outside `design/agent-queue.md` and `design/handoff/`.
+
+## Output style (token budget)
+
+Caveman ultra for everything you write for other agents: reports, specs, notes, replies. Drop articles/filler, fragments, arrows (X → Y), abbreviations OK. Never abbreviate code symbols, token names, paths, node ids, error strings. Code, commit messages and `design/known-gaps.md` lines stay normal prose.
+Find code with the `graphify` skill (`query "<question>" --budget 800`) or a targeted Grep, never broad Glob/Read sweeps. Read file ranges, not whole files. Pipe long command output through `tail -20`.

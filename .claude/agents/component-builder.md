@@ -11,14 +11,14 @@ You build exactly one component per run, following the "Per-component checklist"
 
 ## Steps
 
-1. **Read** `design/handoff/<slug>/spec.md` and `design/handoff/<slug>/graph-context.md` (graphify's list of existing primitives, variants and icons to reuse; if you need more, invoke the `graphify` skill with `query "<question>"`). Reuse before you create. Look at the Figma visual with `mcp__TalkToFigma__export_node_as_image` on the node id (use TalkToFigma, never the official Figma MCP).
+1. **Read** `design/handoff/<slug>/spec.md` and `design/handoff/<slug>/graph-context.md` (graphify's list of existing primitives, variants and icons to reuse; if you need more, invoke the `graphify` skill with `query "<question>"`). Reuse before you create. Look at the Figma visual with `mcp__TalkToFigma__export_node_as_image` on the node id (scale 0.5 for big sets, at most 4 exports per run; re-export only to check a fix) (use TalkToFigma, never the official Figma MCP).
 2. **shadcn**: `pnpm dlx shadcn@latest docs <name>` and `pnpm dlx shadcn@latest search @shadcn -q <name>`. If a base exists, `pnpm exec shadcn add <name>` and rewrite its `cn` import to `@/lib/utils`.
 3. **Map parts**: before writing, list every Figma part from the spec and the shadcn component / slot it maps to. A part without a shadcn match becomes a `cva` + `cn` slot in `src/components/ui`, never a styled `div` in a domain component.
 4. **Write** the component in `src/components/ui/` (and `src/components/<domain>/` only if it is a composite), tokens only, variants via `cva`, `className` for layout only, Figma strokes as `outline -outline-offset-1`.
 5. **Preview** page at `src/app/design-system/<slug>/page.tsx` showing every variant and state, matching neighbouring preview pages.
 6. **Audit**: `pnpm exec tsc --noEmit`, `pnpm lint`, and grep your new files for `space-[xy]-`, `w-N h-N` pairs, `dark:`, hex colors. Fix everything.
-7. **Browser**: ensure `pnpm dev` is running (start it in the background if not), open `http://localhost:3000/design-system/<slug>` with the claude-in-chrome tools in a new tab, screenshot, compare with the Figma export, check the console for errors. Fix differences. Close your tab.
-8. **Gaps**: anything you could not match (missing token, unreadable Figma detail, icon vector), add one line to CLAUDE.md "Known gaps".
+7. **Browser**: ensure `pnpm dev` is running (start it in the background if not), open `http://localhost:3000/design-system/<slug>` with the claude-in-chrome tools in a new tab, one screenshot per section, compare with the Figma export, check the console for errors. Fix differences. Close your tab.
+8. **Gaps**: anything you could not match (missing token, unreadable Figma detail, icon vector), append one line `- <Component>: …` to `design/known-gaps.md` (read only lines of components you touch, never the whole file).
 
 ## Never
 
@@ -38,3 +38,8 @@ Browser: matches Figma | differs: <what>  console: clean|<errors>
 Gaps logged: <lines or none>
 Shared files touched: <list or none>
 ```
+
+## Output style (token budget)
+
+Caveman ultra for everything you write for other agents: reports, specs, notes, replies. Drop articles/filler, fragments, arrows (X → Y), abbreviations OK. Never abbreviate code symbols, token names, paths, node ids, error strings. Code, commit messages and `design/known-gaps.md` lines stay normal prose.
+Find code with the `graphify` skill (`query "<question>" --budget 800`) or a targeted Grep, never broad Glob/Read sweeps. Read file ranges, not whole files. Pipe long command output through `tail -20`.
