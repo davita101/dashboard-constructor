@@ -1,3 +1,12 @@
+## Run summary — 2026-10-30 (stopped: FIGMA DOWN at Loader)
+
+- Done: 21 · Blocked: 0 · Remaining (todo): 56
+- Blocked: none
+- Commits on branch (`main..HEAD`): 34
+- Stopped at Loader (#22). TalkToFigma connected on channel `f4y3oxgs`, but Figma still has the Steps page (4313:48088) open. `set_focus` on Loader page 9402:26498 failed twice ("Error executing command"), including after a re-join. Row is back to `todo`. Only `design/handoff/loader/graph-context.md` was written; the next Loader session reuses it.
+- **User must fix before next run:** open the **Loader** page (9402:26498) in Figma desktop with the TalkToFigma plugin running on channel `f4y3oxgs`. The plugin reads only the page that is open, so every new component page has to be opened by hand. To fix this for good, make the navigator able to switch pages, or set `FIGMA_TOKEN` and wait out the REST 429 so `pnpm figma:fetch` works.
+- `scripts/agent-loop.ps1` has uncommitted local edits that aren't from this pipeline. Left as is.
+
 ## Run summary — 2026-10-30 (stopped: FIGMA DOWN at Steps)
 
 - Done: 20 · Blocked: 0 · Remaining (todo): 57
@@ -57,3 +66,4 @@
 2026-10-30 Slider: done — shadcn slider (Base UI) + cva control/track/range/thumb, SliderThumbValue reuses Tooltip; 8 Slider + 6 Runner + 44 Percent variants; first-pass approve; no REST dump, hex matched to tokens, see CLAUDE.md Known gaps
 2026-10-30 Steps: not started — FIGMA DOWN (set_focus on 4313:48088 fails, Slider page still open), row reset to todo
 2026-10-30 Steps: done — custom shadcn-style steps.tsx (cva + Separator, Material check mask), 12 sets incl. Steps-Dot; 2 retries (dark: cva key → primary-dark, missing browser check → found/fixed Component-02 selected line color); hex matched to tokens, see CLAUDE.md Known gaps
+2026-10-30 Loader: not started — FIGMA DOWN (set_focus on 9402:26498 fails, Steps page still open), row reset to todo
