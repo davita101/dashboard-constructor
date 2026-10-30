@@ -32,9 +32,9 @@ Status is one of `todo`, `in-progress`, `done`, `blocked`. Update it after every
 ## One session
 
 1. **Branch check.** `git branch --show-current`. Never work on `main`. Stay on the current branch.
-2. **Resume.** A row still `in-progress` means the previous session died mid-way: `git restore`/`git clean` only that component's paths, set it back to `todo`.
+2. **Resume.** A row `in-progress` may belong to another live session. Reset it (`git restore`/`git clean` only that component's paths, back to `todo`) only if nothing under its paths or `design/handoff/<slug>/` changed in the last 60 min; otherwise leave it alone and skip it.
 3. **Queue.** If `design/agent-queue.md` has no table, send `figma-navigator`: "Build the queue." If there are no `todo` rows, write the final report, print `QUEUE EMPTY`, and stop.
-4. **Pick** the first `todo` row, set it `in-progress`.
+4. **Pick** the first `todo` row, set it `in-progress`. Never build a component twice: skip and mark `done` (note "already built") any row whose `src/app/design-system/<slug>/` exists or whose `git log --oneline --grep "Add <Component> component"` has a hit. Re-read the queue right before setting `in-progress`; if the row changed, pick again.
 5. **Graph context.** Invoke the `graphify` skill with `query "<Component>: which ui primitives, cva variants, icons and design-system pages already exist that this should reuse" --budget 1500`. Save the answer to `design/handoff/<slug>/graph-context.md`.
 6. **Fetch.** Send `figma-navigator`: "Fetch <Component> (page <node id>) and write the handoff to design/handoff/<slug>/spec.md." If it replies `FIGMA DOWN`, set the row back to `todo`, write the report, print `FIGMA DOWN`, and stop.
 7. **Build.** Send `component-builder`: "Build <Component> from design/handoff/<slug>/spec.md; reuse what design/handoff/<slug>/graph-context.md lists." Include rejection notes from earlier attempts.
