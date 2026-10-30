@@ -30,7 +30,7 @@ Channel: fde0bgrx
 | 26 | Status | 9463:285753 | done |  |
 | 27 | Links | 12123:27015 | done |  |
 | 28 | Color Input | 12053:26144 | done | Forms: Color |
-| 29 | Double Input | 11956:50138 | todo | Forms: Double Inputs |
+| 29 | Double Input | 11956:50138 | done | Forms: Double Inputs |
 | 30 | Input Group | 12015:28362 | todo | Forms: Input Groups |
 | 31 | Input Custom | 12509:89789 | todo | Forms: Inputs Custom |
 | 32 | File Input | 12015:2400 | todo | Forms: File Input |
