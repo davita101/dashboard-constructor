@@ -141,7 +141,7 @@ const colorDotShapeVariants = cva("bg-(--swatch) outline outline-(--swatch-strok
     // Figma `Corner`
     shape: {
       rounded: "rounded-full",
-      rectangle: "rounded-r2",
+      rectangle: "",
     },
     size: {
       lg: "size-2.5",
@@ -149,6 +149,11 @@ const colorDotShapeVariants = cva("bg-(--swatch) outline outline-(--swatch-strok
       sm: "size-1",
     },
   },
+  // Figma Rectangle Default/Small use r1 (no token): r0 keeps them square, r2 would read as a circle.
+  compoundVariants: [
+    { shape: "rectangle", size: "lg", className: "rounded-r2" },
+    { shape: "rectangle", size: ["default", "sm"], className: "rounded-r0" },
+  ],
   defaultVariants: {
     shape: "rounded",
     size: "default",
