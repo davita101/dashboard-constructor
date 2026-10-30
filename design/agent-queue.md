@@ -36,7 +36,7 @@ Channel: fde0bgrx
 | 32 | File Input | 12015:2400 | done | Forms: File Input; ring 4px + disabled opacity-50 guessed, see known-gaps |
 | 33 | File Upload | 9402:22988 | done | FileUpload dropzone + Item + Card cva slots, AddFilesCard; icons redrawn (REST token expired); first-pass approve |
 | 34 | Payment Card Input | 12008:2462 | done | PaymentCardBrand slot (rounded|pilled × 5 sizes) + DoubleInput joined + InputGroup; first-pass approve; Mastercard svg hand-drawn  |
-| 35 | Add Avatar | 11553:28400 | todo | Forms: Add Avatar |
+| 35 | Add Avatar | 11553:28400 | done | Forms: Add Avatar; no figma-dump, hex-matched |
 | 36 | Mail Input | 12273:34772 | todo | Forms: Mail |
 | 37 | AI Input | 12814:6371 | todo | Forms: AI |
 | 38 | Text Area Editor | 15267:48550 | todo | Forms: Text Area Editors |

@@ -126,6 +126,8 @@ const avatarFallbackVariants = cva(
         "teal-soft": "from-teal-alpha-5 to-teal-alpha-15 text-teal-600 outline -outline-offset-1 outline-teal-alpha-20",
         teal: "from-teal-500 to-teal-600 text-background-0",
         dark: "from-base-800 to-base-900 text-background-0",
+        // Form-Avatar-Add empty state: white disc, 1px inside stroke, gray account icon
+        placeholder: "bg-background-0 text-base-500 outline -outline-offset-1 outline-background-100",
       },
     },
     defaultVariants: {
