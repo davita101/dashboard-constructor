@@ -1,3 +1,11 @@
+## Run summary — 2026-10-30 (stopped: FIGMA DOWN at Color Input)
+
+- Done: 27 · Blocked: 0 · Remaining (todo): 50
+- Blocked: none
+- Commits on branch (`main..HEAD`): 45 before this report commit
+- Stopped at Color Input (#28). The previous session died with the row `in-progress` after writing a spec, so this session picked it again. The navigator joined channel `m5tvpzo1` and ran `get_document_info`, then returned `FIGMA DOWN` without giving a reason. Row is back to `todo`. `design/handoff/color-input/` is still untracked: it holds the earlier spec and exports plus a fresh `graph-context.md`. Clearing the stale files was denied by the permission classifier, so the next navigator run must overwrite them.
+- **User must fix before next run:** open the **Forms: Color** page (12053:26144) in Figma desktop, with the TalkToFigma plugin running on channel `m5tvpzo1`. Check that the plugin is connected, since the navigator could not read the page. Also not touched by this run: uncommitted `scripts/agent-loop.ps1` edits and an untracked `.codex/` folder.
+
 ## Run summary — 2026-10-30 (stopped: FIGMA DOWN at Loader, 3rd attempt)
 
 - Done: 21 · Blocked: 0 · Remaining (todo): 56
