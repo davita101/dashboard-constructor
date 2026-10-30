@@ -1,3 +1,14 @@
+## Run summary — 2026-10-30 (stopped: FIGMA DOWN at Steps)
+
+- Done: 20 · Blocked: 0 · Remaining (todo): 57
+- Blocked: none
+- Commits on branch (`main..HEAD`): 32 before this report commit (33 with it)
+- Stopped at Steps (#21). TalkToFigma joined channel `f4y3oxgs`, but Figma still has the Slider page (4313:51976) open, and `set_focus` on the Steps page 4313:48088 returned "Error executing command" twice, including after a re-join. The plugin can't switch to a page that isn't loaded. The row is back to `todo`. Only `design/handoff/steps/graph-context.md` was left behind; the next Steps session reuses it.
+
+**Fix before next run:** in Figma desktop, open the **Steps** page (4313:48088) of Commerce Constructor 7.7 with the TalkToFigma plugin running on channel `f4y3oxgs`. Even better, load every page in the file once (click through them, or set the document to load all pages) so the plugin can navigate by itself (commit 910406f expects that). Also check `FIGMA_TOKEN` / let the REST rate limit reset (`figma:fetch` has returned 429 since Input). `scripts/agent-loop.ps1` has uncommitted local edits; the agents left them alone.
+
+---
+
 ## Run summary — 2026-10-30 (stopped: FIGMA DOWN — wrong page open, REST 429)
 
 - Done: 19 · Blocked: 0 · Remaining (todo): 57
@@ -44,3 +55,4 @@
 2026-10-29 Progress: done — Line/Circular/Half/Percent/Dot built on Base UI progress cva; 1 retry (dark: cva key); REST dump 429, hex matched to tokens
 2026-10-30 Slider: not started — Figma page not open (plugin reads current page only) + REST 429, row reset to todo
 2026-10-30 Slider: done — shadcn slider (Base UI) + cva control/track/range/thumb, SliderThumbValue reuses Tooltip; 8 Slider + 6 Runner + 44 Percent variants; first-pass approve; no REST dump, hex matched to tokens, see CLAUDE.md Known gaps
+2026-10-30 Steps: not started — FIGMA DOWN (set_focus on 4313:48088 fails, Slider page still open), row reset to todo
