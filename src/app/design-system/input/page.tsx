@@ -18,6 +18,7 @@ import {
   InputGroupIcon,
   InputGroupInput,
   InputGroupKbd,
+  InputGroupSwatch,
   InputGroupTag,
   InputGroupText,
 } from "@/components/ui/input-group"
@@ -152,6 +153,13 @@ function SlotRow({ shape, size }: { shape: InputShape; size: InputSize }) {
           </InputGroupAvatar>
         </InputGroupAddon>
         <InputGroupInput placeholder="Avatar" aria-label="Avatar" />
+      </InputGroup>
+
+      <InputGroup size={size} shape={shape} className="w-75">
+        <InputGroupAddon>
+          <InputGroupSwatch color="primary" shape={shape} />
+        </InputGroupAddon>
+        <InputGroupInput placeholder="Color" aria-label="Color" />
       </InputGroup>
     </div>
   )
