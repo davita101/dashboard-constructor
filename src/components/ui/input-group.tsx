@@ -6,6 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { Avatar } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { ColorSwatch } from "@/components/ui/color-swatch"
 import { inputSizeVariants } from "@/components/ui/input"
 import { Kbd } from "@/components/ui/kbd"
 import { cn } from "@/lib/utils"
@@ -170,6 +171,11 @@ function InputGroupAvatar({ size = "24", shape = "rounded", ...props }: React.Co
   return <Avatar data-slot="input-group-avatar" size={size} shape={shape} {...props} />
 }
 
+/** Figma Colors swatch slot: the Forms: Color `Color` chip; pass the input's shape. */
+function InputGroupSwatch({ shape = "rounded", ...props }: React.ComponentProps<typeof ColorSwatch>) {
+  return <ColorSwatch data-slot="input-group-swatch" shape={shape} {...props} />
+}
+
 export {
   InputGroup,
   InputGroupAddon,
@@ -178,6 +184,7 @@ export {
   InputGroupIcon,
   InputGroupInput,
   InputGroupKbd,
+  InputGroupSwatch,
   InputGroupTag,
   InputGroupText,
   inputGroupVariants,
