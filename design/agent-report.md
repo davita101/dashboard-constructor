@@ -97,3 +97,4 @@
 2026-10-30 Color Input: done — Figma page is swatches only: color-swatch.tsx (ColorSwatch = Color, ColorDot = Colors/Item) + InputGroupSwatch slot; tokens hex-matched, no picker in Figma (Known-gaps lines left to main session in CLAUDE.md)
 2026-10-30 Color Input: done — follow-up session (row was already shipped by a concurrent session in fbbad2b): fixed Colors/Item Rectangle dot radius (r2 on Large, r0 on Default/Small; base r2 overrode it so small dots rendered round), browser check vs export clean, no console errors
 2026-10-30 Double Input: done — joined/horizontal/vertical cva on InputGroup, gaps in CLAUDE.md
+2026-10-30 Input Group: done — InputGroupJoin/Segment cva on input-group.tsx; gaps in design/known-gaps.md
