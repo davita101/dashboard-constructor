@@ -33,6 +33,25 @@ const inputGroupVariants = cva(
         success:
           "not-has-[[aria-invalid=true]]:-outline-offset-5 not-has-[[aria-invalid=true]]:[--input-fg:var(--success-600)] not-has-[[aria-invalid=true]]:[--input-placeholder:var(--success-600)] not-has-[[aria-invalid=true]]:[--input-ring:var(--success-alpha-20)] not-has-[[aria-invalid=true]]:[--input-stroke:var(--success-600)]",
       },
+      // Figma Forms: Inputs Custom (12509:89789): glass inputs for photos / dark surfaces, fixed white
+      // text in both color modes. White = Input-Rounded/Pilled-White, Black = Input-*-Black.
+      // Same modifiers as the state classes above, so cn() replaces them. Error / Success keep the
+      // text white and use a 50% outer ring with the 600 stroke; Disabled drops the stroke.
+      tone: {
+        default: "",
+        white:
+          "bg-white-alpha-25 [--input-addon-fg:var(--white-alpha-70)] [--input-fg:var(--white)] [--input-icon-fg:var(--white-alpha-70)] [--input-placeholder:var(--white-alpha-90)] [--input-stroke:var(--white-alpha-5)] " +
+          "has-[[data-slot=input-group-control]:not(:placeholder-shown)]:not-has-[[data-slot=input-group-control]:focus-visible]:not-has-[[data-slot=input-group-control]:disabled]:not-has-[[aria-invalid=true]]:data-[status=default]:[--input-stroke:var(--white-alpha-10)] " +
+          "has-[[data-slot=input-group-control]:focus-visible]:not-has-[[aria-invalid=true]]:data-[status=default]:[--input-ring:var(--white-alpha-50)] has-[[data-slot=input-group-control]:focus-visible]:not-has-[[aria-invalid=true]]:data-[status=default]:[--input-stroke:var(--white-alpha-80)] " +
+          "has-[[aria-invalid=true]]:[--input-fg:var(--white)] has-[[aria-invalid=true]]:[--input-placeholder:var(--white)] has-[[aria-invalid=true]]:[--input-ring:var(--danger-alpha-50)] has-[[aria-invalid=true]]:[--input-stroke:var(--danger-600)] " +
+          "has-[[data-slot=input-group-control]:disabled]:bg-white-alpha-25 has-[[data-slot=input-group-control]:disabled]:[--input-fg:var(--white-alpha-50)] has-[[data-slot=input-group-control]:disabled]:[--input-placeholder:var(--white-alpha-50)] has-[[data-slot=input-group-control]:disabled]:[--input-stroke:transparent]",
+        black:
+          "bg-black-alpha-25 [--input-addon-fg:var(--white-alpha-70)] [--input-fg:var(--white)] [--input-icon-fg:var(--white-alpha-70)] [--input-placeholder:var(--white)] [--input-stroke:var(--black-alpha-5)] " +
+          "has-[[data-slot=input-group-control]:not(:placeholder-shown)]:not-has-[[data-slot=input-group-control]:focus-visible]:not-has-[[data-slot=input-group-control]:disabled]:not-has-[[aria-invalid=true]]:data-[status=default]:[--input-stroke:var(--white-alpha-10)] " +
+          "has-[[data-slot=input-group-control]:focus-visible]:not-has-[[aria-invalid=true]]:data-[status=default]:[--input-ring:var(--white-alpha-50)] has-[[data-slot=input-group-control]:focus-visible]:not-has-[[aria-invalid=true]]:data-[status=default]:[--input-stroke:var(--white-alpha-20)] " +
+          "has-[[aria-invalid=true]]:[--input-fg:var(--white)] has-[[aria-invalid=true]]:[--input-placeholder:var(--white)] has-[[aria-invalid=true]]:[--input-ring:var(--danger-alpha-50)] has-[[aria-invalid=true]]:[--input-stroke:var(--danger-600)] " +
+          "has-[[data-slot=input-group-control]:disabled]:bg-black-alpha-25 has-[[data-slot=input-group-control]:disabled]:[--input-fg:var(--white-alpha-50)] has-[[data-slot=input-group-control]:disabled]:[--input-placeholder:var(--white-alpha-50)] has-[[data-slot=input-group-control]:disabled]:[--input-stroke:transparent]",
+      },
       // Input segment of an InputGroupJoin: square corners (the join rounds the outer ones) and,
       // on Error / Success, only the 1px edge stroke (the join draws one ring around all segments).
       // Same modifiers as the classes above, so cn() replaces them.
@@ -43,6 +62,19 @@ const inputGroupVariants = cva(
     },
     compoundVariants: [
       {
+        tone: ["white", "black"],
+        status: "active",
+        className: "[--input-ring:var(--white-alpha-50)]",
+      },
+      { tone: "white", status: "active", className: "[--input-stroke:var(--white-alpha-80)]" },
+      { tone: "black", status: "active", className: "[--input-stroke:var(--white-alpha-20)]" },
+      {
+        tone: ["white", "black"],
+        status: "success",
+        className:
+          "not-has-[[aria-invalid=true]]:[--input-fg:var(--white)] not-has-[[aria-invalid=true]]:[--input-placeholder:var(--white)] not-has-[[aria-invalid=true]]:[--input-ring:var(--success-alpha-50)]",
+      },
+      {
         joined: true,
         status: "success",
         className:
@@ -51,6 +83,7 @@ const inputGroupVariants = cva(
     ],
     defaultVariants: {
       status: "default",
+      tone: "default",
       joined: false,
     },
   }
@@ -185,6 +218,7 @@ function InputGroup({
   size: sizeProp,
   shape: shapeProp,
   status: statusProp,
+  tone = "default",
   ...props
 }: React.ComponentProps<"div"> &
   VariantProps<typeof inputSizeVariants> &
@@ -200,8 +234,9 @@ function InputGroup({
       data-slot="input-group"
       data-size={size}
       data-status={status}
+      data-tone={tone}
       role="group"
-      className={cn(inputSizeVariants({ size, shape }), inputGroupVariants({ status, joined }), className)}
+      className={cn(inputSizeVariants({ size, shape }), inputGroupVariants({ status, tone, joined }), className)}
       {...props}
     />
   )
@@ -262,7 +297,7 @@ function InputGroupText({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
       data-slot="input-group-text"
-      className={cn("font-semibold whitespace-nowrap text-base-400", className)}
+      className={cn("font-semibold whitespace-nowrap text-[color:var(--input-addon-fg,var(--base-400))]", className)}
       {...props}
     />
   )
@@ -279,7 +314,7 @@ function InputGroupIcon({
     <span
       data-slot="input-group-icon"
       aria-hidden
-      className={cn("size-(--input-icon) shrink-0 bg-base-500 mask-contain mask-center mask-no-repeat", className)}
+      className={cn("size-(--input-icon) shrink-0 bg-[color:var(--input-icon-fg,var(--base-500))] mask-contain mask-center mask-no-repeat", className)}
       style={{ maskImage: `url(${src})`, ...style }}
       {...props}
     />

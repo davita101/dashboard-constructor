@@ -21,6 +21,12 @@ const fieldVariants = cva("group/field flex w-full flex-col font-default trackin
       rounded: "",
       pill: "",
     },
+    // Figma Forms: Inputs Custom (12509:89789): white label, 50% white hints over photos / dark
+    // surfaces, in both color modes. Pair with InputGroup tone="white" | "black".
+    tone: {
+      default: "",
+      glass: "[--field-hint-fg:var(--white-alpha-50)] [--field-icon-fg:var(--white-alpha-50)] [--field-label-fg:var(--white)]",
+    },
   },
   compoundVariants: [
     { shape: "pill", size: "60", className: "[--field-px:--spacing(8)]" },
@@ -32,6 +38,7 @@ const fieldVariants = cva("group/field flex w-full flex-col font-default trackin
   defaultVariants: {
     size: "40",
     shape: "rounded",
+    tone: "default",
   },
 })
 
@@ -41,6 +48,7 @@ function Field({
   className,
   size = "40",
   shape = "rounded",
+  tone = "default",
   ...props
 }: React.ComponentProps<"div"> & VariantProps<typeof fieldVariants>) {
   return (
@@ -48,7 +56,7 @@ function Field({
       role="group"
       data-slot="field"
       data-size={size}
-      className={cn(fieldVariants({ size, shape }), className)}
+      className={cn(fieldVariants({ size, shape, tone }), className)}
       {...props}
     />
   )
@@ -69,7 +77,7 @@ function FieldHeader({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 function FieldLabel({ className, ...props }: React.ComponentProps<typeof Label>) {
-  return <Label data-slot="field-label" className={cn("gap-(--field-label-gap)", className)} {...props} />
+  return <Label data-slot="field-label" className={cn("gap-(--field-label-gap) text-[color:var(--field-label-fg,var(--base-700))]", className)} {...props} />
 }
 
 /** Figma material-help next to the label. */
@@ -79,7 +87,7 @@ function FieldLabelIcon({ className, ...props }: React.ComponentProps<"span">) {
       data-slot="field-label-icon"
       aria-hidden
       className={cn(
-        "size-(--field-icon) shrink-0 bg-base-500 mask-[url(/icons/material-help.svg)] mask-contain mask-center mask-no-repeat",
+        "size-(--field-icon) shrink-0 bg-[color:var(--field-icon-fg,var(--base-500))] mask-[url(/icons/material-help.svg)] mask-contain mask-center mask-no-repeat",
         className
       )}
       {...props}
@@ -92,7 +100,7 @@ function FieldHint({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
       data-slot="field-hint"
-      className={cn("truncate text-right font-semibold text-base-400", className)}
+      className={cn("truncate text-right font-semibold text-[color:var(--field-hint-fg,var(--base-400))]", className)}
       {...props}
     />
   )
@@ -104,7 +112,7 @@ function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
     <p
       data-slot="field-description"
       className={cn(
-        "px-(--field-px) font-semibold text-base-400 group-data-[disabled=true]/field:opacity-50 group-data-[invalid=true]/field:text-danger-600 group-data-[success=true]/field:text-success-600",
+        "px-(--field-px) font-semibold text-[color:var(--field-hint-fg,var(--base-400))] group-data-[disabled=true]/field:opacity-50 group-data-[invalid=true]/field:text-danger-600 group-data-[success=true]/field:text-success-600",
         className
       )}
       {...props}
