@@ -1,5 +1,5 @@
 # Summary 2026-10-31: FIGMA DOWN
-done 43 / blocked 0 / remaining 34. commits ahead of main: 74.
+done 45 / blocked 0 / remaining 32. commits ahead of main: 77. Notification (row 46): set_focus 12145:243335 failed, Figma stuck on Toasts page. User: open Notification page in Figma or restart plugin, rerun.
 Fix: open Figma file, run TalkToFigma plugin on channel ypny6p4s, check Modal node 6980:969 valid (set_focus fail, currentPage still Dialog). Re-run loop.
 
 ## Run summary — 2026-10-30 (stopped: FIGMA DOWN at Double Input)
