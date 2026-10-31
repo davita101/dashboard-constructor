@@ -1,5 +1,7 @@
-# Dropdown reuse
-- No dropdown-menu.tsx yet: add shadcn dropdown-menu (Base UI menu), cva variants in it.
-- button.tsx: trigger. avatar.tsx, badge.tsx, kbd.tsx (shortcuts), separator.tsx (dividers), checkbox.tsx/radio-group.tsx/switch.tsx (item controls), input-group.tsx (search item), scroll-area.tsx, tooltip.tsx.
-- Preview page layout: copy src/app/design-system/tooltip/page.tsx.
-- Row 41 Dropdown; Select/Country slots pending from Input.
+# Dropdown graph context
+Rebuild. Edit existing, no new copies.
+- src/components/ui/dropdown-menu.tsx: base, extend w/ lead/trail slots, Item-2/Menu-2, Head-Footer.
+- src/app/design-system/dropdown/page.tsx: existing preview, extend.
+- avatar.tsx, payment-card-brand.tsx, checkbox.tsx, radio-group.tsx, switch.tsx: lead/trail slot content.
+- separator.tsx, kbd.tsx, badge.tsx, scroll-area.tsx, popover.tsx: reuse.
+- design/known-gaps.md: grep "^- Dropdown:".

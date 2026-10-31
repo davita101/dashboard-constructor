@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import {
   Popover,
   PopoverActions,
+  PopoverBack,
   PopoverBadge,
   PopoverClose,
   PopoverContent,
@@ -11,11 +12,13 @@ import {
   PopoverGroup,
   PopoverHeader,
   PopoverIcon,
+  PopoverNext,
   PopoverTitle,
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-// Mirrors the Figma Popover set (9494:47023): Type = Default | Black, Direction = Bottom | Top | Right | Left.
+// Mirrors the Figma Popover set (9494:47023): Type = Default | Black, Direction = Top | Right | Bottom | Left.
+// Direction names where the popover sits relative to its trigger; the notch points back at the trigger.
 
 const types = [
   { name: "Default", variant: "default" },
@@ -23,34 +26,29 @@ const types = [
 ] as const
 
 const directions = [
-  { name: "Bottom", side: "bottom" },
   { name: "Top", side: "top" },
   { name: "Right", side: "right" },
+  { name: "Bottom", side: "bottom" },
   { name: "Left", side: "left" },
 ] as const
 
-function Body({ variant }: { variant: "default" | "black" }) {
-  const black = variant === "black"
+function Body({ closeSize = "16" }: { closeSize?: "16" | "20" }) {
   return (
     <>
       <PopoverHeader>
         <PopoverGroup>
           <PopoverIcon />
           <PopoverTitle>Heading</PopoverTitle>
-          <PopoverBadge variant={black ? "gray" : "soft-border"}>BADGE</PopoverBadge>
+          <PopoverBadge>BADGE</PopoverBadge>
         </PopoverGroup>
-        <PopoverClose />
+        <PopoverClose size={closeSize} />
       </PopoverHeader>
       <PopoverDescription>Content Here</PopoverDescription>
       <PopoverFooter>
         <PopoverFooterText>1 from 10</PopoverFooterText>
         <PopoverActions>
-          <Button variant={black ? "black-soft" : "ghost"} size="32">
-            Back
-          </Button>
-          <Button variant={black ? "white" : "dark"} size="28">
-            Next
-          </Button>
+          <PopoverBack>Back</PopoverBack>
+          <PopoverNext>Next</PopoverNext>
         </PopoverActions>
       </PopoverFooter>
     </>
@@ -71,16 +69,18 @@ export default function PopoverPreviewPage() {
     <main className="flex flex-1 flex-col gap-16 bg-background-10 px-4 py-20 md:px-20">
       <Section title="Live (click a trigger)">
         <div className="flex flex-wrap items-center gap-6">
-          {directions.map(({ name, side }) => (
-            <Popover key={name}>
-              <PopoverTrigger render={<Button variant="outline" size="32" />}>
-                Direction {name}
-              </PopoverTrigger>
-              <PopoverContent side={side}>
-                <Body variant="default" />
-              </PopoverContent>
-            </Popover>
-          ))}
+          {types.flatMap((type) =>
+            directions.map(({ name, side }) => (
+              <Popover key={`${type.name}-${name}`}>
+                <PopoverTrigger render={<Button variant="outline" size="32" />}>
+                  {type.name} {name}
+                </PopoverTrigger>
+                <PopoverContent variant={type.variant} side={side}>
+                  <Body />
+                </PopoverContent>
+              </Popover>
+            ))
+          )}
         </div>
       </Section>
 
@@ -91,14 +91,19 @@ export default function PopoverPreviewPage() {
               <div
                 key={d.name}
                 title={`Type=${type.name}, Direction=${d.name}`}
-                className="flex h-64 items-center justify-center rounded-r10 outline -outline-offset-1 outline-base-100"
+                className="flex h-80 items-center justify-center rounded-r10 outline -outline-offset-1 outline-base-100"
               >
                 <Popover open>
                   <PopoverTrigger render={<Button variant="outline" size="24" />}>
                     {d.name}
                   </PopoverTrigger>
-                  <PopoverContent variant={type.variant} side={d.side}>
-                    <Body variant={type.variant} />
+                  <PopoverContent
+                    variant={type.variant}
+                    side={d.side}
+                    collisionAvoidance={{ side: "none", align: "none" }}
+                  >
+                    {/* Figma: only Default/Top uses the 20px close */}
+                    <Body closeSize={type.variant === "default" && d.side === "top" ? "20" : "16"} />
                   </PopoverContent>
                 </Popover>
               </div>

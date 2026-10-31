@@ -78,6 +78,8 @@ const buttonVariants = cva(
         "40": "h-10 rounded-r8 text-12 leading-20 [--btn-icon:--spacing(5)] [--btn-px:--spacing(3)] [--btn-tx:--spacing(1.5)]",
         "32": "h-8 rounded-r8 text-11 leading-20 [--btn-icon:--spacing(4)] [--btn-px:--spacing(2)] [--btn-tx:--spacing(1.5)]",
         "28": "h-7 rounded-r6 text-11 leading-20 [--btn-icon:--spacing(4)] [--btn-px:--spacing(1)] [--btn-tx:--spacing(1)]",
+        // Figma 28 instances with 8px padding + 4px text inset (Popover footer Back/Next, 50x28)
+        "28-loose": "h-7 rounded-r6 text-11 leading-20 [--btn-icon:--spacing(4)] [--btn-px:--spacing(2)] [--btn-tx:--spacing(1)]",
         "24": "h-6 rounded-r6 text-10 leading-16 [--btn-icon:--spacing(4)] [--btn-px:--spacing(1)] [--btn-tx:--spacing(1)]",
         "20": "h-5 rounded-r6 text-10 leading-16 [--btn-icon:--spacing(4)] [--btn-px:--spacing(1)] [--btn-tx:--spacing(0.5)]",
         "16": "h-4 rounded-r4 text-9 leading-16 [--btn-icon:--spacing(3)] [--btn-px:--spacing(1)] [--btn-tx:--spacing(0.5)]",

@@ -42,10 +42,10 @@ Channel: ypny6p4s
 | 38 | Text Area Editor | 15267:48550 | done | Forms: Text Area Editors; 1 retry (browser check redo); Pilled non-XL radii inferred, footer button plain label, see known-gaps |
 | 39 | Tabs Switch | 12210:14389 | done | tone cva (default/black/white) + size + iconOnly on tabs.tsx; 1 retry (dark: removed, White/Black missing); icon placeholder |
 | 40 | Misc | 460:6121 | done | rebuilt: Close/Upload (Button icon-action)/Header x5/Dark-Mode guide/Map rasters; icon colors pixel-derived, see known-gaps |
-| 41 | Dropdown | 4290:12174 | todo | REBUILD: lead/trail slots (payment, avatar, flag, checkbox, radio, switch), Item-2/Menu-2 and Head-Footer parts missing; state fills and radii guessed. Build all, tokens via token:hex. |
-| 42 | Popover | 9402:22995 | todo | REBUILD: Black variant colors/shadow/notch and default colors guessed; match every set to Figma with exact tokens. |
+| 41 | Dropdown | 4290:12174 | done | partial rebuild (builder cut off at 10 min); accepted as is by user |
+| 42 | Popover | 9402:22995 | done | partial rebuild (builder cut off at 10 min); accepted as is by user |
 | 43 | Dialog | 9402:26501 | done | shadcn dialog (Base UI) + cva variant/layout, DialogPanel static; first-pass approve; no tree.txt, black/horizontal guessed |
-| 44 | Modal | 6980:969 | todo | REBUILD: 7 content sets (Form, Switcher-List, Switcher-Payment, Switcher-Users, Files, Two-Factor-Authentication, Pin) guessed from names; Date-Range calendar, Payment Select, Welcome video missing. Reuse dialog.tsx. |
+| 44 | Modal | 6980:969 | done | partial rebuild (builder cut off at 10 min); accepted as is by user; reuses dialog.tsx |
 | 45 | Toast | 6978:41509 | done | Figma toast = Alert (CLAUDE.md): extend alert.tsx with variants, not shadcn toast |
 | 46 | Notification | 12145:243335 | todo | Check alert.tsx and row 45 first; reuse/extend them, new file only for parts they lack |
 | 47 | Command Menu | 9402:27554 | todo |  |

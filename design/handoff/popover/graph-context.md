@@ -1,4 +1,6 @@
-# Popover graph context
-- No popover.tsx yet. Add shadcn popover (Base UI) via pnpm exec shadcn add popover.
-- Reuse: tooltip.tsx (cva variant/slots pattern), button.tsx, separator.tsx, avatar, badge, input.
-- Preview layout: copy src/app/design-system/tooltip/page.tsx.
+# Popover reuse
+- src/components/ui/popover.tsx: existing, REBUILD edits it
+- ui/tooltip.tsx: notch/variant cva pattern
+- ui/button.tsx, avatar.tsx, separator.tsx, kbd.tsx: content slots
+- src/app/design-system/popover/page.tsx: existing page, edit
+- design/known-gaps.md line 51: Popover guessed colors/shadow/notch, must fix
