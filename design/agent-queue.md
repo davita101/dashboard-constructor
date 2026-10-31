@@ -51,7 +51,7 @@ Channel: ypny6p4s
 | 47 | Command Menu | 9402:27554 | done |  |
 | 48 | Color Picker | 9402:27555 | done |  |
 | 49 | Date Picker | 9402:27552 | done |  |
-| 50 | Action Panel | 11531:349716 | todo |  |
+| 50 | Action Panel | 11531:349716 | done | 3 sets built, layout matches Figma sizes |
 | 51 | Card Content | 11590:81923 | todo | Cards: Content; ui/card.tsx exists |
 | 52 | Profile | 11638:16498 | todo |  |
 | 53 | List | 11654:127 | todo |  |

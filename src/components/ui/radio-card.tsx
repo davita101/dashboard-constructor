@@ -1,21 +1,32 @@
 import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
 // Figma Radio-Card (9415:3455): leading media, Content (Main Text, Additional Text, Links) and a
 // RadioGroupItem top-right, in a <label> so the card selects it. Active / Dislabled follow the radio
 // inside (data-checked / data-disabled).
-function RadioCard({ className, ...props }: React.ComponentProps<"label">) {
-  return (
-    <label
-      data-slot="radio-card"
-      className={cn(
-        "group/radio-card flex cursor-pointer items-start gap-5 rounded-r16 bg-background-0 p-4 font-default tracking-default outline outline-base-100 -outline-offset-1 transition-[outline-color] select-none not-has-data-disabled:has-data-checked:outline-base-alpha-50 has-data-disabled:cursor-not-allowed has-data-disabled:bg-background-20",
-        className
-      )}
-      {...props}
-    />
-  )
+// `compact` = Figma Action-List-Panel Item: radio first, 12px padding/gap, 12px Inter SemiBold texts.
+const radioCardVariants = cva(
+  "group/radio-card flex cursor-pointer items-start rounded-r16 bg-background-0 font-default tracking-default outline outline-base-100 -outline-offset-1 transition-[outline-color] select-none not-has-data-disabled:has-data-checked:outline-base-alpha-50 has-data-disabled:cursor-not-allowed has-data-disabled:bg-background-20",
+  {
+    variants: {
+      layout: {
+        default: "gap-5 p-4",
+        compact:
+          "gap-3 p-3 [&_[data-slot=radio-card-content]]:gap-1 [&_[data-slot=radio-card-description]]:text-12 [&_[data-slot=radio-card-description]]:font-semibold [&_[data-slot=radio-card-title]]:text-12 [&_[data-slot=radio-card-title]]:font-semibold",
+      },
+    },
+    defaultVariants: { layout: "default" },
+  }
+)
+
+function RadioCard({
+  className,
+  layout,
+  ...props
+}: React.ComponentProps<"label"> & VariantProps<typeof radioCardVariants>) {
+  return <label data-slot="radio-card" className={cn(radioCardVariants({ layout }), className)} {...props} />
 }
 
 /** Figma leading slot (24px): an icon, avatar, flag, badge or card logo. Faded when disabled. */

@@ -1,0 +1,8 @@
+# review attempt 1
+
+Audit ok, scope ok, sets present. Fix layout vs Figma. Measured DOM via CDP on /design-system/action-panel.
+
+1. Action-List-Panel content gap wrong. Figma Content slot col gap 8 (`ActionPanelContent` gap-2). DOM shows `action-panel-content` gap 12px: `RadioGroup` base class `gap-3` wins over render element's `gap-2` (Base UI `render` does not twMerge). Panel height 588, Figma 528. Fix: pass `className="gap-2"` on `<RadioGroup>` (or add `gap-2` via cn in page) so merged by `cn`; drop `render={<ActionPanelContent />}` if needed. Target panel 280x528, 4 items each 240x68 with 8 gap.
+2. Action-List-Panel Item size wrong in served DOM: `radio-card` 240x80, gap 20px, padding 16px, title 14px, content gap 8. Figma Item 240x68 pad 12 gap 12, texts Inter 600 12/20 (Main Text base-900, Additional Text base-400), Content gap 4. `layout="compact"` classes not reaching DOM (served class still `gap-5 p-4`). Dev server on :3000 stale or compact selectors not winning. Restart dev server (kill pid on 3000, `pnpm dev`), re-run `pnpm -s shot action-panel`, re-measure. If still default, fix `radioCardVariants` compact so `gap-3 p-3`, title/description `text-12 font-semibold`, content `gap-1` actually apply (check `cn`/tailwind-merge dropping `p-3` vs generated class, or use data-attribute on `RadioCardContent` instead of descendant arbitrary selectors).
+3. Check radio-card page `/design-system/radio` still unchanged after item 2 (default layout must stay gap-5 p-4, 14px text).
+4. After fixes verify via DOM: Action-Panel 238x292 ok; Action-List-Panel 280x528; Action-List-Card-Panel 280x688 (Switch cards 240x? gap 8, check against img/action-list-card-panel.png).
