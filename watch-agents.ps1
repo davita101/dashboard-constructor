@@ -2,7 +2,8 @@
 # with token usage per call, per agent and per component session.
 # Read-only and free: it only tails the transcripts `claude -p` writes; no API calls.
 # Usage: powershell -ExecutionPolicy Bypass -File watch-agents.ps1 [-All] [-SummaryEvery 30]
-#   -All           also show interactive sessions (by default only `--agent director` loop sessions)
+#   -All           also show interactive sessions (by default only `claude -p --agent` loop sessions:
+#                  director, component-builder, ...; each loop step is its own session)
 #   -SummaryEvery  seconds between token summary tables (printed only when something changed)
 #   -Budget        your own token budget per 5-hour window; shows what is left. The real plan
 #                  limit is only known to Anthropic's servers, so this is an estimate you set.
@@ -12,7 +13,8 @@ param(
   [int]$SummaryEvery = 30,
   [int]$ContextLimit = 200000,
   [int]$BigResult = 5000,    # flag tool results larger than this many characters
-  [long]$Budget = 0,         # tokens per 5-hour window (0 = only show usage)
+  [long]$Budget = 0,
+  [int]$SummaryRows = 8,     # agent sessions listed in the token summary         # tokens per 5-hour window (0 = only show usage)
   [switch]$All
 )
 
@@ -20,7 +22,8 @@ $pos = @{}        # file -> bytes read
 $labels = @{}     # file -> agent label
 $stats = @{}      # file -> per-agent token stats
 $pending = @{}    # tool_use id -> tool name, to name big results
-$sessionOk = @{}  # session id -> is a director loop session
+$sessionOk = @{}  # session id -> is a loop session (`claude -p --agent <name>`)
+$sessionAgent = @{} # session id -> agent name of that session
 $current = $null  # session id shown in the summary
 $dirty = $false
 $lastSummary = Get-Date
@@ -48,7 +51,8 @@ function Test-Session($session) {
   $ok = $false
   if (Test-Path $top) {
     $head = Get-Content $top -TotalCount 30 -Encoding UTF8 -ErrorAction SilentlyContinue
-    $ok = [bool]($head | Where-Object { $_ -match '"agentSetting":"director"' })
+    $hit = $head | Where-Object { $_ -match '"agentSetting":"([a-z-]+)"' } | Select-Object -First 1
+    if ($hit -and $hit -match '"agentSetting":"([a-z-]+)"') { $ok = $true; $sessionAgent[$session] = $Matches[1] }
     $sessionOk[$session] = $ok
   }
   return $ok
@@ -56,7 +60,9 @@ function Test-Session($session) {
 
 function Get-Label($file) {
   if ($labels.ContainsKey($file)) { return $labels[$file] }
-  $label = 'director'
+  $label = 'chat'
+  $session = Get-Session $file
+  if ($sessionAgent.ContainsKey($session)) { $label = $sessionAgent[$session] }
   $meta = $file -replace '\.jsonl$', '.meta.json'
   if (Test-Path $meta) {
     try { $label = (Get-Content $meta -Raw | ConvertFrom-Json).agentType } catch {}
@@ -155,12 +161,12 @@ function Show-Line($file, $line) {
 }
 
 function Show-Summary {
-  if (-not $current) { return }
-  $rows = $stats.Values | Where-Object { $_.Session -eq $current } | Sort-Object Start
+  # Each loop step (builder, director review) is its own session: show the latest ones.
+  $rows = $stats.Values | Sort-Object Start | Select-Object -Last $SummaryRows
   if (-not $rows) { return }
   $sum = ($rows | Measure-Object -Property Total -Sum).Sum
   Write-Host ''
-  Write-Host ("=== tokens, session {0} ===" -f $current.Substring(0, 8)) -ForegroundColor Yellow
+  Write-Host ("=== tokens, last {0} agent sessions ===" -f ($rows | Measure-Object).Count) -ForegroundColor Yellow
   Write-Host ("{0,-20} {1,-11} {2,5} {3,7} {4,7}  {5,-20} {6,8} {7,4}" -f 'agent', 'model', 'calls', 'start', 'peak', 'context now', 'total', 'img') -ForegroundColor DarkGray
   foreach ($r in $rows) {
     $color = $colors[$r.Label]; if (-not $color) { $color = 'White' }
@@ -173,7 +179,7 @@ function Show-Summary {
     $n = [Math]::Max(1, [Math]::Round(40 * $r.Total / [Math]::Max(1, $sum)))
     Write-Host ($full * $n) -NoNewline -ForegroundColor $(if ($colors[$r.Label]) { $colors[$r.Label] } else { 'White' })
   }
-  Write-Host ("  session total {0}" -f (Format-K $sum)) -ForegroundColor Yellow
+  Write-Host ("  total {0}" -f (Format-K $sum)) -ForegroundColor Yellow
   Show-Window
   Write-Host ''
 }
@@ -252,7 +258,7 @@ function Show-Window {
 }
 
 function Update-Title {
-  $rows = $stats.Values | Where-Object { $_.Session -eq $current }
+  $rows = $stats.Values | Sort-Object Start | Select-Object -Last $SummaryRows
   $sum = ($rows | Measure-Object -Property Total -Sum).Sum
   $live = $rows | Sort-Object { $_.Seen.Count } -Descending | Select-Object -First 1
   $win = ''
@@ -288,11 +294,11 @@ function Read-New($file) {
 # token summary has its numbers (only the last $Backlog lines are printed).
 $existing = Get-ChildItem $Dir -Recurse -Filter *.jsonl -ErrorAction SilentlyContinue
 foreach ($f in $existing) { $pos[$f.FullName] = $f.Length }
-$newest = $existing | Where-Object { Test-Session (Get-Session $_.FullName) } |
-  Sort-Object LastWriteTime -Descending | Select-Object -First 1
+$recent = $existing | Where-Object { Test-Session (Get-Session $_.FullName) } |
+  Sort-Object LastWriteTime -Descending | Select-Object -First $SummaryRows
+$newest = $recent | Select-Object -First 1
 if ($newest) {
-  $session = Get-Session $newest.FullName
-  $files = $existing | Where-Object { (Get-Session $_.FullName) -eq $session } | Sort-Object LastWriteTime
+  $files = $recent | Sort-Object LastWriteTime
   foreach ($f in $files) {
     $lines = Get-Content $f.FullName -Encoding UTF8
     $quiet = if ($f.FullName -eq $newest.FullName) { [Math]::Max(0, $lines.Count - $Backlog) } else { $lines.Count }
