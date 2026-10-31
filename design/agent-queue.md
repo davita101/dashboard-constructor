@@ -64,7 +64,7 @@ Channel: ypny6p4s
 | 60 | Navbar | 6860:42234 | done | Nabars |
 | 61 | Navbar Menu | 12466:577 | done | Nabars Menu; Parts of Navbar (row 60): reuse navbar files, add variants |
 | 62 | Navigate Head | 8967:25852 | done | |
-| 63 | Navigate Footer | 12492:252181 | todo |  |
+| 63 | Navigate Footer | 12492:252181 | done | fb/pinterest glyphs placeholder, see known-gaps |
 | 64 | Pagination | 9232:577001 | todo |  |
 | 65 | Sidebar | 15260:53844 | todo |  |
 | 66 | Sidebar Component | 5081:15251 | todo | Parts of Sidebar (row 65): reuse sidebar files, add variants |
