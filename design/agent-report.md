@@ -1,4 +1,5 @@
-# Summary 2026-10-31: FIGMA DOWN
+# Summary 2026-10-31: FIGMA DOWN (2nd run)
+2026-10-31 Notification: set_focus 12145:243335 fail x2 even after join_channel ypny6p4s. Row back to todo. User: open Notification page in Figma / restart TalkToFigma plugin, rerun.
 done 45 / blocked 0 / remaining 32. commits ahead of main: 77. Notification (row 46): set_focus 12145:243335 failed, Figma stuck on Toasts page. User: open Notification page in Figma or restart plugin, rerun.
 Fix: open Figma file, run TalkToFigma plugin on channel ypny6p4s, check Modal node 6980:969 valid (set_focus fail, currentPage still Dialog). Re-run loop.
 
