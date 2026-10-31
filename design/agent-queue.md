@@ -54,7 +54,7 @@ Channel: ypny6p4s
 | 50 | Action Panel | 11531:349716 | done | 3 sets built, layout matches Figma sizes |
 | 51 | Card Content | 11590:81923 | done | Cards: Content; ui/card.tsx exists |
 | 52 | Profile | 11638:16498 | done |  |
-| 53 | List | 11654:127 | todo |  |
+| 53 | List | 11654:127 | done |  |
 | 54 | Message | 11409:1128 | todo | Messages |
 | 55 | Task | 12276:31748 | todo | Tasks |
 | 56 | Empty State | 11951:3850 | todo |  |
