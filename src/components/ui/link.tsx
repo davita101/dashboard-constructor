@@ -20,6 +20,8 @@ const linkVariants = cva(
       variant: {
         "900":
           "[--link-active:var(--primary-700)] [--link-fg:var(--base-900)] [--link-hover:var(--primary-500)] [--link-pill:var(--base-50)]",
+        "600":
+          "[--link-active:var(--primary-700)] [--link-fg:var(--base-600)] [--link-hover:var(--primary-500)] [--link-pill:var(--base-50)]",
         "700":
           "[--link-active:var(--primary-700)] [--link-fg:var(--base-700)] [--link-hover:var(--primary-500)] [--link-pill:var(--base-50)]",
         "500":
