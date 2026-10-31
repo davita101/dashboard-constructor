@@ -19,7 +19,7 @@ You build exactly one component per run, following the "Per-component checklist"
 5. **Write** the component in `src/components/ui/` (and `src/components/<domain>/` only if it is a composite), tokens only, variants via `cva`, `className` for layout only, Figma strokes as `outline -outline-offset-1`.
 6. **Preview** page at `src/app/design-system/<slug>/page.tsx` showing every variant and state, matching neighbouring preview pages.
 7. **Audit**: `pnpm -s audit:component <every .tsx file you created or changed>` (tsc, eslint and the CLAUDE.md greps in one call; the director runs the same script). Fix every hit until it exits 0.
-8. **Browser**: ensure `pnpm dev` is running (start it in the background if not), then `pnpm -s shot <slug> [width] [height]` (headless Chrome, no browser tools needed). It prints the PNG path and console errors. Read the PNG once and compare it with the Figma export; at most 3 shots per run (one more only after a fix). Fix differences and console errors.
+8. **Browser**: ensure `pnpm dev` is running (start it in the background if not), then `pnpm -s shot <slug>` (headless Chrome, full page at 0.6 scale, 1440px wide; pass a larger width only if a column is still cut). It prints the screenshot parts and console errors. Read every part once and compare it with the Figma export from step 1, section by section, including every state row; skip none. Run it at most twice (once more after fixes). Fix differences and console errors.
 9. **Gaps**: anything you could not match (missing token, unreadable Figma detail, icon vector), append one line `- <Component>: …` to `design/known-gaps.md` (read only lines of components you touch, never the whole file).
 
 ## Never

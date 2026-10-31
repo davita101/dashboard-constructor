@@ -44,10 +44,10 @@ Channel: ypny6p4s
 | 40 | Misc | 460:6121 | todo |  |
 | 41 | Dropdown | 4290:12174 | todo |  |
 | 42 | Popover | 9402:22995 | todo |  |
-| 43 | Dialog | 9402:26501 | todo |  |
-| 44 | Modal | 6980:969 | todo |  |
-| 45 | Toast | 6978:41509 | todo |  |
-| 46 | Notification | 12145:243335 | todo |  |
+| 43 | Dialog | 9402:26501 | todo | Base for Modal (row 44): build on shadcn dialog |
+| 44 | Modal | 6980:969 | todo | Reuse dialog.tsx from row 43 (add variant/size), no new dialog primitive |
+| 45 | Toast | 6978:41509 | todo | Figma toast = Alert (CLAUDE.md): extend alert.tsx with variants, not shadcn toast |
+| 46 | Notification | 12145:243335 | todo | Check alert.tsx and row 45 first; reuse/extend them, new file only for parts they lack |
 | 47 | Command Menu | 9402:27554 | todo |  |
 | 48 | Color Picker | 9402:27555 | todo |  |
 | 49 | Date Picker | 9402:27552 | todo |  |
@@ -62,17 +62,17 @@ Channel: ypny6p4s
 | 58 | Carousel | 9524:2620 | todo |  |
 | 59 | Cell UI Table | 5026:42162 | todo | Cells UI (Tables) |
 | 60 | Navbar | 6860:42234 | todo | Nabars |
-| 61 | Navbar Menu | 12466:577 | todo | Nabars Menu |
+| 61 | Navbar Menu | 12466:577 | todo | Nabars Menu; Parts of Navbar (row 60): reuse navbar files, add variants |
 | 62 | Navigate Head | 8967:25852 | todo |  |
 | 63 | Navigate Footer | 12492:252181 | todo |  |
 | 64 | Pagination | 9232:577001 | todo |  |
 | 65 | Sidebar | 15260:53844 | todo |  |
-| 66 | Sidebar Component | 5081:15251 | todo |  |
+| 66 | Sidebar Component | 5081:15251 | todo | Parts of Sidebar (row 65): reuse sidebar files, add variants |
 | 67 | Chart | 9859:3629 | todo | Charts |
-| 68 | Chart Component | 5035:13716 | todo | Charts Components |
-| 69 | Chart Metric | 9880:5306 | todo | Charts Metrics |
-| 70 | Chart Card | 9903:12833 | todo | Charts Cards |
-| 71 | Chart White | 12246:59190 | todo | Charts (White) |
+| 68 | Chart Component | 5035:13716 | todo | Charts Components; Parts of Chart (row 67): reuse chart files, add variants |
+| 69 | Chart Metric | 9880:5306 | todo | Charts Metrics; Extend chart from row 67 (variant), no new chart primitive |
+| 70 | Chart Card | 9903:12833 | todo | Charts Cards; Compose chart from row 67 inside card.tsx, no new chart primitive |
+| 71 | Chart White | 12246:59190 | todo | Charts (White); White theme of chart from row 67: variant, not a copy |
 | 72 | Icons Payment | 4289:8404 | todo | SVG icons |
 | 73 | Icons Social | 5030:10817 | todo | SVG icons |
 | 74 | Icons Flags Rectangle | 11956:33422 | todo | SVG icons |
