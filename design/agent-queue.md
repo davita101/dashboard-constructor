@@ -67,7 +67,7 @@ Channel: ypny6p4s
 | 63 | Navigate Footer | 12492:252181 | done | fb/pinterest glyphs placeholder, see known-gaps |
 | 64 | Pagination | 9232:577001 | done |  |
 | 65 | Sidebar | 15260:53844 | done |  |
-| 66 | Sidebar Component | 5081:15251 | todo | Parts of Sidebar (row 65): reuse sidebar files, add variants |
+| 66 | Sidebar Component | 5081:15251 | done | Sidebar Component |
 | 67 | Chart | 9859:3629 | todo | Charts |
 | 68 | Chart Component | 5035:13716 | todo | Charts Components; Parts of Chart (row 67): reuse chart files, add variants |
 | 69 | Chart Metric | 9880:5306 | todo | Charts Metrics; Extend chart from row 67 (variant), no new chart primitive |
