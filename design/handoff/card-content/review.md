@@ -1,0 +1,3 @@
+1. User-Card (11593:122) Type=Company (11595:67) missing on /design-system/card-content. Page shows only Type=User. Add 2nd card in User-Card section: Head + 80x80 logo Content (pad 30 0 30 0) + Footer "Jane Cooper"/"Web Designer". Shopify asset missing → use existing logo placeholder from `public/images/avatars/`, keep gap line in `design/known-gaps.md`.
+2. Company-Card Type=Logo (Adobe, 80x80 in Content 80x140) and Type=Brand Logo (Adobe-Aero 60x60 in Content 60x140 pad 40 0 40 0) ok structurally. Keep.
+3. Everything else ok (audit pass, scope ok, tokens ok). After fix 1 re-run `pnpm -s shot card-content`, `pnpm build`.
