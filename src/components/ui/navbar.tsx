@@ -1,6 +1,10 @@
 import * as React from "react"
+import Image from "next/image"
+import { mergeProps } from "@base-ui/react/merge-props"
+import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
 
+import { Badge, type BadgeColor } from "@/components/ui/badge"
 import { Button, ButtonIcon } from "@/components/ui/button"
 import { InputGroup, InputGroupAddon, InputGroupIcon, InputGroupInput, InputGroupJoin, InputGroupKbd } from "@/components/ui/input-group"
 import { KbdGroup } from "@/components/ui/kbd"
@@ -121,6 +125,304 @@ function NavbarSearch({ className, placeholder = "Search ...", ...props }: React
   )
 }
 
+// Figma Navbar Menu page (12466:577): Item-Menu-Component (Type x State), the six *-Group sets and
+// the Menu-01/02/03 mega-menu panels (Desktop 1056, Tablet 696, Mobile 320).
+// CSS vars set per state: --mi-fg title, --mi-sub description, --mi-icon leading icon,
+// --mi-ring card stroke, --mi-link footer link.
+const navbarMenuItemVariants = cva(
+  "group/item flex font-default tracking-default transition-colors focus-visible:ring-3 focus-visible:ring-primary-alpha-30",
+  {
+    variants: {
+      type: {
+        default: "items-center gap-4",
+        "image-top": "w-40 flex-col gap-2",
+        "image-left": "w-50 gap-4",
+        video: "w-37.5 flex-col gap-3",
+        card: "w-49 flex-col gap-4 rounded-r12 p-3 outline -outline-offset-1 outline-(color:--mi-ring)",
+      },
+      // Pinned states for previews; `default` follows :hover and aria-current.
+      state: {
+        default:
+          "[--mi-fg:var(--base-700)] [--mi-icon:var(--base-500)] [--mi-link:var(--blue-600)] [--mi-ring:var(--background-100)] [--mi-sub:var(--base-500)] hover:[--mi-fg:var(--blue-600)] hover:[--mi-icon:var(--blue-600)] hover:[--mi-ring:var(--blue-600)] hover:[--mi-sub:var(--blue-600)] aria-[current]:[--mi-fg:var(--blue-800)] aria-[current]:[--mi-icon:var(--blue-800)] aria-[current]:[--mi-link:var(--blue-800)] aria-[current]:[--mi-ring:var(--blue-800)] aria-[current]:[--mi-sub:var(--blue-800)]",
+        hover:
+          "[--mi-fg:var(--blue-600)] [--mi-icon:var(--blue-600)] [--mi-link:var(--blue-600)] [--mi-ring:var(--blue-600)] [--mi-sub:var(--blue-600)]",
+        active:
+          "[--mi-fg:var(--blue-800)] [--mi-icon:var(--blue-800)] [--mi-link:var(--blue-800)] [--mi-ring:var(--blue-800)] [--mi-sub:var(--blue-800)]",
+      },
+    },
+    defaultVariants: { type: "default", state: "default" },
+  }
+)
+
+/** Figma Item-Menu-Component. Renders `<a>`, or `<div>` for `card` (it holds a button). */
+function NavbarMenuItem({
+  className,
+  type = "default",
+  state = "default",
+  render,
+  ...props
+}: useRender.ComponentProps<"a"> & VariantProps<typeof navbarMenuItemVariants>) {
+  return useRender({
+    defaultTagName: type === "card" ? "div" : "a",
+    props: mergeProps<"a">(
+      { className: cn(navbarMenuItemVariants({ type, state }), className), "data-type": type } as React.ComponentProps<"a">,
+      props
+    ),
+    render,
+    state: { slot: "navbar-menu-item", type, state },
+  })
+}
+
+/** Figma Icon 20x20 in the item color (base-500, blue on hover/active). */
+function NavbarMenuItemIcon({ icon, className, style, ...props }: Omit<React.ComponentProps<"span">, "children"> & { icon: string }) {
+  return (
+    <span
+      data-slot="navbar-menu-item-icon"
+      aria-hidden
+      className={cn("size-5 shrink-0 bg-(--mi-icon) mask-contain mask-center mask-no-repeat", className)}
+      style={{ maskImage: `url(${icon})`, ...style }}
+      {...props}
+    />
+  )
+}
+
+/** Figma Badge-Icon-Pilled 40x40: a white circle (`base`) or a tinted one (`color`) with a 20 icon. */
+function NavbarMenuItemBadge({
+  icon,
+  color,
+  ...props
+}: Omit<React.ComponentProps<typeof Badge>, "children" | "color" | "variant" | "size" | "shape"> & { icon: string; color?: BadgeColor }) {
+  return (
+    <Badge
+      data-slot="navbar-menu-item-badge"
+      variant={color ? "soft-border" : "base"}
+      color={color}
+      size="square-40"
+      shape="pill"
+      {...props}
+    >
+      <span
+        aria-hidden
+        className={cn("size-5 bg-current mask-contain mask-center mask-no-repeat", !color && "text-base-500")}
+        style={{ maskImage: `url(${icon})` }}
+      />
+    </Badge>
+  )
+}
+
+/** Text column: heading row + description (gap 4). */
+function NavbarMenuItemContent({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="navbar-menu-item-content" className={cn("flex min-w-0 flex-col gap-1", className)} {...props} />
+}
+
+/** Figma Heading row: title + optional tag badge (gap 8). */
+function NavbarMenuItemHeading({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="navbar-menu-item-heading" className={cn("flex items-center gap-2", className)} {...props} />
+}
+
+/** Heading Item: 12/20 600 (11/20 on Image Top). */
+function NavbarMenuItemTitle({ className, ...props }: React.ComponentProps<"span">) {
+  return (
+    <span
+      data-slot="navbar-menu-item-title"
+      className={cn(
+        "text-12 leading-20 font-semibold whitespace-nowrap text-(--mi-fg) group-data-[type=image-top]/item:text-11",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+/** Descriptions: 10/16 600. */
+function NavbarMenuItemDescription({ className, ...props }: React.ComponentProps<"span">) {
+  return (
+    <span
+      data-slot="navbar-menu-item-description"
+      className={cn("text-10 leading-16 font-semibold text-(--mi-sub)", className)}
+      {...props}
+    />
+  )
+}
+
+/** Figma Badge-Default-Pilled 16 in blue, next to the heading. */
+function NavbarMenuItemTag(props: Omit<React.ComponentProps<typeof Badge>, "variant" | "color" | "size" | "shape">) {
+  return <Badge data-slot="navbar-menu-item-tag" variant="soft-border" color="blue" size="16" shape="pill" {...props} />
+}
+
+/** Figma Image r8: full width x 100 on Image Top and Video, 80x80 on Image Left. */
+function NavbarMenuItemImage({
+  className,
+  src,
+  alt = "",
+  ...props
+}: Omit<React.ComponentProps<typeof Image>, "fill" | "width" | "height" | "alt"> & { alt?: string }) {
+  return (
+    <span
+      data-slot="navbar-menu-item-image"
+      className={cn(
+        "relative block h-25 w-full shrink-0 overflow-hidden rounded-r8 bg-base-100 group-data-[type=image-left]/item:size-20",
+        className
+      )}
+    >
+      <Image src={src} alt={alt} fill sizes="200px" className="object-cover" {...props} />
+    </span>
+  )
+}
+
+/** Figma Black-Button 32x32: black-alpha-90 disc, white-alpha-20 stroke, play icon. */
+function NavbarMenuItemPlay({ className, ...props }: Omit<React.ComponentProps<"span">, "children">) {
+  return (
+    <span
+      data-slot="navbar-menu-item-play"
+      aria-hidden
+      className={cn(
+        "absolute top-1/2 left-1/2 flex size-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black-alpha-90 outline -outline-offset-1 outline-white-alpha-20",
+        className
+      )}
+      {...props}
+    >
+      <span className="size-4 bg-background-0 mask-[url(/icons/material-play-arrow.svg)] mask-contain mask-center mask-no-repeat" />
+    </span>
+  )
+}
+
+/** Figma Video frame: the image with the play button centered on top. */
+function NavbarMenuItemVideo({ className, children, ...props }: React.ComponentProps<"span">) {
+  return (
+    <span data-slot="navbar-menu-item-video" className={cn("relative block h-25 w-full shrink-0", className)} {...props}>
+      {children}
+      <NavbarMenuItemPlay />
+    </span>
+  )
+}
+
+/** Figma Footer: "Learn More" + chevron (gap 4), or play icon + "Watch Video" (`iconPosition="start"`, gap 8). */
+function NavbarMenuItemFooter({
+  icon = "/icons/material-chevron-right.svg",
+  iconPosition = "end",
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"span"> & { icon?: string; iconPosition?: "start" | "end" }) {
+  const glyph = (
+    <span
+      aria-hidden
+      className="size-4 shrink-0 bg-current mask-contain mask-center mask-no-repeat"
+      style={{ maskImage: `url(${icon})` }}
+    />
+  )
+  return (
+    <span
+      data-slot="navbar-menu-item-footer"
+      className={cn(
+        "flex items-center text-10 leading-16 font-semibold text-(--mi-link)",
+        iconPosition === "start" ? "gap-2" : "gap-1",
+        className
+      )}
+      {...props}
+    >
+      {iconPosition === "start" && glyph}
+      {children}
+      {iconPosition === "end" && glyph}
+    </span>
+  )
+}
+
+/** Card head: leading icon left, action button right. */
+function NavbarMenuItemHead({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="navbar-menu-item-head" className={cn("flex items-center justify-between", className)} {...props} />
+}
+
+const navbarMenuGroupVariants = cva("flex flex-col bg-background-0 p-3", {
+  variants: {
+    layout: {
+      list: "w-50 gap-5",
+      grid: "w-150 gap-5",
+      cards: "w-50 gap-4",
+      "cards-grid": "w-150 gap-4",
+      "image-left": "w-58 gap-5",
+    },
+  },
+  defaultVariants: { layout: "list" },
+})
+
+const navbarMenuGroupContentVariants = cva("", {
+  variants: {
+    layout: {
+      list: "flex flex-col gap-5",
+      grid: "grid grid-cols-3 gap-6",
+      cards: "flex flex-col gap-2",
+      "cards-grid": "grid grid-cols-3 gap-2",
+      "image-left": "flex flex-col gap-5",
+    },
+  },
+  defaultVariants: { layout: "list" },
+})
+
+/** Figma Menu-*-Group: uppercase label + slot of items. `layout` sets width and item arrangement. */
+function NavbarMenuGroup({
+  label,
+  layout = "list",
+  className,
+  contentClassName,
+  children,
+  ...props
+}: Omit<React.ComponentProps<"div">, "children"> &
+  VariantProps<typeof navbarMenuGroupVariants> & { label: string; contentClassName?: string; children: React.ReactNode }) {
+  return (
+    <div data-slot="navbar-menu-group" className={cn(navbarMenuGroupVariants({ layout }), className)} {...props}>
+      <span data-slot="navbar-menu-group-label" className="text-11 leading-20 font-semibold text-base-500">
+        {label}
+      </span>
+      <div data-slot="navbar-menu-group-content" className={cn(navbarMenuGroupContentVariants({ layout }), contentClassName)}>
+        {children}
+      </div>
+    </div>
+  )
+}
+
+const navbarMenuPanelVariants = cva(
+  "flex flex-col overflow-hidden rounded-r16 bg-background-0 shadow-[0_16px_32px_0_var(--shadow-base)] outline -outline-offset-1 outline-background-100",
+  {
+    variants: {
+      size: { desktop: "w-264", tablet: "w-174", mobile: "w-80" },
+    },
+    defaultVariants: { size: "desktop" },
+  }
+)
+
+/** Figma Menu-01/02/03: the mega-menu panel (r16, 1px background-100 stroke). */
+function NavbarMenuPanel({ className, size, ...props }: React.ComponentProps<"div"> & VariantProps<typeof navbarMenuPanelVariants>) {
+  return <div data-slot="navbar-menu-panel" className={cn(navbarMenuPanelVariants({ size }), className)} {...props} />
+}
+
+/** Panel body: 16 padding, groups side by side (gap 12); `direction="col"` on Tablet/Mobile. */
+function NavbarMenuPanelContent({
+  direction = "row",
+  className,
+  ...props
+}: React.ComponentProps<"div"> & { direction?: "row" | "col" }) {
+  return (
+    <div
+      data-slot="navbar-menu-panel-content"
+      className={cn("flex gap-3 p-4", direction === "col" && "flex-col", className)}
+      {...props}
+    />
+  )
+}
+
+/** Panel footer: background-20 strip with a top stroke and the footer links (gap 24). */
+function NavbarMenuPanelFooter({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="navbar-menu-panel-footer"
+      className={cn("flex flex-wrap items-center gap-6 border-t border-background-100 bg-background-20 px-6 py-5", className)}
+      {...props}
+    />
+  )
+}
+
 export {
   Navbar,
   NavbarHeading,
@@ -132,4 +434,24 @@ export {
   NavbarIconButton,
   NavbarSearch,
   navbarVariants,
+  NavbarMenuItem,
+  NavbarMenuItemIcon,
+  NavbarMenuItemBadge,
+  NavbarMenuItemContent,
+  NavbarMenuItemHeading,
+  NavbarMenuItemTitle,
+  NavbarMenuItemDescription,
+  NavbarMenuItemTag,
+  NavbarMenuItemImage,
+  NavbarMenuItemVideo,
+  NavbarMenuItemPlay,
+  NavbarMenuItemFooter,
+  NavbarMenuItemHead,
+  NavbarMenuGroup,
+  NavbarMenuPanel,
+  NavbarMenuPanelContent,
+  NavbarMenuPanelFooter,
+  navbarMenuItemVariants,
+  navbarMenuGroupVariants,
+  navbarMenuPanelVariants,
 }

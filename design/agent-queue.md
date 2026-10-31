@@ -62,7 +62,7 @@ Channel: ypny6p4s
 | 58 | Carousel | 9524:2620 | done |  |
 | 59 | Cell UI Table | 5026:42162 | done | Cells UI (Tables) |
 | 60 | Navbar | 6860:42234 | done | Nabars |
-| 61 | Navbar Menu | 12466:577 | todo | Nabars Menu; Parts of Navbar (row 60): reuse navbar files, add variants |
+| 61 | Navbar Menu | 12466:577 | done | Nabars Menu; Parts of Navbar (row 60): reuse navbar files, add variants |
 | 62 | Navigate Head | 8967:25852 | todo |  |
 | 63 | Navigate Footer | 12492:252181 | todo |  |
 | 64 | Pagination | 9232:577001 | todo |  |
