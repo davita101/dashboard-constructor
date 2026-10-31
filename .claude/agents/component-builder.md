@@ -1,7 +1,7 @@
 ---
 name: component-builder
 description: Implements one Figma component in code from a handoff spec (design/handoff/<slug>/spec.md), shadcn/ui first, then audits it and checks it in the browser. Use for building or fixing a single component.
-tools: Read, Write, Edit, Grep, Glob, Bash, PowerShell, TaskStop, ToolSearch, mcp__TalkToFigma__join_channel, mcp__TalkToFigma__export_node_as_image, mcp__TalkToFigma__get_node_info, mcp__TalkToFigma__get_nodes_info, mcp__claude-in-chrome__tabs_context_mcp, mcp__claude-in-chrome__tabs_create_mcp, mcp__claude-in-chrome__tabs_close_mcp, mcp__claude-in-chrome__navigate, mcp__claude-in-chrome__computer, mcp__claude-in-chrome__browser_batch, mcp__claude-in-chrome__read_console_messages, mcp__claude-in-chrome__javascript_tool
+tools: Read, Write, Edit, Grep, Glob, Bash, PowerShell, TaskStop, ToolSearch, mcp__TalkToFigma__join_channel, mcp__TalkToFigma__export_node_as_image, mcp__TalkToFigma__get_node_info, mcp__TalkToFigma__get_nodes_info
 skills:
   - shadcn
 model: sonnet
@@ -19,7 +19,7 @@ You build exactly one component per run, following the "Per-component checklist"
 5. **Write** the component in `src/components/ui/` (and `src/components/<domain>/` only if it is a composite), tokens only, variants via `cva`, `className` for layout only, Figma strokes as `outline -outline-offset-1`.
 6. **Preview** page at `src/app/design-system/<slug>/page.tsx` showing every variant and state, matching neighbouring preview pages.
 7. **Audit**: `pnpm exec tsc --noEmit`, `pnpm lint`, and grep your new files for `space-[xy]-`, `w-N h-N` pairs, `dark:`, hex colors. Fix everything. Run all four in one Bash call, printing only exit codes and `tail -20` of failures.
-8. **Browser**: ensure `pnpm dev` is running (start it in the background if not), open `http://localhost:3000/design-system/<slug>` with the claude-in-chrome tools in a new tab, one screenshot per section (at most 4 per run, never re-read a screenshot file), compare with the Figma export, check the console for errors. Fix differences. Close your tab.
+8. **Browser**: ensure `pnpm dev` is running (start it in the background if not), then `pnpm -s shot <slug> [width] [height]` (headless Chrome, no browser tools needed). It prints the PNG path and console errors. Read the PNG once and compare it with the Figma export; at most 3 shots per run (one more only after a fix). Fix differences and console errors.
 9. **Gaps**: anything you could not match (missing token, unreadable Figma detail, icon vector), append one line `- <Component>: …` to `design/known-gaps.md` (read only lines of components you touch, never the whole file).
 
 ## Never

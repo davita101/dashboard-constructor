@@ -1,0 +1,6 @@
+{
+  "enabledPlugins": {
+    "claude-seo@agricidaniel-claude-seo": false,
+    "vercel-plugin@vercel": false
+  }
+}

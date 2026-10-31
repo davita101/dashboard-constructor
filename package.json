@@ -10,7 +10,8 @@
     "tokens": "node scripts/build-tokens.mjs",
     "figma:fetch": "node scripts/figma-fetch.mjs",
     "figma:pages": "node scripts/figma-pages.mjs",
-    "ui:index": "node scripts/ui-index.mjs"
+    "ui:index": "node scripts/ui-index.mjs",
+    "shot": "node scripts/shot.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
