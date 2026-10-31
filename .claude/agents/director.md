@@ -27,7 +27,7 @@ Channel: <talktofigma channel id>
 | 1 | Checkbox  | 1234:0     | todo   |       |
 ```
 
-Status is one of `todo`, `in-progress`, `done`, `blocked`. Update it after every step.
+Status is one of `todo`, `in-progress`, `done`, `blocked`. Update it after every step. Every row has exactly 5 cells; write notes only inside the Notes cell and never use `|` in them (write `a/b/c`), or the table breaks.
 
 ## One session
 
@@ -42,6 +42,7 @@ Status is one of `todo`, `in-progress`, `done`, `blocked`. Update it after every
    - `pnpm -s audit:component <new/changed .tsx files>` exits 0 (tsc, eslint and the CLAUDE.md greps: `space-[xy]-`, `w-N h-N`, `dark:` class prefix, hex colors, `cn` from "cn"). The builder runs the same script, so trust its hits list; do not add your own greps.
    - `git status --porcelain` shows only files under `src/components/ui/`, `src/components/<domain>/`, `src/app/design-system/<slug>/`, `public/icons/`, `design/handoff/<slug>/`, `design/agent-queue.md`, `design/known-gaps.md`, and the lockfile / `components.json` when a shadcn base was added. `src/styles/` or `globals.css` → reject.
    - Every Figma part listed in the spec maps to a shadcn primitive or a `cva` slot in `src/components/ui`, per CLAUDE.md.
+   - The builder's report has `Figma exports: <count>` with at least 1, and every set in the spec's Sets table is built (or logged in `design/known-gaps.md` with a reason). No exports or missing sets → reject (missing sets are a component problem: retry on opus).
    - The builder's report says the browser check at `/design-system/<slug>` matched the Figma export with no console errors.
 9. **Decide.**
    - Approve → `pnpm build`; if green, set row `done`, append the report line (step 11) now, and commit the component's files together with `design/agent-queue.md` and `design/agent-report.md` (`git add <paths>`, never `git add -A`) with message `Add <Component> component from Figma` plus the attribution trailer from the session. One commit per component, no separate report commit. Then `git push origin <current branch>` (the user asked for a push after every component). If the push fails, note it in the report line and keep going; the next session's push carries it.

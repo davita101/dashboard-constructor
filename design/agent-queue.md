@@ -21,7 +21,7 @@ Channel: ypny6p4s
 | 17 | Divider | 7060:312915 | done | 1 retry (hex in comments); Separator cva + SeparatorGroup/Label/Icon slots |
 | 18 | Tooltip | 4313:31796 | done | shadcn tooltip (Base UI) + cva variant/layout, Heading/Row/Label/Value/Dot slots; REST dump 429 |
 | 19 | Progress | 4313:34129 | done | 1 retry (dark: cva key renamed); Line/Circle/Half/Percent/Dot on Base UI progress; REST dump 429 |
-| 20 | Slider | 4313:51976 | done | shadcn slider (Base UI) + cva track/range/thumb, Tooltip value pills; first-pass approve; hex→token
+| 20 | Slider | 4313:51976 | done | shadcn slider (Base UI) + cva track/range/thumb, Tooltip value pills; first-pass approve; hex→token |
 | 21 | Steps | 4313:48088 | done | 2 retries (dark: cva key renamed; browser check redo fixed Component-02 line color); no shadcn stepper, cva + Separator |
 | 22 | Loader | 9402:26498 | done | shadcn spinner (two-tone ring like ProgressCircle) + Loader container cva, 4 sizes; first-pass approve; drop shadow omitted |
 | 23 | Command Key | 9402:26499 | done | shadcn kbd extended (variant/shape/glyph, KbdSeparator, KbdGroup props via cloneElement); first-pass approve |
@@ -35,14 +35,14 @@ Channel: ypny6p4s
 | 31 | Input Custom | 12509:89789 | done | InputGroup tone white/black + Field tone glass cva; first-pass approve; FIGMA_TOKEN expired, no tree.txt |
 | 32 | File Input | 12015:2400 | done | Forms: File Input; ring 4px + disabled opacity-50 guessed, see known-gaps |
 | 33 | File Upload | 9402:22988 | done | FileUpload dropzone + Item + Card cva slots, AddFilesCard; icons redrawn (REST token expired); first-pass approve |
-| 34 | Payment Card Input | 12008:2462 | done | PaymentCardBrand slot (rounded|pilled × 5 sizes) + DoubleInput joined + InputGroup; first-pass approve; Mastercard svg hand-drawn  |
+| 34 | Payment Card Input | 12008:2462 | done | PaymentCardBrand slot (rounded/pilled × 5 sizes) + DoubleInput joined + InputGroup; first-pass approve; Mastercard svg hand-drawn  |
 | 35 | Add Avatar | 11553:28400 | done | Forms: Add Avatar; no figma-dump, hex-matched |
 | 36 | Mail Input | 12273:34772 | done | Forms: Mail; browser check via headless chrome; Button muted + glyph-20 added |
 | 37 | AI Input | 12814:6371 | done | 1 retry (dark: cva key renamed to inverse); no tree.txt, tokens from hex; Menu-Dropdown-Rounded not built |
 | 38 | Text Area Editor | 15267:48550 | done | Forms: Text Area Editors; 1 retry (browser check redo); Pilled non-XL radii inferred, footer button plain label, see known-gaps |
-| 39 | Tabs Switch | 12210:14389 | done | tone cva (default|black|white) + size + iconOnly on tabs.tsx; 1 retry (dark: removed, White/Black missing); icon placeholder |  |
-| 40 | Misc | 460:6121 | done | Scroll only (scroll-area, Base UI); Close=AlertClose; Upload icons/Map skipped; first-pass approve |  |
-| 41 | Dropdown | 4290:12174 | done | shadcn dropdown-menu (Base UI) + cva shape/size/layout; 1 retry (browser check, font); Item-2/Menu-2 spec-only, state fills guessed; slots shell only |  |
+| 39 | Tabs Switch | 12210:14389 | done | tone cva (default/black/white) + size + iconOnly on tabs.tsx; 1 retry (dark: removed, White/Black missing); icon placeholder |
+| 40 | Misc | 460:6121 | done | Scroll only (scroll-area, Base UI); Close=AlertClose; Upload icons/Map skipped; first-pass approve |
+| 41 | Dropdown | 4290:12174 | done | shadcn dropdown-menu (Base UI) + cva shape/size/layout; 1 retry (browser check, font); Item-2/Menu-2 spec-only, state fills guessed; slots shell only |
 | 42 | Popover | 9402:22995 | done | colors inferred from export; see known-gaps |
 | 43 | Dialog | 9402:26501 | done | shadcn dialog (Base UI) + cva variant/layout, DialogPanel static; first-pass approve; no tree.txt, black/horizontal guessed |
 | 44 | Modal | 6980:969 | todo | Reuse dialog.tsx from row 43 (add variant/size), no new dialog primitive |

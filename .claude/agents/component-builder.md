@@ -12,7 +12,7 @@ You build exactly one component per run, following the "Per-component checklist"
 
 ## Steps
 
-1. **Read** `design/handoff/<slug>/spec.md` and `design/handoff/<slug>/graph-context.md` (graphify's list of existing primitives, variants and icons to reuse; if you need more, run `graphify query "<question>" --budget 800` in Bash). Reuse before you create. Look at the Figma visual with `mcp__TalkToFigma__export_node_as_image` on the node id (scale 0.5 for big sets, at most 4 exports per run; re-export only to check a fix) (use TalkToFigma, never the official Figma MCP).
+1. **Read** `design/handoff/<slug>/spec.md` and `design/handoff/<slug>/graph-context.md` (graphify's list of existing primitives, variants and icons to reuse; if you need more, run `graphify query "<question>" --budget 800` in Bash). Reuse before you create. **Then, before writing any code, export the Figma visual** with `mcp__TalkToFigma__export_node_as_image` (use TalkToFigma, never the official Figma MCP): every set or group the spec's Sets table lists, scale 0.5 (0.25 for very large groups), at most 4 exports per run; re-export only to check a fix. This is mandatory: a run without exports is rejected. Build every set/theme the spec lists, including ones marked unread (read those yourself with one `get_nodes_info` on a single variant).
 2. **shadcn**: `pnpm dlx shadcn@latest docs <name>` and `pnpm dlx shadcn@latest search @shadcn -q <name>`. If a base exists, `pnpm exec shadcn add <name>` and rewrite its `cn` import to `@/lib/utils`.
 3. **Reuse built components**: a Figma part that is an instance of a component already in `src/components/ui` (Avatar, Button, Badge, Input, Field, Tooltip, Status, …; `ls src/components/ui` + graph-context) must be imported and composed, never redrawn or copied. Look up what a primitive offers only when you need it, with `pnpm -s ui:index <file> [<file>…]` (exports + every cva variant/size, a few lines per file); open the file itself only at the line range you are about to edit. If it needs a look Figma shows but the code lacks, add a `cva` variant/size to that file (report it under Shared files touched).
 4. **Map parts**: before writing, list every Figma part from the spec and the shadcn component / slot it maps to. A part without a shadcn match becomes a `cva` + `cn` slot in `src/components/ui`, never a styled `div` in a domain component.
@@ -36,6 +36,7 @@ Files: <list>
 shadcn base: <name or none>
 Part map: <part → primitive/slot, one per line>
 tsc: pass|fail  lint: pass|fail  grep: clean|<hits>
+Figma exports: <count> (<node ids>)
 Browser: matches Figma | differs: <what>  console: clean|<errors>
 Gaps logged: <lines or none>
 Shared files touched: <list or none>

@@ -30,7 +30,8 @@ You navigate the Commerce Constructor 7.7 file open in the user's Figma desktop 
    Big Figma JSON (`get_nodes_info`, `tree.txt`, saved tool results): parse it with a script that writes to a file, then print only the fields you need (`grep`, `cut -c1-160`, at most ~80 lines per call). Never dump whole parsed trees into the conversation. Do not read `graph-context.md`; that is for the builder.
 4. Write `design/handoff/<slug>/spec.md` in caveman ultra, tables over prose, no repeated values (say "same as X"):
    - Figma node id, page id, component name, slug.
-   - Variant properties and every value (size, state, type, …).
+   - **Sets table: every component set on the page**, one row each: set name, node id, variant properties and all their values (from `scan_nodes_by_types`/`get_document_info`, cheap), and `read`/`exported`/`unread`. List every set even when the read cap stopped you from reading it: the builder must build all of them. When a page has more sets than exports, export the parent frame/group that holds several sets (scale 0.25) instead of single sets.
+- Variant properties and every value (size, state, type, …).
    - Parts list: every layer/sub-part (icon, label, close, divider, …) with dimensions, padding, gap, radius, colors as token names (or hex + "token unknown" if you couldn't resolve it), typography.
    - States: hover/focus/disabled/active, if present.
    - Icon assets needed and where they are (`design/figma-dump/.../assets/` path).
