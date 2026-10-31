@@ -1,3 +1,7 @@
+# Summary 2026-10-31: FIGMA DOWN
+done 43 / blocked 0 / remaining 34. commits ahead of main: 74.
+Fix: open Figma file, run TalkToFigma plugin on channel ypny6p4s, check Modal node 6980:969 valid (set_focus fail, currentPage still Dialog). Re-run loop.
+
 ## Run summary — 2026-10-30 (stopped: FIGMA DOWN at Double Input)
 
 - Done: 28 · Blocked: 0 · Remaining (todo): 49
@@ -111,3 +115,4 @@
 2026-10-31 Dropdown: done — dropdown-menu.tsx, 1 retry, gaps logged
 2026-10-31 Popover: done — shadcn popover (Base UI) + cva default/black, 8 variants; colors inferred, see known-gaps
 2026-10-31 Dialog: done — first-pass approve; gaps in known-gaps.md
+2026-10-31 Modal: done — dialog.tsx variant modal + slots; Form/Switcher-*/Files/2FA/Pin content guessed, Calendar/Select/video missing, see known-gaps

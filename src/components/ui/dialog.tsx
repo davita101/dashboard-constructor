@@ -6,6 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
+import { Button, ButtonIcon } from "@/components/ui/button"
 
 function Dialog({ ...props }: DialogPrimitive.Root.Props) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />
@@ -51,14 +52,25 @@ const dialogContentVariants = cva(
           "bg-background-0 text-base-700 [--dialog-icon:var(--base-500)] [--dialog-text:var(--base-600)] shadow-[inset_0_0_0_1px_var(--base-100),0_16px_32px_0_var(--shadow-base)]",
         black:
           "bg-base-900/80 text-base-0 [--dialog-icon:var(--base-0)] [--dialog-text:var(--base-200)] shadow-[0_16px_32px_0_var(--shadow-base)]",
+        // Figma Modal-* sets (Head-Modal-Component, content, Footer-Modal-Component)
+        modal:
+          "relative bg-background-0 text-base-700 [--dialog-icon:var(--base-500)] [--dialog-text:var(--base-500)] shadow-[inset_0_0_0_1px_var(--base-100),0_16px_32px_0_var(--shadow-base)]",
+      },
+      // Panel width: default keeps the dialog width; Modal-Default is 228, content modals 360 / 600
+      size: {
+        default: "",
+        sm: "w-57",
+        md: "w-90",
+        lg: "w-150",
       },
       layout: {
         vertical:
           "[&>[data-slot=dialog-description]]:px-4 [&>[data-slot=dialog-description]]:py-2 [&>[data-slot=dialog-footer]]:h-12 [&>[data-slot=dialog-footer]]:items-end [&>[data-slot=dialog-footer]]:px-4 [&>[data-slot=dialog-footer]]:pb-4 [&>[data-slot=dialog-header]]:h-13 [&>[data-slot=dialog-header]]:px-4 [&>[data-slot=dialog-header]]:pt-4",
         horizontal: "gap-2 p-3",
+        modal: "",
       },
     },
-    defaultVariants: { variant: "default", layout: "vertical" },
+    defaultVariants: { variant: "default", layout: "vertical", size: "default" },
   }
 )
 
@@ -67,6 +79,7 @@ function DialogPanel({
   className,
   variant = "default",
   layout = "vertical",
+  size = "default",
   ...props
 }: React.ComponentProps<"div"> & VariantProps<typeof dialogContentVariants>) {
   return (
@@ -74,7 +87,7 @@ function DialogPanel({
       <div
         data-slot="dialog-panel"
         data-variant={variant}
-        className={cn(dialogContentVariants({ variant, layout }), className)}
+        className={cn(dialogContentVariants({ variant, layout, size }), className)}
         {...props}
       />
     </DialogPrimitive.Root>
@@ -85,6 +98,7 @@ function DialogContent({
   className,
   variant = "default",
   layout = "vertical",
+  size = "default",
   ...props
 }: DialogPrimitive.Popup.Props & VariantProps<typeof dialogContentVariants>) {
   return (
@@ -94,7 +108,7 @@ function DialogContent({
         data-slot="dialog-content"
         data-variant={variant}
         className={cn(
-          dialogContentVariants({ variant, layout }),
+          dialogContentVariants({ variant, layout, size }),
           "fixed top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 duration-100 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           className
         )}
@@ -179,7 +193,127 @@ function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/** Figma Head-Modal-Component: Type=Default (left) or Center. Holds icon, heading and the close slot. */
+const dialogModalHeadVariants = cva("flex flex-col gap-3 px-5 pt-5", {
+  variants: {
+    align: { left: "items-start text-left", center: "items-center text-center" },
+  },
+  defaultVariants: { align: "left" },
+})
+
+function DialogModalHead({
+  className,
+  align = "left",
+  ...props
+}: React.ComponentProps<"div"> & VariantProps<typeof dialogModalHeadVariants>) {
+  return (
+    <div
+      data-slot="dialog-modal-head"
+      data-align={align}
+      className={cn(dialogModalHeadVariants({ align }), className)}
+      {...props}
+    />
+  )
+}
+
+/** Figma Badge-Icon-Pilled (40, white fill, base-100 stroke) with a 20px icon. */
+function DialogModalIcon({ src, className, ...props }: React.ComponentProps<typeof Badge> & { src?: string }) {
+  return (
+    <Badge data-slot="dialog-modal-icon" variant="base" size="square-40" shape="pill" className={className} {...props}>
+      <DialogIcon src={src} />
+    </Badge>
+  )
+}
+
+/** Figma Heading group: Heading Modal + About Text, 12px apart. */
+function DialogModalHeading({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="dialog-modal-heading" className={cn("flex w-full flex-col gap-3", className)} {...props} />
+}
+
+function DialogModalTitle({ className, ...props }: DialogPrimitive.Title.Props) {
+  return (
+    <DialogPrimitive.Title
+      data-slot="dialog-modal-title"
+      className={cn("text-14 leading-24 font-semibold text-base-900", className)}
+      {...props}
+    />
+  )
+}
+
+function DialogModalDescription({ className, ...props }: DialogPrimitive.Description.Props) {
+  return (
+    <DialogPrimitive.Description
+      data-slot="dialog-modal-description"
+      className={cn("text-11 leading-20 font-semibold text-(--dialog-text)", className)}
+      {...props}
+    />
+  )
+}
+
+/** Figma Close (24): top-right close button of the modal. */
+function DialogModalClose({ className, ...props }: DialogPrimitive.Close.Props) {
+  return (
+    <DialogPrimitive.Close
+      data-slot="dialog-modal-close"
+      aria-label="Close"
+      className={cn("absolute top-6 right-6", className)}
+      render={<Button variant="ghost" size="icon-24" />}
+      {...props}
+    >
+      <ButtonIcon src="/icons/material-close.svg" />
+    </DialogPrimitive.Close>
+  )
+}
+
+/** Modal content area between head and footer. */
+function DialogModalBody({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="dialog-modal-body" className={cn("flex flex-col gap-3 px-5 pt-3", className)} {...props} />
+}
+
+/** Figma Footer-Modal-Component: Left / Block (full-width buttons) / Center. Style comes from the Button variants. */
+const dialogModalFooterVariants = cva("flex flex-col gap-4 px-5 pt-3 pb-5", {
+  variants: {
+    layout: {
+      left: "items-start",
+      block: "items-stretch *:data-[slot=dialog-modal-actions]:*:flex-1",
+      center: "items-center",
+    },
+  },
+  defaultVariants: { layout: "left" },
+})
+
+function DialogModalFooter({
+  className,
+  layout = "left",
+  ...props
+}: React.ComponentProps<"div"> & VariantProps<typeof dialogModalFooterVariants>) {
+  return (
+    <div
+      data-slot="dialog-modal-footer"
+      data-layout={layout}
+      className={cn(dialogModalFooterVariants({ layout }), className)}
+      {...props}
+    />
+  )
+}
+
+/** Figma Buttons row (gap 8). */
+function DialogModalActions({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="dialog-modal-actions" className={cn("flex items-center gap-2", className)} {...props} />
+}
+
 export {
+  DialogModalActions,
+  DialogModalBody,
+  DialogModalClose,
+  DialogModalDescription,
+  DialogModalFooter,
+  DialogModalHead,
+  DialogModalHeading,
+  DialogModalIcon,
+  DialogModalTitle,
+  dialogModalFooterVariants,
+  dialogModalHeadVariants,
   Dialog,
   DialogBadge,
   DialogClose,
