@@ -41,11 +41,11 @@ Channel: ypny6p4s
 | 37 | AI Input | 12814:6371 | done | 1 retry (dark: cva key renamed to inverse); no tree.txt, tokens from hex; Menu-Dropdown-Rounded not built |
 | 38 | Text Area Editor | 15267:48550 | done | Forms: Text Area Editors; 1 retry (browser check redo); Pilled non-XL radii inferred, footer button plain label, see known-gaps |
 | 39 | Tabs Switch | 12210:14389 | done | tone cva (default/black/white) + size + iconOnly on tabs.tsx; 1 retry (dark: removed, White/Black missing); icon placeholder |
-| 40 | Misc | 460:6121 | done | Scroll only (scroll-area, Base UI); Close=AlertClose; Upload icons/Map skipped; first-pass approve |
-| 41 | Dropdown | 4290:12174 | done | shadcn dropdown-menu (Base UI) + cva shape/size/layout; 1 retry (browser check, font); Item-2/Menu-2 spec-only, state fills guessed; slots shell only |
-| 42 | Popover | 9402:22995 | done | colors inferred from export; see known-gaps |
+| 40 | Misc | 460:6121 | todo | REBUILD: only Scroll was built; build every set on the Misc page (Close, Upload, Map, Header, …) with exact tokens. |
+| 41 | Dropdown | 4290:12174 | todo | REBUILD: lead/trail slots (payment, avatar, flag, checkbox, radio, switch), Item-2/Menu-2 and Head-Footer parts missing; state fills and radii guessed. Build all, tokens via token:hex. |
+| 42 | Popover | 9402:22995 | todo | REBUILD: Black variant colors/shadow/notch and default colors guessed; match every set to Figma with exact tokens. |
 | 43 | Dialog | 9402:26501 | done | shadcn dialog (Base UI) + cva variant/layout, DialogPanel static; first-pass approve; no tree.txt, black/horizontal guessed |
-| 44 | Modal | 6980:969 | done | dialog.tsx modal variant/size + DialogModal* slots; 7 content sets guessed from names (see known-gaps); Reuse dialog.tsx from row 43 (add variant/size), no new dialog primitive |
+| 44 | Modal | 6980:969 | todo | REBUILD: 7 content sets (Form, Switcher-List, Switcher-Payment, Switcher-Users, Files, Two-Factor-Authentication, Pin) guessed from names; Date-Range calendar, Payment Select, Welcome video missing. Reuse dialog.tsx. |
 | 45 | Toast | 6978:41509 | done | Figma toast = Alert (CLAUDE.md): extend alert.tsx with variants, not shadcn toast |
 | 46 | Notification | 12145:243335 | todo | Check alert.tsx and row 45 first; reuse/extend them, new file only for parts they lack |
 | 47 | Command Menu | 9402:27554 | todo |  |

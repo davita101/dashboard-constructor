@@ -11,14 +11,14 @@ E-commerce site built from the **Commerce Constructor 7.7** Figma design system.
 
 ## Workflow order
 
-1. **Figma first** — build components in Figma (Commerce Constructor 7.7 file), bound to the existing variables. Use skills `figma:figma-use` and `figma:figma-generate-library`.
+1. **Figma first** — components live in Figma (Commerce Constructor 7.7 file), bound to the existing variables. Figma is read only through TalkToFigma; the official Figma MCP/plugin and the Figma REST API are not used.
 2. **Tokens → code** — generate Tailwind theme + CSS variables from the Figma variables export.
-3. **Components → code** — implement each Figma component, reusing/extending shadcn/ui primitives. Link with `figma:figma-code-connect` (needs the official Figma MCP).
+3. **Components → code** — implement each Figma component, reusing/extending shadcn/ui primitives.
 4. **Pages** — compose pages from components only.
 
 ### Per-component checklist (mandatory, in order)
 
-1. **Read Figma with TalkToFigma** (`mcp__TalkToFigma__*`) — always, not the official Figma MCP. `get_document_info` → `get_nodes_info` on the component sets → `export_node_as_image` for visual reference. For token names, layout and padding use the dump in `design/figma-dump/<page-id>/tree.txt` (`pnpm figma:fetch <node-id>`, needs `FIGMA_TOKEN`); icon SVGs are in its `assets/`.
+1. **Read Figma with TalkToFigma** (`mcp__TalkToFigma__*`) — always, not the official Figma MCP. `get_document_info` → `scan_nodes_by_types` for every set and variant → `get_nodes_info` for layout, padding, radius, sizes and fill/stroke hex → `export_node_as_image` for visual reference (`format: "SVG"` for icons). Map every hex to its token with `pnpm -s token:hex "#e6e6e6" "#000000@50"` (exact names, Light mode); never guess a token. No REST (`figma:fetch`/`FIGMA_TOKEN`) and no official Figma MCP.
 2. **Invoke the `shadcn` skill (Skill tool) before writing any component code — every component, every time, even if shadcn was used earlier in the session or the base is already installed.** Running the shadcn CLI alone does not count. Then run `pnpm dlx shadcn@latest docs <name>` and `pnpm dlx shadcn@latest search @shadcn -q <name>`; add the base with `pnpm exec shadcn add <name>` and fix its `cn` import.
    - Before writing, list every part of the Figma component and the shadcn component it maps to. A part with no shadcn match is built in shadcn style in `src/components/ui` (`cva` + `cn`), never as a styled `div`/`span` in a domain component.
 3. **Write code** following the skill's rules (below) and the Component rule.
@@ -78,7 +78,7 @@ Mapping rules for code:
 - Domain components (`src/components/<domain>`) are compositions of shadcn primitives from `src/components/ui` (e.g. `ProductCard` = `Card` + `Badge` + `Button`).
 - Customize shadcn components via tokens (CSS vars) and `cva` variants — not by duplicating or rewriting them.
 - Need something shadcn doesn't have? Build it in the shadcn style: Radix/Base UI primitive + Tailwind + `cn()` + `cva`, placed in `src/components/ui`.
-- Figma components map 1:1 to shadcn components where possible (link with Code Connect).
+- Figma components map 1:1 to shadcn components where possible.
 
 ## Conventions
 
@@ -100,10 +100,7 @@ One line per component in `design/known-gaps.md`. Read only the lines for the co
 ## Skills to use
 
 - `shadcn` (official, `npx skills add shadcn/ui`) — shadcn/ui components, CLI, `components.json`-aware
-- `figma:figma-use`, `figma:figma-generate-library` — build components/variables in Figma
 - TalkToFigma MCP (`.mcp.json`) — **always** use it to read Figma (see Per-component checklist)
-- `figma:figma-design-to-code` — implement Figma nodes in code (official Figma MCP only)
-- `figma:figma-code-connect` — map Figma components to code
 - `frontend-ui-engineering`, `ui-styling`, `vercel:react-best-practices` — UI code quality
 - `vercel:deploy` — deploy
 

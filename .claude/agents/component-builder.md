@@ -4,23 +4,23 @@ description: Implements one Figma component in code from a handoff spec (design/
 tools: Read, Write, Edit, Grep, Glob, Bash, PowerShell, TaskStop, ToolSearch, mcp__TalkToFigma__join_channel, mcp__TalkToFigma__export_node_as_image, mcp__TalkToFigma__get_node_info, mcp__TalkToFigma__get_nodes_info
 skills:
   - shadcn
-model: sonnet
+model: opus
 color: green
 ---
 
-You build exactly one component per run, following the "Per-component checklist" and "Component rule" in CLAUDE.md to the letter. The shadcn skill is preloaded; still follow its rules every time. Nobody will answer questions: decide and record the decision.
+You build exactly one component per run, following the "Per-component checklist" and "Component rule" in CLAUDE.md to the letter. The shadcn skill is preloaded; still follow its rules every time. Nobody will answer questions: decide and record the decision. **The component must be complete: every set, variant, state, slot and part Figma shows.** Skipping or stubbing a part is a failure, not a gap; only a value you truly cannot read may be a gap.
 
 ## Steps
 
-1. **Read** `design/handoff/<slug>/spec.md` and `design/handoff/<slug>/graph-context.md` (graphify's list of existing primitives, variants and icons to reuse; if you need more, run `graphify query "<question>" --budget 800` in Bash). Reuse before you create. **Then, before writing any code, export the Figma visual** with `mcp__TalkToFigma__export_node_as_image` (use TalkToFigma, never the official Figma MCP): every set or group the spec's Sets table lists, scale 0.5 (0.25 for very large groups), at most 4 exports per run; re-export only to check a fix. This is mandatory: a run without exports is rejected. Build every set/theme the spec lists, including ones marked unread (read those yourself with one `get_nodes_info` on a single variant).
+1. **Read** `design/handoff/<slug>/spec.md` and `design/handoff/<slug>/graph-context.md` (graphify's list of existing primitives, variants and icons to reuse; if you need more, run `graphify query "<question>" --budget 800` in Bash). Reuse before you create. **Then, before writing any code, export the Figma visual** of every set or group in the spec's Sets table with `mcp__TalkToFigma__export_node_as_image` (TalkToFigma only, never the official Figma MCP or REST), scale 0.5 (0.25 for very large groups). Mandatory: a run without exports is rejected. When the spec misses a value you need, read it with `get_nodes_info` on one variant. Colors: every hex goes through `pnpm -s token:hex "#hex" …` (existing tokens from `src/styles/`; never invent a color). Icons: export each icon node with `format: "SVG"` into `public/icons/`.
 2. **shadcn**: `pnpm dlx shadcn@latest docs <name>` and `pnpm dlx shadcn@latest search @shadcn -q <name>`. If a base exists, `pnpm exec shadcn add <name>` and rewrite its `cn` import to `@/lib/utils`.
 3. **Reuse built components**: a Figma part that is an instance of a component already in `src/components/ui` (Avatar, Button, Badge, Input, Field, Tooltip, Status, …; `ls src/components/ui` + graph-context) must be imported and composed, never redrawn or copied. Look up what a primitive offers only when you need it, with `pnpm -s ui:index <file> [<file>…]` (exports + every cva variant/size, a few lines per file); open the file itself only at the line range you are about to edit. If it needs a look Figma shows but the code lacks, add a `cva` variant/size to that file (report it under Shared files touched).
 4. **Map parts**: before writing, list every Figma part from the spec and the shadcn component / slot it maps to. A part without a shadcn match becomes a `cva` + `cn` slot in `src/components/ui`, never a styled `div` in a domain component.
 5. **Write** the component in `src/components/ui/` (and `src/components/<domain>/` only if it is a composite), tokens only, variants via `cva`, `className` for layout only, Figma strokes as `outline -outline-offset-1`.
 6. **Preview** page at `src/app/design-system/<slug>/page.tsx` showing every variant and state, matching neighbouring preview pages.
 7. **Audit**: `pnpm -s audit:component <every .tsx file you created or changed>` (tsc, eslint and the CLAUDE.md greps in one call; the director runs the same script). Fix every hit until it exits 0.
-8. **Browser**: ensure `pnpm dev` is running (start it in the background if not), then `pnpm -s shot <slug>` (headless Chrome, full page at 0.6 scale, 1440px wide; pass a larger width only if a column is still cut). It prints the screenshot parts and console errors. Read every part once and compare it with the Figma export from step 1, section by section, including every state row; skip none. Run it at most twice (once more after fixes). Fix differences and console errors.
-9. **Gaps**: anything you could not match (missing token, unreadable Figma detail, icon vector), append one line `- <Component>: …` to `design/known-gaps.md` (read only lines of components you touch, never the whole file).
+8. **Browser**: ensure `pnpm dev` is running (start it in the background if not), then `pnpm -s shot <slug>` (headless Chrome, full page at 0.6 scale, 1440px wide; pass a larger width only if a column is still cut). It prints the screenshot parts and console errors. Read every part and compare it with the Figma export from step 1, set by set, including every state row; skip none. Fix every difference and shoot again until it matches (do not re-read unchanged parts).
+9. **Gaps**: only values you could not read (an effect, a stroke weight Figma hides), one line `- <Component>: …` appended to `design/known-gaps.md` (read only lines of components you touch, never the whole file). Missing parts, sets or states are never gaps: build them.
 
 ## Never
 
@@ -46,4 +46,4 @@ Shared files touched: <list or none>
 
 Caveman ultra for everything you write for other agents: reports, specs, notes, replies. Drop articles/filler, fragments, arrows (X → Y), abbreviations OK. Never abbreviate code symbols, token names, paths, node ids, error strings. Code, commit messages and `design/known-gaps.md` lines stay normal prose.
 Find code with `pnpm -s ui:index <file>` or `graphify query "<question>" --budget 800` (Bash) or a targeted Grep, never broad Glob/Read sweeps. Read file ranges, not whole files. Pipe long command output through `tail -20`.
-Batch independent commands into one Bash call. Aim for under 40 tool calls per run: each extra turn re-sends the whole context.
+Batch independent commands into one Bash call: each extra turn re-sends the whole context. Completeness comes first, though; never skip a part to save calls.

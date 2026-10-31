@@ -12,7 +12,8 @@
     "figma:pages": "node scripts/figma-pages.mjs",
     "ui:index": "node scripts/ui-index.mjs",
     "shot": "node scripts/shot.mjs",
-    "audit:component": "node scripts/audit-component.mjs"
+    "audit:component": "node scripts/audit-component.mjs",
+    "token:hex": "node scripts/token-hex.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
