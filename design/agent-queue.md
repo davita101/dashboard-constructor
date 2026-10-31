@@ -43,7 +43,7 @@ Channel: ypny6p4s
 | 39 | Tabs Switch | 12210:14389 | done | tone cva (default|black|white) + size + iconOnly on tabs.tsx; 1 retry (dark: removed, White/Black missing); icon placeholder |  |
 | 40 | Misc | 460:6121 | done | Scroll only (scroll-area, Base UI); Close=AlertClose; Upload icons/Map skipped; first-pass approve |  |
 | 41 | Dropdown | 4290:12174 | done | shadcn dropdown-menu (Base UI) + cva shape/size/layout; 1 retry (browser check, font); Item-2/Menu-2 spec-only, state fills guessed; slots shell only |  |
-| 42 | Popover | 9402:22995 | todo |  |
+| 42 | Popover | 9402:22995 | done | colors inferred from export; see known-gaps |
 | 43 | Dialog | 9402:26501 | todo | Base for Modal (row 44): build on shadcn dialog |
 | 44 | Modal | 6980:969 | todo | Reuse dialog.tsx from row 43 (add variant/size), no new dialog primitive |
 | 45 | Toast | 6978:41509 | todo | Figma toast = Alert (CLAUDE.md): extend alert.tsx with variants, not shadcn toast |
