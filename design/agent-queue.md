@@ -58,7 +58,7 @@ Channel: ypny6p4s
 | 54 | Message | 11409:1128 | in-progress | Messages |
 | 55 | Task | 12276:31748 | done | Tasks |
 | 56 | Empty State | 11951:3850 | done |  |
-| 57 | QR Code | 9488:542 | todo |  |
+| 57 | QR Code | 9488:542 | done |  |
 | 58 | Carousel | 9524:2620 | todo |  |
 | 59 | Cell UI Table | 5026:42162 | todo | Cells UI (Tables) |
 | 60 | Navbar | 6860:42234 | todo | Nabars |

@@ -129,3 +129,4 @@ Fix: open Figma file, run TalkToFigma plugin on channel ypny6p4s, check Modal no
 2026-10-31 List: done
 2026-10-31 Task: done
 2026-10-31 Empty State: done
+2026-10-31 QR Code: done
