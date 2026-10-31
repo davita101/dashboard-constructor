@@ -110,3 +110,4 @@
 2026-10-31 Misc: done — Scroll built via scroll-area; Close covered by AlertClose; Upload icons/Map skipped (no SVG), see known-gaps
 2026-10-31 Dropdown: done — dropdown-menu.tsx, 1 retry, gaps logged
 2026-10-31 Popover: done — shadcn popover (Base UI) + cva default/black, 8 variants; colors inferred, see known-gaps
+2026-10-31 Dialog: done — first-pass approve; gaps in known-gaps.md
