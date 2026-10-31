@@ -120,3 +120,4 @@ Fix: open Figma file, run TalkToFigma plugin on channel ypny6p4s, check Modal no
 2026-10-31 Toast: done — Alert layout=panel + AlertDot/AlertTime slots; Black variant not node-read, see known-gaps
 2026-10-31 Misc: done — rebuilt all 6 sets; icon colors pixel-derived, see known-gaps
 2026-10-31 Notification: done
+2026-10-31 Command Menu: done

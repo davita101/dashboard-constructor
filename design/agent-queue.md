@@ -48,7 +48,7 @@ Channel: ypny6p4s
 | 44 | Modal | 6980:969 | done | partial rebuild (builder cut off at 10 min); accepted as is by user; reuses dialog.tsx |
 | 45 | Toast | 6978:41509 | done | Figma toast = Alert (CLAUDE.md): extend alert.tsx with variants, not shadcn toast |
 | 46 | Notification | 12145:243335 | done | Check alert.tsx and row 45 first; reuse/extend them, new file only for parts they lack |
-| 47 | Command Menu | 9402:27554 | todo |  |
+| 47 | Command Menu | 9402:27554 | done |  |
 | 48 | Color Picker | 9402:27555 | todo |  |
 | 49 | Date Picker | 9402:27552 | todo |  |
 | 50 | Action Panel | 11531:349716 | todo |  |
