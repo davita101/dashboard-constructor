@@ -4,12 +4,15 @@
 # Usage: powershell -ExecutionPolicy Bypass -File watch-agents.ps1 [-All] [-SummaryEvery 30]
 #   -All           also show interactive sessions (by default only `--agent director` loop sessions)
 #   -SummaryEvery  seconds between token summary tables (printed only when something changed)
+#   -Budget        your own token budget per 5-hour window; shows what is left. The real plan
+#                  limit is only known to Anthropic's servers, so this is an estimate you set.
 param(
   [string]$Dir = "$env:USERPROFILE\.claude\projects\E--Girhub-ecormce-webstie",
   [int]$Backlog = 15,        # lines to replay from the active file on start
   [int]$SummaryEvery = 30,
   [int]$ContextLimit = 200000,
   [int]$BigResult = 5000,    # flag tool results larger than this many characters
+  [long]$Budget = 0,         # tokens per 5-hour window (0 = only show usage)
   [switch]$All
 )
 
@@ -22,6 +25,12 @@ $current = $null  # session id shown in the summary
 $dirty = $false
 $lastSummary = Get-Date
 $colors = @{ 'director' = 'Cyan'; 'figma-navigator' = 'Magenta'; 'component-builder' = 'Green' }
+$root = Split-Path $Dir -Parent  # all projects: the usage limit is per account
+$winPos = @{}     # file -> bytes scanned for the 5-hour window
+$winSeen = New-Object 'System.Collections.Generic.HashSet[string]'
+$winEntries = New-Object 'System.Collections.Generic.List[object]'
+$lastWindow = [DateTime]::MinValue
+$window = $null
 $full = [string][char]0x2588
 $empty = [string][char]0x2591
 
@@ -165,15 +174,95 @@ function Show-Summary {
     Write-Host ($full * $n) -NoNewline -ForegroundColor $(if ($colors[$r.Label]) { $colors[$r.Label] } else { 'White' })
   }
   Write-Host ("  session total {0}" -f (Format-K $sum)) -ForegroundColor Yellow
+  Show-Window
   Write-Host ''
 }
 
+# Usage in the current 5-hour window across every project. A window starts at the
+# hour of the first message after the previous window ended and lasts 5 hours.
+function Update-Window {
+  $since = (Get-Date).AddHours(-10)
+  Get-ChildItem $root -Recurse -Filter *.jsonl -ErrorAction SilentlyContinue |
+    Where-Object { $_.LastWriteTime -gt $since } | ForEach-Object {
+      $file = $_.FullName
+      $start = 0; if ($winPos.ContainsKey($file)) { $start = $winPos[$file] }
+      if ($_.Length -le $start) { return }
+      $fs = [IO.File]::Open($file, 'Open', 'Read', 'ReadWrite')
+      try {
+        $fs.Position = $start
+        $buf = New-Object byte[] ($fs.Length - $start)
+        $read = $fs.Read($buf, 0, $buf.Length)
+      } finally { $fs.Close() }
+      $last = [Array]::LastIndexOf($buf, [byte]10, $read - 1)
+      if ($last -lt 0) { return }
+      $winPos[$file] = $start + $last + 1
+      foreach ($line in ([Text.Encoding]::UTF8.GetString($buf, 0, $last + 1) -split "`n")) {
+        if ($line -notmatch '"type":"assistant"' -or $line -notmatch '"usage"') { continue }
+        if ($line -notmatch '"id":"(msg_[^"]+)"') { continue }
+        if (-not $winSeen.Add($Matches[1])) { continue }
+        if ($line -notmatch '"timestamp":"([^"]+)"') { continue }
+        $time = [DateTimeOffset]::Parse($Matches[1]).LocalDateTime
+        $n = @{}
+        foreach ($k in 'input_tokens', 'cache_creation_input_tokens', 'cache_read_input_tokens', 'output_tokens') {
+          $n[$k] = 0; if ($line -match ('"' + $k + '":(\d+)')) { $n[$k] = [long]$Matches[1] }
+        }
+        $model = ''; if ($line -match '"model":"claude-([a-z]+)') { $model = $Matches[1] }
+        $winEntries.Add([pscustomobject]@{
+          Time = $time; Model = $model
+          New = $n['input_tokens'] + $n['cache_creation_input_tokens'] + $n['output_tokens']
+          Cached = $n['cache_read_input_tokens']
+        })
+      }
+    }
+
+  $blockStart = $null; $blockEnd = $null
+  foreach ($e in ($winEntries | Sort-Object Time)) {
+    if (-not $blockEnd -or $e.Time -ge $blockEnd) {
+      $blockStart = $e.Time.Date.AddHours($e.Time.Hour); $blockEnd = $blockStart.AddHours(5)
+    }
+  }
+  if (-not $blockEnd -or (Get-Date) -ge $blockEnd) { $script:window = $null; return }
+  $in = $winEntries | Where-Object { $_.Time -ge $blockStart }
+  $models = $in | Group-Object Model | ForEach-Object {
+    "$($_.Name) $(Format-K (($_.Group | Measure-Object New -Sum).Sum + ($_.Group | Measure-Object Cached -Sum).Sum))"
+  }
+  $script:window = [pscustomobject]@{
+    Start = $blockStart; End = $blockEnd
+    New = [long](($in | Measure-Object New -Sum).Sum)
+    Cached = [long](($in | Measure-Object Cached -Sum).Sum)
+    Models = ($models -join ', ')
+  }
+}
+
+function Show-Window {
+  if (-not $window) { Write-Host "5h window: no usage yet (new window starts with the next message)" -ForegroundColor DarkGray; return }
+  $total = $window.New + $window.Cached
+  $left = $window.End - (Get-Date)
+  Write-Host ("5h window {0:HH:mm}-{1:HH:mm}, resets in {2}h{3:00}m | used {4} (new {5}, cache reads {6}) | {7}" -f `
+    $window.Start, $window.End, [int][Math]::Floor($left.TotalHours), $left.Minutes, (Format-K $total), (Format-K $window.New), (Format-K $window.Cached), $window.Models) -ForegroundColor Yellow
+  if ($Budget -gt 0) {
+    $rest = [Math]::Max(0, $Budget - $total)
+    $pct = [Math]::Round(100 * $rest / $Budget)
+    $fill = [Math]::Round(30 * ($Budget - $rest) / $Budget)
+    $color = if ($pct -lt 15) { 'Red' } elseif ($pct -lt 40) { 'Yellow' } else { 'Green' }
+    Write-Host 'budget    ' -NoNewline -ForegroundColor Yellow
+    Write-Host (($full * $fill) + ($empty * (30 - $fill))) -NoNewline -ForegroundColor $color
+    Write-Host (" {0} left of {1} ({2}%)" -f (Format-K $rest), (Format-K $Budget), $pct) -ForegroundColor $color
+  }
+}
+
 function Update-Title {
-  if (-not $current) { return }
   $rows = $stats.Values | Where-Object { $_.Session -eq $current }
   $sum = ($rows | Measure-Object -Property Total -Sum).Sum
   $live = $rows | Sort-Object { $_.Seen.Count } -Descending | Select-Object -First 1
-  try { $Host.UI.RawUI.WindowTitle = "agents $(Format-K $sum) | $(($rows | Measure-Object).Count) agents | ctx $(Format-K $live.Ctx)" } catch {}
+  $win = ''
+  if ($window) {
+    $used = $window.New + $window.Cached
+    $win = " | 5h $(Format-K $used)"
+    if ($Budget -gt 0) { $win += " ($([Math]::Round(100 * [Math]::Max(0, $Budget - $used) / $Budget))% left)" }
+    $win += " resets $('{0:HH:mm}' -f $window.End)"
+  }
+  try { $Host.UI.RawUI.WindowTitle = "agents $(Format-K $sum) | $(($rows | Measure-Object).Count) agents | ctx $(Format-K $live.Ctx)$win" } catch {}
 }
 
 function Read-New($file) {
@@ -214,6 +303,7 @@ if ($newest) {
       } else { Show-Line $f.FullName $lines[$k] }
     }
   }
+  Update-Window
   Show-Summary; Update-Title
   $dirty = $false
 }
@@ -224,6 +314,9 @@ while ($true) {
   Get-ChildItem $Dir -Recurse -Filter *.jsonl -ErrorAction SilentlyContinue |
     Where-Object { $_.LastWriteTime -gt $cutoff -and (Test-Session (Get-Session $_.FullName)) } |
     ForEach-Object { Read-New $_.FullName }
+  if (((Get-Date) - $lastWindow).TotalSeconds -ge 60) {
+    Update-Window; $lastWindow = Get-Date; Update-Title
+  }
   if ($dirty) { Update-Title }
   if ($dirty -and ((Get-Date) - $lastSummary).TotalSeconds -ge $SummaryEvery) {
     Show-Summary
