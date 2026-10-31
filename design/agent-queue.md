@@ -55,8 +55,8 @@ Channel: ypny6p4s
 | 51 | Card Content | 11590:81923 | done | Cards: Content; ui/card.tsx exists |
 | 52 | Profile | 11638:16498 | done |  |
 | 53 | List | 11654:127 | done |  |
-| 54 | Message | 11409:1128 | todo | Messages |
-| 55 | Task | 12276:31748 | todo | Tasks |
+| 54 | Message | 11409:1128 | in-progress | Messages |
+| 55 | Task | 12276:31748 | done | Tasks |
 | 56 | Empty State | 11951:3850 | todo |  |
 | 57 | QR Code | 9488:542 | todo |  |
 | 58 | Carousel | 9524:2620 | todo |  |
