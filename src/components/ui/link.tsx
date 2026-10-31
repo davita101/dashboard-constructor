@@ -34,6 +34,8 @@ const linkVariants = cva(
           "[--link-active:var(--danger-700)] [--link-fg:var(--danger-600)] [--link-hover:var(--danger-400)] [--link-pill:var(--danger-alpha-10)]",
         primary:
           "[--link-active:var(--primary-700)] [--link-fg:var(--primary-600)] [--link-hover:var(--primary-500)] [--link-pill:var(--primary-alpha-5)]",
+        blue:
+          "[--link-active:var(--blue-700)] [--link-fg:var(--blue-600)] [--link-hover:var(--blue-500)] [--link-pill:var(--blue-alpha-20)]",
         success:
           "[--link-active:var(--success-700)] [--link-fg:var(--success-600)] [--link-hover:var(--success-500)] [--link-pill:var(--success-alpha-10)]",
       },

@@ -19,6 +19,7 @@ export const progressColors = [
   "amber",
   "teal",
   "blue",
+  "blue-flat",
   "lime",
   "cyan",
   "emerald",
