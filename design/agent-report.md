@@ -106,3 +106,4 @@
 2026-10-31 Mail Input: done — tsc/lint/build green, headless browser matches Figma; gaps in known-gaps.md
 2026-10-31 AI Input: done — 1 retry, gaps in known-gaps.md
 2026-10-31 Text Area Editor: done — TextareaEditor cva (size/shape/status) + toolbar/footer slots; 1 retry; gaps in known-gaps
+2026-10-31 Tabs Switch: done — tabs.tsx switch variant + size/tone/iconOnly; 1 retry; icon placeholder, see known-gaps
