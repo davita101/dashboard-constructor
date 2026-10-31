@@ -15,6 +15,11 @@ const nativeSelectVariants = cva(
       variant: {
         input:
           "h-8 w-full rounded-r32 bg-background-0 outline outline-base-100 -outline-offset-1 has-focus-visible:shadow-[inset_0_0_0_4px_var(--base-alpha-20)] has-focus-visible:outline-base-200 has-focus-visible:-outline-offset-5 [--select-icon:url(/icons/material-unfold-more.svg)] [--select-pl:--spacing(3)] [--select-pr:--spacing(8)] [&_select]:text-10 [&_select]:leading-16 [&_select]:font-semibold [&_select]:text-base-700",
+        // Color-Picker Input-Pilled / Input-Rounded size 24 used as a select (Hex, Last Colors)
+        "compact-pill":
+          "h-6 w-full rounded-r32 bg-background-0 outline outline-base-100 -outline-offset-1 has-focus-visible:shadow-[inset_0_0_0_4px_var(--base-alpha-20)] has-focus-visible:outline-base-200 has-focus-visible:-outline-offset-5 [--select-icon:url(/icons/material-unfold-more.svg)] [--select-pl:--spacing(3)] [--select-pr:--spacing(7)] [&_select]:text-9 [&_select]:leading-16 [&_select]:font-semibold [&_select]:text-base-700",
+        "compact-rounded":
+          "h-6 w-full rounded-r6 bg-background-0 outline outline-base-100 -outline-offset-1 has-focus-visible:shadow-[inset_0_0_0_4px_var(--base-alpha-20)] has-focus-visible:outline-base-200 has-focus-visible:-outline-offset-5 [--select-icon:url(/icons/material-unfold-more.svg)] [--select-pl:--spacing(2)] [--select-pr:--spacing(7)] [&_select]:text-9 [&_select]:leading-16 [&_select]:font-semibold [&_select]:text-base-700",
         pill:
           "h-6 w-fit rounded-r32 bg-linear-to-b from-background-0 to-background-20 outline outline-base-100 -outline-offset-1 has-focus-visible:outline-2 has-focus-visible:outline-base-alpha-50 [--select-icon:url(/icons/material-expand-more.svg)] [--select-pl:--spacing(3)] [--select-pr:--spacing(7)] [&_select]:text-10 [&_select]:leading-16 [&_select]:font-bold [&_select]:text-base-800",
       },
@@ -44,7 +49,7 @@ function NativeSelect({ className, variant = "input", ...props }: NativeSelectPr
         data-slot="native-select-icon"
         className={cn(
           "pointer-events-none absolute top-1/2 size-4 -translate-y-1/2 bg-base-500 mask-(--select-icon) mask-contain mask-center mask-no-repeat",
-          variant === "pill" ? "right-2" : "right-3"
+          variant === "pill" || variant?.startsWith("compact") ? "right-2" : "right-3"
         )}
       />
     </div>
