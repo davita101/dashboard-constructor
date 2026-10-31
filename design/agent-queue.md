@@ -46,7 +46,7 @@ Channel: ypny6p4s
 | 42 | Popover | 9402:22995 | done | colors inferred from export; see known-gaps |
 | 43 | Dialog | 9402:26501 | done | shadcn dialog (Base UI) + cva variant/layout, DialogPanel static; first-pass approve; no tree.txt, black/horizontal guessed |
 | 44 | Modal | 6980:969 | done | dialog.tsx modal variant/size + DialogModal* slots; 7 content sets guessed from names (see known-gaps); Reuse dialog.tsx from row 43 (add variant/size), no new dialog primitive |
-| 45 | Toast | 6978:41509 | todo | Figma toast = Alert (CLAUDE.md): extend alert.tsx with variants, not shadcn toast |
+| 45 | Toast | 6978:41509 | done | Figma toast = Alert (CLAUDE.md): extend alert.tsx with variants, not shadcn toast |
 | 46 | Notification | 12145:243335 | todo | Check alert.tsx and row 45 first; reuse/extend them, new file only for parts they lack |
 | 47 | Command Menu | 9402:27554 | todo |  |
 | 48 | Color Picker | 9402:27555 | todo |  |

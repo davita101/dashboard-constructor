@@ -116,3 +116,4 @@ Fix: open Figma file, run TalkToFigma plugin on channel ypny6p4s, check Modal no
 2026-10-31 Popover: done — shadcn popover (Base UI) + cva default/black, 8 variants; colors inferred, see known-gaps
 2026-10-31 Dialog: done — first-pass approve; gaps in known-gaps.md
 2026-10-31 Modal: done — dialog.tsx variant modal + slots; Form/Switcher-*/Files/2FA/Pin content guessed, Calendar/Select/video missing, see known-gaps
+2026-10-31 Toast: done — Alert layout=panel + AlertDot/AlertTime slots; Black variant not node-read, see known-gaps

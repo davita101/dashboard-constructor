@@ -43,6 +43,8 @@ const alertVariants = cva(
         card: "w-full items-start justify-between rounded-r16 px-2",
         // Alert-List-Buttons: heading + divider + dash list + footer
         list: "w-full items-start justify-between rounded-r20 px-3",
+        // Toast (Figma 6978:41848): 300px panel, head (dot, title, time, close) + divider + message + two buttons
+        panel: "w-75 max-w-full flex-col overflow-hidden rounded-r20",
       },
     },
     // Toast types differ slightly from the card in Figma
@@ -99,7 +101,14 @@ function AlertContent({ className, ...props }: React.ComponentProps<"div">) {
 /** Card/list heading row. */
 function AlertHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div data-slot="alert-header" className={cn("flex items-center pb-2", className)} {...props} />
+    <div
+      data-slot="alert-header"
+      className={cn(
+        "flex items-center pb-2 group-data-[layout=panel]/alert:h-9.75 group-data-[layout=panel]/alert:justify-between group-data-[layout=panel]/alert:gap-2 group-data-[layout=panel]/alert:p-3",
+        className
+      )}
+      {...props}
+    />
   )
 }
 
@@ -151,12 +160,37 @@ function AlertIcon({ className, ...props }: React.ComponentProps<"span">) {
   )
 }
 
+/** Figma material-default-icon (toast head): 16px box with an 8px ring. */
+function AlertDot({ className, ...props }: React.ComponentProps<"span">) {
+  return (
+    <span
+      data-slot="alert-dot"
+      aria-hidden
+      className={cn("grid size-4 shrink-0 place-items-center", className)}
+      {...props}
+    >
+      <span className="size-2 rounded-full outline-2 -outline-offset-2 outline-(--alert-icon)" />
+    </span>
+  )
+}
+
+/** Toast head timestamp. */
+function AlertTime({ className, ...props }: React.ComponentProps<"time">) {
+  return (
+    <time
+      data-slot="alert-time"
+      className={cn("text-10 leading-16 font-semibold text-(--alert-icon)", className)}
+      {...props}
+    />
+  )
+}
+
 function AlertTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="alert-title"
       className={cn(
-        "min-w-0 truncate px-2 text-11 leading-20 font-bold group-data-[layout=card]/alert:flex-1 group-data-[layout=card]/alert:px-1.5 group-data-[layout=list]/alert:flex-1 group-data-[layout=list]/alert:px-1.5 group-data-[layout=list]/alert:text-12",
+        "min-w-0 truncate px-2 text-11 leading-20 font-bold group-data-[layout=card]/alert:flex-1 group-data-[layout=card]/alert:px-1.5 group-data-[layout=list]/alert:flex-1 group-data-[layout=list]/alert:px-1.5 group-data-[layout=list]/alert:text-12 group-data-[layout=panel]/alert:flex-1 group-data-[layout=panel]/alert:px-0 group-data-[layout=panel]/alert:text-10 group-data-[layout=panel]/alert:leading-16 group-data-[layout=panel]/alert:font-semibold",
         className
       )}
       {...props}
@@ -169,7 +203,7 @@ function AlertDescription({ className, ...props }: React.ComponentProps<"div">) 
     <div
       data-slot="alert-description"
       className={cn(
-        "px-2 py-3 text-11 leading-20 font-semibold text-(--alert-desc) group-data-[layout=list]/alert:px-0 group-data-[layout=list]/alert:py-2",
+        "px-2 py-3 text-11 leading-20 font-semibold text-(--alert-desc) group-data-[layout=list]/alert:px-0 group-data-[layout=list]/alert:py-2 group-data-[layout=panel]/alert:p-3 group-data-[layout=panel]/alert:pb-0",
         className
       )}
       {...props}
@@ -205,7 +239,7 @@ function AlertFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="alert-footer"
-      className={cn("flex items-center gap-2 px-2 pt-1 pb-3", className)}
+      className={cn("flex items-center gap-2 px-2 pt-1 pb-3 group-data-[layout=panel]/alert:p-3", className)}
       {...props}
     />
   )
@@ -216,7 +250,7 @@ function AlertAction({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="alert-action"
-      className={cn("flex shrink-0 items-center gap-1", className)}
+      className={cn("flex shrink-0 items-center gap-1 group-data-[layout=panel]/alert:gap-3", className)}
       {...props}
     />
   )
@@ -228,12 +262,14 @@ export {
   AlertClose,
   AlertContent,
   AlertDescription,
+  AlertDot,
   AlertFooter,
   AlertHeader,
   AlertIcon,
   AlertList,
   AlertListItem,
   AlertSeparator,
+  AlertTime,
   AlertTitle,
   alertVariants,
   type AlertVariant,
