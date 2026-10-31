@@ -65,6 +65,8 @@ const buttonVariants = cva(
           "bg-white-alpha-20 text-background-0 outline-white-alpha-50 backdrop-blur-[15px] before:from-white-alpha-15 before:to-white-alpha-15 hover:bg-white-alpha-30 hover:before:from-white-alpha-20 hover:before:to-white-alpha-20 active:bg-white-alpha-40 active:before:from-white-alpha-20 active:before:to-white-alpha-20 data-disabled:text-white-alpha-50 data-disabled:opacity-50 data-disabled:before:from-white-alpha-20 data-disabled:before:to-white-alpha-20",
         // Icon-only control that keeps its parent's color (e.g. alert close)
         bare: "text-current outline-current before:hidden hover:opacity-70",
+        // Gray toolbar icon action (e.g. mail input formatting icons)
+        muted: "text-base-500 outline-base-alpha-20 before:hidden hover:text-base-700 active:text-base-800",
       },
       size: {
         "60": "h-15 rounded-r16 text-14 leading-24 [--btn-icon:--spacing(7)] [--btn-px:--spacing(4)] [--btn-tx:--spacing(2)]",
@@ -84,6 +86,8 @@ const buttonVariants = cva(
         "icon-24": "size-6 rounded-r6 text-10 leading-16 [--btn-icon:--spacing(3)]",
         "icon-20": "size-5 rounded-r6 text-10 leading-16 [--btn-icon:--spacing(4)]",
         "icon-16": "size-4 rounded-r4 text-9 leading-16 [--btn-icon:--spacing(3)]",
+        // Icon fills the whole 20px box (Figma 20x20 toolbar icons)
+        "glyph-20": "size-5 rounded-r6 p-0 [--btn-icon:--spacing(5)] [--btn-px:0px] [--btn-tx:0px]",
       },
       shape: {
         pill: "rounded-r32",

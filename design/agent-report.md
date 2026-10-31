@@ -103,3 +103,4 @@
 2026-10-30 File Upload: done — first-pass approve, gaps in known-gaps.md
 2026-10-31 Payment Card Input: done — PaymentCardBrand slot on input-group/double-input, first-pass approve
 2026-10-31 Add Avatar: done — tsc/lint/build green; gaps in known-gaps.md
+2026-10-31 Mail Input: done — tsc/lint/build green, headless browser matches Figma; gaps in known-gaps.md
