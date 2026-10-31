@@ -32,6 +32,7 @@ const counterStyle: Record<ButtonVariant, { variant: BadgeVariant; color?: Badge
   "white-soft": { variant: "white" },
   bare: { variant: "ghost" },
   muted: { variant: "ghost" },
+  "icon-action": { variant: "ghost" },
 }
 const counterSize: Record<(typeof sizes)[number], BadgeSize> = {
   "60": "square-24", "48": "square-24", "40": "square-20", "32": "square-16",

@@ -67,6 +67,10 @@ const buttonVariants = cva(
         bare: "text-current outline-current before:hidden hover:opacity-70",
         // Gray toolbar icon action (e.g. mail input formatting icons)
         muted: "text-base-500 outline-base-alpha-20 before:hidden hover:text-base-700 active:text-base-800",
+        // Figma Misc Close (11956:33166) / Upload (11956:33373): gray, blue on hover, dark when pressed,
+        // Active at 30% when disabled. data-force pins a state for previews.
+        "icon-action":
+          "text-base-500 outline-primary-300 before:hidden hover:text-primary-600 active:text-base-700 data-[force=active]:text-base-700 data-[force=hover]:text-primary-600 data-disabled:text-base-700 data-disabled:opacity-30",
       },
       size: {
         "60": "h-15 rounded-r16 text-14 leading-24 [--btn-icon:--spacing(7)] [--btn-px:--spacing(4)] [--btn-tx:--spacing(2)]",

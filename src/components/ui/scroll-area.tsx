@@ -31,7 +31,7 @@ function ScrollArea({
 
 // Figma Scroll: 4px pill thumb, Default idle, Active on hover/drag.
 const scrollThumbVariants = cva(
-  "relative flex-1 rounded-r8 bg-base-200 transition-colors hover:bg-base-500 data-[scrolling]:bg-base-500",
+  "relative flex-1 rounded-r8 bg-base-150 transition-colors hover:bg-base-500 data-[scrolling]:bg-base-500",
   {
     variants: {
       state: {
