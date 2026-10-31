@@ -13,7 +13,8 @@
     "ui:index": "node scripts/ui-index.mjs",
     "shot": "node scripts/shot.mjs",
     "audit:component": "node scripts/audit-component.mjs",
-    "token:hex": "node scripts/token-hex.mjs"
+    "token:hex": "node scripts/token-hex.mjs",
+    "figma:spec": "node scripts/figma-spec.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
