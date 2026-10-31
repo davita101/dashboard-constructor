@@ -68,7 +68,7 @@ Channel: ypny6p4s
 | 64 | Pagination | 9232:577001 | done |  |
 | 65 | Sidebar | 15260:53844 | done |  |
 | 66 | Sidebar Component | 5081:15251 | done | Sidebar Component |
-| 67 | Chart | 9859:3629 | todo | Charts |
+| 67 | Chart | 9859:3629 | done | Charts |
 | 68 | Chart Component | 5035:13716 | todo | Charts Components; Parts of Chart (row 67): reuse chart files, add variants |
 | 69 | Chart Metric | 9880:5306 | todo | Charts Metrics; Extend chart from row 67 (variant), no new chart primitive |
 | 70 | Chart Card | 9903:12833 | todo | Charts Cards; Compose chart from row 67 inside card.tsx, no new chart primitive |
