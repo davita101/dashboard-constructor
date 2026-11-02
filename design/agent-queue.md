@@ -90,4 +90,4 @@ Channel: eyg843by
 | 87  | Icons Crypto          | 5027:42555   | hold        | user writes SVGs; 62 icons |
 | 88  | Icons AI              | 13351:71669  | hold        | user writes SVGs; 32 icons |
 | 89  | Icons Flags           | 4288:329     | hold        | user writes SVGs; 238 icons |
-| 77  | Mockups               | 11662:1003   | todo        | composite, last                                                                                                                    |
+| 77  | Mockups               | 11662:1003   | done        | composite, last                                                                                                                    |

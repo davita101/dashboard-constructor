@@ -150,3 +150,4 @@ Fix: open Figma file, run TalkToFigma plugin on channel ypny6p4s, check Modal no
 2026-11-02 Navigate Sidebars Footers: done
 2026-11-02 Code Snippet: done
 2026-11-02 Player: done
+2026-11-02 Mockups: done
