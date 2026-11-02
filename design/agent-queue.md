@@ -55,7 +55,7 @@ Channel: eyg843by
 | 51  | Card Content          | 11590:81923  | done        | Cards: Content; ui/card.tsx exists                                                                                                 |
 | 52  | Profile               | 11638:16498  | done        |                                                                                                                                    |
 | 53  | List                  | 11654:127    | done        |                                                                                                                                    |
-| 54  | Message               | 11409:1128   | in-progress | Messages                                                                                                                           |
+| 54  | Message               | 11409:1128   | done        | Messages                                                                                                                           |
 | 55  | Task                  | 12276:31748  | done        | Tasks                                                                                                                              |
 | 56  | Empty State           | 11951:3850   | done        |                                                                                                                                    |
 | 57  | QR Code               | 9488:542     | done        |                                                                                                                                    |

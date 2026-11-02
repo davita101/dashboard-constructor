@@ -398,7 +398,21 @@ function MessageName({ className, name = "John Traveller", time = "2 min ago", c
         <span className="text-12 leading-20 font-semibold text-base-700">{name}</span>
         {time ? <span className="text-10 leading-16 font-semibold text-base-400">{time}</span> : null}
       </div>
-      {children}
+      {children ?? <MessageActions />}
+    </div>
+  )
+}
+
+/** Figma Name row actions: copy + edit, 16px icon buttons. */
+function MessageActions({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div data-slot="message-actions" className={cn("flex items-center gap-2", className)} {...props}>
+      {[
+        { icon: "material-file_copy", mask: "mask-[url(/icons/material-file_copy.svg)]", label: "Copy message" },
+        { icon: "material-mode", mask: "mask-[url(/icons/material-mode.svg)]", label: "Edit message" },
+      ].map(({ icon, mask, label }) => (
+        <button key={icon} type="button" aria-label={label} className={cn("size-4 shrink-0 cursor-pointer bg-base-400 transition-colors mask-contain mask-center mask-no-repeat hover:bg-base-700", mask)} />
+      ))}
     </div>
   )
 }
@@ -475,6 +489,7 @@ export {
   ContentMessageVideo,
   Message,
   MessageActivity,
+  MessageActions,
   MessageBody,
   MessageImage,
   MessageName,
