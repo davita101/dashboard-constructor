@@ -1,4 +1,4 @@
-Channel: ypny6p4s
+Channel: eyg843by
 
 | #   | Component             | Figma node   | Status      | Notes                                                                                                                              |
 | --- | --------------------- | ------------ | ----------- | ---------------------------------------------------------------------------------------------------------------------------------- |
@@ -69,7 +69,7 @@ Channel: ypny6p4s
 | 65  | Sidebar               | 15260:53844  | done        |                                                                                                                                    |
 | 66  | Sidebar Component     | 5081:15251   | done        | Sidebar Component                                                                                                                  |
 | 67  | Chart                 | 9859:3629    | done        | Charts                                                                                                                             |
-| 68  | Chart Component       | 5035:13716   | in-progress | Charts Components; Parts of Chart (row 67): reuse chart files, add variants                                                        |
+| 68  | Chart Component       | 5035:13716   | done        | Charts Components; Parts of Chart (row 67): reuse chart files, add variants                                                        |
 | 69  | Chart Metric          | 9880:5306    | todo        | Charts Metrics; Extend chart from row 67 (variant), no new chart primitive                                                         |
 | 70  | Chart Card            | 9903:12833   | todo        | Charts Cards; Compose chart from row 67 inside card.tsx, no new chart primitive                                                    |
 | 71  | Chart White           | 12246:59190  | todo        | Charts (White); White theme of chart from row 67: variant, not a copy                                                              |
