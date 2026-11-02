@@ -72,10 +72,10 @@ Channel: eyg843by
 | 68  | Chart Component       | 5035:13716   | done        | Charts Components; Parts of Chart (row 67): reuse chart files, add variants                                                        |
 | 69  | Chart Metric          | 9880:5306    | done        | Charts Metrics; Extend chart from row 67 (variant), no new chart primitive                                                         |
 | 70  | Chart Card            | 9903:12833   | blocked     | 3 attempts failed: line-chart tooltip wide/covers left plot/not at Jul, Figma ~100px at Jul |
-| 71  | Chart White           | 12246:59190  | todo        | Charts (White); White theme of chart from row 67: variant, not a copy                                                              |
-| 72  | Icons Payment         | 4289:8404    | todo        | SVG icons                                                                                                                          |
-| 73  | Icons Social          | 5030:10817   | todo        | SVG icons                                                                                                                          |
-| 74  | Icons Flags Rectangle | 11956:33422  | todo        | SVG icons                                                                                                                          |
-| 75  | Logotypes             | 5992:23482   | todo        | SVG logos                                                                                                                          |
-| 76  | Auth Templates        | 7058:304041  | todo        | Sing In, Sing Up, Password, Activation; composite                                                                                  |
-| 77  | Mockups               | 11662:1003   | todo        | composite, last                                                                                                                    |
+| 71  | Chart White           | 12246:59190  | done        | Charts (White); White theme of chart from row 67: variant, not a copy                                                              |
+| 72  | Icons Payment         | 4289:8404    | hold        | SVG icons                                                                                                                          |
+| 73  | Icons Social          | 5030:10817   | hold        | SVG icons                                                                                                                          |
+| 74  | Icons Flags Rectangle | 11956:33422  | hold        | SVG icons                                                                                                                          |
+| 75  | Logotypes             | 5992:23482   | hold        | SVG logos                                                                                                                          |
+| 76  | Auth Templates        | 7058:304041  | hold        | Sing In, Sing Up, Password, Activation; composite                                                                                  |
+| 77  | Mockups               | 11662:1003   | hold        | composite, last                                                                                                                    |

@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 import * as RechartsPrimitive from "recharts"
 import type { TooltipValueType } from "recharts"
@@ -38,14 +39,31 @@ function useChart() {
   return context
 }
 
+const chartContainerVariants = cva(
+  "flex justify-center font-default text-10 leading-16 font-bold [&_.recharts-cartesian-axis-line]:stroke-transparent [&_.recharts-cartesian-axis-tick-line]:stroke-transparent [&_.recharts-layer]:outline-hidden [&_.recharts-sector]:outline-hidden [&_.recharts-surface]:outline-hidden",
+  {
+    variants: {
+      theme: {
+        default:
+          "[&_.recharts-cartesian-axis-tick_text]:fill-base-700 [&_.recharts-cartesian-grid_line]:stroke-background-100",
+        white:
+          "[&_.recharts-cartesian-axis-tick_text]:fill-white-alpha-50 [&_.recharts-cartesian-grid_line]:stroke-white-alpha-10",
+      },
+    },
+    defaultVariants: { theme: "default" },
+  }
+)
+
 function ChartContainer({
   id,
+  theme,
   className,
   children,
   config,
   initialDimension = INITIAL_DIMENSION,
   ...props
-}: React.ComponentProps<"div"> & {
+}: Omit<React.ComponentProps<"div">, "color"> &
+  VariantProps<typeof chartContainerVariants> & {
   config: ChartConfig
   children: React.ComponentProps<
     typeof RechartsPrimitive.ResponsiveContainer
@@ -63,10 +81,7 @@ function ChartContainer({
       <div
         data-slot="chart"
         data-chart={chartId}
-        className={cn(
-          "flex justify-center font-default text-10 leading-16 font-bold [&_.recharts-cartesian-axis-tick_text]:fill-base-700 [&_.recharts-cartesian-axis-line]:stroke-transparent [&_.recharts-cartesian-axis-tick-line]:stroke-transparent [&_.recharts-cartesian-grid_line]:stroke-background-100 [&_.recharts-layer]:outline-hidden [&_.recharts-sector]:outline-hidden [&_.recharts-surface]:outline-hidden",
-          className
-        )}
+        className={cn(chartContainerVariants({ theme }), className)}
         {...props}
       >
         <ChartStyle id={chartId} config={config} />

@@ -68,14 +68,20 @@ function slices(count: number) {
   })
 }
 
-type Props = VariantProps<typeof radialChartVariants> & { count?: number; className?: string }
+type Props = VariantProps<typeof radialChartVariants> & {
+  count?: number
+  theme?: "default" | "white"
+  className?: string
+}
 
-function RadialChart({ kind = "donut", text = false, count = 7, className }: Props) {
+function RadialChart({ kind = "donut", text = false, count = 7, theme = "default", className }: Props) {
+  const white = theme === "white"
   const label = (
     <span className="absolute inset-0 flex flex-col items-center justify-center">
       <span
         className={cn(
-          "font-default font-bold text-base-800",
+          "font-default font-bold",
+          white ? "text-white" : "text-base-800",
           kind === "progress-half" ? "text-24 leading-36" : "text-18 leading-28",
         )}
       >
@@ -84,8 +90,15 @@ function RadialChart({ kind = "donut", text = false, count = 7, className }: Pro
       <span
         className={cn(
           "font-default font-bold",
-          kind === "progress" ? "text-16 leading-24 text-base-700" : "text-base-500",
-          kind === "progress-half" ? "text-12 leading-20 text-base-700" : kind === "progress" ? "" : "text-10 leading-16",
+          white
+            ? "text-white-alpha-50"
+            : kind === "progress"
+              ? "text-base-700"
+              : kind === "progress-half"
+                ? "text-base-700"
+                : "text-base-500",
+          kind === "progress" ? "text-16 leading-24" : "",
+          kind === "progress-half" ? "text-12 leading-20" : kind === "progress" ? "" : "text-10 leading-16",
         )}
       >
         Total
@@ -123,8 +136,8 @@ function RadialChart({ kind = "donut", text = false, count = 7, className }: Pro
             const [bx, by] = polar(64, 64, kind === "pie" ? 40 : 56, (s.from + s.to) / 2)
             return (
               <g key={`b${s.i}`}>
-                <rect x={bx - 11} y={by - 8} width={22} height={16} rx={6} fill="var(--base-900)" />
-                <text x={bx} y={by + 3} textAnchor="middle" fontSize={7} fontWeight={700} fill="var(--background-0)">
+                <rect x={bx - 11} y={by - 8} width={22} height={16} rx={6} fill={white ? "var(--default-gray-800)" : "var(--base-900)"} />
+                <text x={bx} y={by + 3} textAnchor="middle" fontSize={7} fontWeight={700} fill={white ? "var(--white)" : "var(--background-0)"}>
                   {s.pct}%
                 </text>
               </g>

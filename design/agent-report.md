@@ -144,3 +144,4 @@ Fix: open Figma file, run TalkToFigma plugin on channel ypny6p4s, check Modal no
 2026-11-02 Message: done
 2026-11-02 Chart Metric: done
 2026-11-02 Chart Card: blocked — 3 attempts failed, line-chart tooltip size/position never matched Figma
+2026-11-02 Chart White: done

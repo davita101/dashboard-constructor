@@ -169,10 +169,12 @@ type Props = {
   yAxis?: ChartYAxis
   lines?: ChartLines
   tooltip?: boolean
+  theme?: "default" | "white"
   className?: string
 }
 
-function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, className }: Props) {
+function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, theme = "default", className }: Props) {
+  const barBg = theme === "white" ? "var(--white-alpha-10)" : "var(--base-100)"
   const uid = React.useId().replace(/:/g, "")
   const isHorizontal =
     kind === "bar" || kind === "bar-double" || kind === "bar-stacked" || kind === "bar-negative"
@@ -181,7 +183,11 @@ function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, 
   ) satisfies ChartConfig
   const grid =
     lines === "none" ? null : (
-      <CartesianGrid vertical={lines === "grid"} horizontal={!isHorizontal || lines === "grid"} />
+      <CartesianGrid
+        stroke={theme === "white" ? "var(--white-alpha-10)" : "var(--background-100)"}
+        vertical={lines === "grid"}
+        horizontal={!isHorizontal || lines === "grid"}
+      />
     )
   const margin = { top: 0, right: 12, bottom: 0, left: 8 }
   const tip = tooltip ? (
@@ -333,14 +339,14 @@ function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, 
     const bars =
       t === 1 ? (
         <>
-          <Bar yAxisId={yId} dataKey="bg" fill="var(--base-100)" barSize={4} radius={2} isAnimationActive={false} />
+          <Bar yAxisId={yId} dataKey="bg" fill={barBg} barSize={4} radius={2} isAnimationActive={false} />
           <Bar yAxisId={yId} dataKey="b" fill="var(--blue-500)" barSize={4} radius={2} isAnimationActive={false} />
           <Bar yAxisId={yId} dataKey="a" fill="var(--pink-500)" barSize={4} radius={2} isAnimationActive={false} />
           <Bar yAxisId={yId} dataKey="c" fill="var(--green-500)" barSize={4} radius={2} isAnimationActive={false} />
         </>
       ) : t === 2 ? (
         <>
-          <Bar yAxisId={yId} dataKey="bg" fill="var(--base-100)" barSize={10} radius={[4, 4, 0, 0]} isAnimationActive={false} />
+          <Bar yAxisId={yId} dataKey="bg" fill={barBg} barSize={10} radius={[4, 4, 0, 0]} isAnimationActive={false} />
           <Bar yAxisId={yId} dataKey="v" fill={`url(#${uid}-c)`} barSize={10} radius={[4, 4, 0, 0]} isAnimationActive={false} />
         </>
       ) : t === 3 ? (
@@ -374,7 +380,7 @@ function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, 
   }
 
   return (
-    <ChartContainer config={config} className={className ?? "h-79 w-70"}>
+    <ChartContainer config={config} theme={theme} className={className ?? "h-79 w-70"}>
       {chart}
     </ChartContainer>
   )

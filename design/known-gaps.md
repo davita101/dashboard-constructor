@@ -75,3 +75,4 @@ One line per component: what could not be matched to Figma. Update when fixed.
 - Chart: built on recharts via shadcn chart; series data, bar/candle/pie/progress geometry, stroke weights, tooltip placement and axis offsets approximated from the Figma images, not exact.
 - Chart Component: Figma plugin gives no vector geometry, so sparkline/area/step/pie/map shapes and series are generated (seeded) approximations; map continent outline and highlight regions approximate; Chart-Dot Border=2 outline weight and Pie/Donut ring width read from images.
 - Chart Metric: Figma check_circle and bar_chart icons are not in public/icons and the plugin cannot export SVG, so those icon slots are empty; chart geometry and the Image-type picture fill are approximated from chart-parts (black-to-blue gradient).
+- Chart White: variant of Chart via theme="white" (no copy); Figma #ffffff@0.1 has no exact token so white-alpha-10 used; data/geometry approximated as in Chart.
