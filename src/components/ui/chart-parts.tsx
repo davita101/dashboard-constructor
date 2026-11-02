@@ -2,6 +2,7 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { Progress } from "@/components/ui/progress"
+import type { ProgressColor } from "@/components/ui/progress-colors"
 import { cn } from "@/lib/utils"
 
 // Figma Charts Components page (5035:13716): the small parts every chart card is built from.
@@ -283,15 +284,17 @@ function ChartTrend({
   className,
   direction,
   icon = "trend",
+  size = "sm",
   children,
   ...props
-}: React.ComponentProps<"span"> & { direction: "up" | "down"; icon?: "trend" | "arrow" }) {
+}: React.ComponentProps<"span"> & { direction: "up" | "down"; icon?: "trend" | "arrow"; size?: "sm" | "md" }) {
   return (
     <span
       data-slot="chart-trend"
       data-direction={direction}
       className={cn(
-        "inline-flex items-center gap-1 text-10 leading-16 font-bold",
+        "inline-flex items-center text-10 leading-16 font-bold",
+        size === "md" ? "gap-2" : "gap-1",
         direction === "up" ? "text-green-600" : "text-danger-600",
         className,
       )}
@@ -300,7 +303,9 @@ function ChartTrend({
       <span
         aria-hidden
         className={cn(
-          "size-4 shrink-0 bg-current mask-contain mask-center mask-no-repeat",
+          "shrink-0 bg-current mask-contain",
+          size === "md" ? "size-5" : "size-4",
+          " mask-center mask-no-repeat",
           icon === "arrow"
             ? direction === "up"
               ? "mask-[url(/icons/material-arrow-upward.svg)]"
@@ -334,6 +339,7 @@ type ChartProgressCardProps = Omit<React.ComponentProps<"div">, "style"> &
     count?: string
     trend?: "up" | "down"
     value?: number
+    color?: ProgressColor
   }
 
 /** Figma Progress-Card-Component: Type Progress (heading, count, trend, progress line) or Head (Head / Views row). */
@@ -345,6 +351,7 @@ function ChartProgressCard({
   count = "256",
   trend,
   value = 100,
+  color = "blue",
   ...props
 }: ChartProgressCardProps) {
   const image = appearance === "image"
@@ -377,7 +384,7 @@ function ChartProgressCard({
           {trend && !image ? <ChartTrend direction={trend} icon="arrow">{count}</ChartTrend> : null}
         </span>
       </div>
-      <Progress value={value} color="blue" size="small" aria-label={heading ?? "Heading"} />
+      <Progress value={value} color={color} size="small" aria-label={heading ?? "Heading"} />
     </div>
   )
 }
