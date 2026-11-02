@@ -36,6 +36,7 @@ const progressArcVariants = cva("fill-none transition-[stroke-dasharray]", {
         fuchsia: "stroke-fuchsia-600",
         violet: "stroke-violet-600",
         indigo: "stroke-indigo-600",
+        gray: "stroke-background-50",
     },
   },
   defaultVariants: { color: "primary" },
@@ -67,6 +68,7 @@ const progressArcTrackVariants = cva("fill-none", {
         fuchsia: "stroke-fuchsia-alpha-10",
         violet: "stroke-violet-alpha-10",
         indigo: "stroke-indigo-alpha-10",
+        gray: "stroke-background-20",
     },
   },
   defaultVariants: { color: "primary" },
@@ -98,13 +100,14 @@ const progressArcTextVariants = cva("relative font-default font-bold", {
         fuchsia: "text-fuchsia-700",
         violet: "text-violet-700",
         indigo: "text-indigo-700",
+        gray: "text-base-700",
     },
   },
   defaultVariants: { color: "primary" },
 })
 
 type ProgressCircleSize = "16" | "24" | "36" | "48" | "56" | "72" | "128"
-type ProgressHalfSize = "20" | "24" | "32" | "40" | "48" | "60" | "72" | "96" | "128"
+type ProgressHalfSize = "20" | "24" | "32" | "40" | "48" | "56" | "60" | "72" | "96" | "128"
 
 /** Figma Progress-Circular Size: Micro 16, Extra Small 24, Small 36, Default 48, Large 56, Extra Large 72, 2 Extra Large 128. */
 const progressCircleVariants = cva(
@@ -125,7 +128,7 @@ const progressCircleVariants = cva(
   }
 )
 
-/** Figma Progress-Circle-Half Size (width; height is half). Text sits on the bottom edge. */
+/** Figma Progress-Circle-Half Size (width; height is half; 56 from Chart-Half). Text sits on the bottom edge. */
 const progressHalfVariants = cva(
   "relative inline-flex shrink-0 flex-col items-center justify-end text-center",
   {
@@ -136,6 +139,7 @@ const progressHalfVariants = cva(
         "32": "h-4 w-8",
         "40": "h-5 w-10",
         "48": "h-6 w-12",
+        "56": "h-7 w-14",
         "60": "h-7.5 w-15",
         "72": "h-9 w-18",
         "96": "h-12 w-24",
@@ -162,6 +166,7 @@ const progressArcValueVariants = cva("tabular-nums", {
       "half-32": "text-8 leading-12",
       "half-40": "text-8 leading-12",
       "half-48": "text-8 leading-12",
+      "half-56": "hidden",
       "half-60": "text-10 leading-16",
       "half-72": "text-10 leading-16",
       "half-96": "text-12 leading-20",
@@ -186,6 +191,7 @@ const progressArcLabelVariants = cva("whitespace-nowrap", {
       "half-32": "hidden",
       "half-40": "hidden",
       "half-48": "hidden",
+      "half-56": "hidden",
       "half-60": "hidden",
       "half-72": "text-8 leading-12",
       "half-96": "text-10 leading-16",

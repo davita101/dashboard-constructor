@@ -27,6 +27,7 @@ export const progressColors = [
   "fuchsia",
   "violet",
   "indigo",
+  "gray",
 ] as const
 
 export type ProgressColor = (typeof progressColors)[number]

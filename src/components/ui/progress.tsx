@@ -35,6 +35,7 @@ const progressTrackVariants = cva(
         fuchsia: "bg-fuchsia-alpha-10",
         violet: "bg-violet-alpha-10",
         indigo: "bg-indigo-alpha-10",
+        gray: "bg-background-20",
       },
       size: {
         default: "h-1",
@@ -73,6 +74,7 @@ const progressIndicatorVariants = cva(
         fuchsia: "from-fuchsia-700 to-fuchsia-600",
         violet: "from-violet-700 to-violet-600",
         indigo: "from-indigo-700 to-indigo-600",
+        gray: "from-background-50 to-background-50",
       },
     },
     defaultVariants: { color: "primary" },
@@ -105,6 +107,7 @@ const progressValueVariants = cva("shrink-0 font-default font-bold tabular-nums"
       fuchsia: "text-fuchsia-600",
       violet: "text-violet-600",
       indigo: "text-indigo-600",
+      gray: "text-base-700",
     },
     size: {
       default: "text-10 leading-16",
