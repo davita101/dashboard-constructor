@@ -80,7 +80,7 @@ Channel: eyg843by
 | 76  | Auth Templates        | 7058:304041  | done        | Sing In, Sing Up, Password, Activation; composite                                                                                  |
 | 78  | Navigate Sidebars Footers | 10417:603619 | done | Navigate, Sidebars, Footers; reuse sidebar/navigate-footer (rows 63, 65) as variants, no copies |
 | 79  | Code Snippet          | 11407:87015  | done | Code Snippet |
-| 80  | Player                | 9402:22996   | todo        | Player; video/audio player |
+| 80  | Player                | 9402:22996   | done        | Player; video/audio player |
 | 81  | Icons Material        | 314:956      | hold        | user writes SVGs; 2061 icons |
 | 82  | Icons Lucide          | 15851:208399 | hold        | user writes SVGs; 1767 icons |
 | 83  | Icons Outline Default | 15580:69404  | hold        | user writes SVGs; 90 icons |
