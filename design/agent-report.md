@@ -147,3 +147,4 @@ Fix: open Figma file, run TalkToFigma plugin on channel ypny6p4s, check Modal no
 2026-11-02 Chart White: done
 2026-11-02 Chart Card: done — recovered from builder transcripts after block; preset="card" on CartesianChart/RadialChart, tooltip pinned to Figma spot; bar_chart icon pending (user)
 2026-11-02 Auth Templates: done
+2026-11-02 Navigate Sidebars Footers: done

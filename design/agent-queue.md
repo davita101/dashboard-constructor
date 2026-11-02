@@ -78,7 +78,7 @@ Channel: eyg843by
 | 74  | Icons Flags Rectangle | 11956:33422  | hold        | user writes SVGs; SVG icons |
 | 75  | Logotypes             | 5992:23482   | hold        | user writes SVGs; SVG logos |
 | 76  | Auth Templates        | 7058:304041  | done        | Sing In, Sing Up, Password, Activation; composite                                                                                  |
-| 78  | Navigate Sidebars Footers | 10417:603619 | todo        | Navigate, Sidebars, Footers; reuse sidebar/navigate-footer (rows 63, 65) as variants, no copies |
+| 78  | Navigate Sidebars Footers | 10417:603619 | done | Navigate, Sidebars, Footers; reuse sidebar/navigate-footer (rows 63, 65) as variants, no copies |
 | 79  | Code Snippet          | 11407:87015  | todo        | Code Snippet |
 | 80  | Player                | 9402:22996   | todo        | Player; video/audio player |
 | 81  | Icons Material        | 314:956      | hold        | user writes SVGs; 2061 icons |

@@ -17,6 +17,10 @@ const sidebarVariants = cva("group/sidebar flex flex-col font-default tracking-d
       rail: "w-16 gap-0 p-2",
       icon: "w-16 items-center gap-2 px-3 py-5",
       flush: "w-62 gap-0 p-0",
+      // Figma Sidebar-Commerce-01 (296, p 12/20, gap 40), -02/-04 (296, p 24, gap 16), -03 (296, p 20, gap 16)
+      commerce: "w-74 gap-10 px-5 py-3",
+      "commerce-card": "w-74 gap-4 p-6",
+      "commerce-card-sm": "w-74 gap-4 p-5",
     },
     bordered: {
       true: "outline outline-background-100 -outline-offset-1",
@@ -243,6 +247,11 @@ function SidebarItemRow({ className, ...props }: React.ComponentProps<"div">) {
 
 function SidebarItemLabel({ className, ...props }: React.ComponentProps<"span">) {
   return <span data-slot="sidebar-item-label" className={cn("min-w-0 flex-1 truncate", className)} {...props} />
+}
+
+/** Left slot of a List-Item: swap in Checkbox, Radio, Switch, Avatar, flag or payment icon. */
+function SidebarItemLeading({ className, ...props }: React.ComponentProps<"span">) {
+  return <span data-slot="sidebar-item-leading" className={cn("flex shrink-0 items-center", className)} {...props} />
 }
 
 /** Right side of an item: counter badge, chevron. */
@@ -588,7 +597,76 @@ function SidebarRailDot({ className, ...props }: React.ComponentProps<"span">) {
   )
 }
 
+/** Figma Sidebar-Commerce card: r20 box with a 1px stroke holding a menu (Content slot). */
+const sidebarCardVariants = cva(
+  "flex w-full flex-col rounded-r20 bg-background-0 outline outline-background-100 -outline-offset-1",
+  {
+    variants: { pad: { wide: "px-4 py-2", narrow: "p-2", list: "px-2 py-3", news: "px-2 pt-2 pb-4" } },
+    defaultVariants: { pad: "wide" },
+  }
+)
+
+function SidebarCard({
+  className,
+  pad = "wide",
+  ...props
+}: React.ComponentProps<"section"> & VariantProps<typeof sidebarCardVariants>) {
+  return <section data-slot="sidebar-card" className={cn(sidebarCardVariants({ pad }), className)} {...props} />
+}
+
+/** Figma Navigate-List-Group: nested category list; `guide` draws the vertical line of the open branch. */
+const sidebarTreeVariants = cva("flex w-full flex-col", {
+  variants: { guide: { true: "ml-6 w-[calc(100%-1.5rem)] border-l border-background-100", false: "" } },
+  defaultVariants: { guide: false },
+})
+
+function SidebarTree({
+  className,
+  guide = false,
+  ...props
+}: React.ComponentProps<"div"> & VariantProps<typeof sidebarTreeVariants>) {
+  return <div data-slot="sidebar-tree" role="list" className={cn(sidebarTreeVariants({ guide }), className)} {...props} />
+}
+
+/** Figma List Item Component Level 1-3: 40 high row, `active` = bold label with a 2px left bar. */
+const sidebarTreeItemVariants = cva(
+  "group/tree relative flex h-10 w-full items-center gap-2 pr-3 text-left font-default text-11 leading-20 font-bold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary-500",
+  {
+    variants: {
+      level: { "1": "pl-3", "2": "pl-6", "3": "pl-6" },
+      active: {
+        true: "text-base-800 before:absolute before:inset-y-0 before:left-0 before:w-0.5 before:bg-base-800",
+        false: "text-base-600 hover:text-base-800",
+      },
+    },
+    defaultVariants: { level: "1", active: false },
+  }
+)
+
+function SidebarTreeItem({
+  className,
+  level = "1",
+  active = false,
+  ...props
+}: React.ComponentProps<"button"> & VariantProps<typeof sidebarTreeItemVariants>) {
+  return (
+    <button
+      type="button"
+      role="listitem"
+      data-slot="sidebar-tree-item"
+      data-active={active || undefined}
+      aria-current={active ? "page" : undefined}
+      className={cn(sidebarTreeItemVariants({ level, active }), className)}
+      {...props}
+    />
+  )
+}
+
 export {
+  SidebarItemLeading,
+  SidebarCard,
+  SidebarTree,
+  SidebarTreeItem,
   Sidebar,
   SidebarActions,
   SidebarBlock,
@@ -649,5 +727,8 @@ export {
   sidebarLogoVariants,
   sidebarTextItemVariants,
   sidebarVariants,
+  sidebarCardVariants,
+  sidebarTreeVariants,
+  sidebarTreeItemVariants,
   type SidebarLayout,
 }

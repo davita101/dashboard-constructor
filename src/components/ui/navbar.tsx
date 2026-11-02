@@ -19,6 +19,8 @@ const navbarVariants = cva("flex w-full items-center justify-between bg-backgrou
     variant: {
       bar: "min-h-16 gap-3 border-b border-background-100 p-4",
       plain: "gap-3",
+      // Figma Navigate-Commerce (6825:30921): 72 high, padding 20, bottom stroke
+      commerce: "h-18 gap-5 border-b border-background-100 p-5",
     },
   },
   defaultVariants: { variant: "bar" },
@@ -102,6 +104,20 @@ function NavbarIconButton({
     <Button variant={variant} size="icon-32" shape="pill" aria-label={label} {...props}>
       <ButtonIcon src={icon} className="size-4" />
     </Button>
+  )
+}
+
+/** Figma Navigate-Commerce Search: bare 24px search icon with an optional "Search" label (icon only below desktop). */
+function NavbarSearchLabel({ children = "Search", className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div data-slot="navbar-search-label" className={cn("flex items-center gap-3 text-base-500", className)} {...props}>
+      <span
+        aria-hidden
+        className="size-6 shrink-0 bg-current mask-contain mask-center mask-no-repeat"
+        style={{ maskImage: "url(/icons/material-search.svg)" }}
+      />
+      {children ? <span className="text-11 leading-20 font-semibold">{children}</span> : null}
+    </div>
   )
 }
 
@@ -423,8 +439,18 @@ function NavbarMenuPanelFooter({ className, ...props }: React.ComponentProps<"di
   )
 }
 
+/** Figma Navigate-Commerce Counter: Badge-Square-Pilled 16 (background-0, stroke background-100) after a button label. */
+function NavbarCounter({ className, children = "1", ...props }: Omit<React.ComponentProps<typeof Badge>, "size" | "variant" | "shape">) {
+  return (
+    <Badge data-slot="navbar-counter" size="square-16" variant="base" shape="pill" className={cn("mx-0.5", className)} {...props}>
+      {children}
+    </Badge>
+  )
+}
+
 export {
   Navbar,
+  NavbarCounter,
   NavbarHeading,
   NavbarLogo,
   NavbarTitle,
@@ -433,6 +459,7 @@ export {
   NavbarActions,
   NavbarIconButton,
   NavbarSearch,
+  NavbarSearchLabel,
   navbarVariants,
   NavbarMenuItem,
   NavbarMenuItemIcon,
