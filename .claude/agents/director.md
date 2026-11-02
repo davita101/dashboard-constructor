@@ -18,7 +18,7 @@ You review exactly one component per session. The user is away; nobody will answ
 2. **Audit.** `pnpm -s audit:component <new/changed .tsx files>` (from `git status --porcelain`) exits 0.
 3. **Scope.** `git status --porcelain` shows only files under `src/components/ui/`, `src/components/<domain>/`, `src/app/design-system/<slug>/`, `public/icons/`, `design/handoff/<slug>/`, `design/agent-queue.md`, `design/known-gaps.md`, and the lockfile / `package.json` / `components.json` when a shadcn base or dependency was added. `src/styles/`, `design/tokens/` or `globals.css` changed → reject.
 4. **Complete.** Every set and every variant in the Sets table of `figma.md` exists on `/design-system/<slug>` and in the code (cva variants, slots, parts).
-5. **Looks like Figma.** `pnpm -s shot <slug>`, then read the screenshot parts and the `img/*.png` Figma images and compare set by set: layout, sizes, colors, typography, icons. Colors in the code must be the tokens `figma.md` lists.
+5. **Looks like Figma.** `pnpm -s shot <slug>`, then read the screenshot parts and the `img/*.png` Figma images and compare set by set: layout, sizes, colors, typography, icons. Colors in the code must be the tokens `figma.md` lists. A missing icon file is not a reject reason and never ask the builder to write an SVG: the user writes SVGs. Check only that the slot references `/icons/material-<name>.svg` and the gap is logged; a new hand-written `.svg` in `public/icons/` → reject.
 6. **Gaps.** Only values the Figma data cannot give (stroke width, effects, hidden layers) may be lines in `design/known-gaps.md`. A missing set, variant, state, slot or part is never a gap.
 
 ## Decide

@@ -71,17 +71,19 @@ function slices(count: number) {
 type Props = VariantProps<typeof radialChartVariants> & {
   count?: number
   theme?: "default" | "white"
+  preset?: "default" | "card"
   className?: string
 }
 
-function RadialChart({ kind = "donut", text = false, count = 7, theme = "default", className }: Props) {
+function RadialChart({ kind = "donut", text = false, count = 7, theme = "default", preset = "default", className }: Props) {
   const white = theme === "white"
+  const card = preset === "card"
   const label = (
     <span className="absolute inset-0 flex flex-col items-center justify-center">
       <span
         className={cn(
           "font-default font-bold",
-          white ? "text-white" : "text-base-800",
+          white ? "text-white" : "text-base-800 group-data-[appearance=dark]/chart-card:text-background-0",
           kind === "progress-half" ? "text-24 leading-36" : "text-18 leading-28",
         )}
       >
@@ -97,6 +99,7 @@ function RadialChart({ kind = "donut", text = false, count = 7, theme = "default
               : kind === "progress-half"
                 ? "text-base-700"
                 : "text-base-500",
+          "group-data-[appearance=dark]/chart-card:text-white-alpha-70",
           kind === "progress" ? "text-16 leading-24" : "",
           kind === "progress-half" ? "text-12 leading-20" : kind === "progress" ? "" : "text-10 leading-16",
         )}
@@ -124,18 +127,18 @@ function RadialChart({ kind = "donut", text = false, count = 7, theme = "default
             ) : (
               <path
                 key={s.i}
-                d={arc(64, 64, 56, s.from + 2, s.to - 2)}
+                d={card ? arc(64, 64, 52, s.from + 1, s.to - 1) : arc(64, 64, 56, s.from + 2, s.to - 2)}
                 fill="none"
                 stroke={colors[s.i]}
-                strokeWidth={4}
-                strokeLinecap="round"
+                strokeWidth={card ? 12 : 4}
+                strokeLinecap={card ? "butt" : "round"}
               />
             ),
           )}
           {parts.map((s) => {
             const [bx, by] = polar(64, 64, kind === "pie" ? 40 : 56, (s.from + s.to) / 2)
             return (
-              <g key={`b${s.i}`}>
+              <g key={`b${s.i}`} className={card ? "hidden" : undefined}>
                 <rect x={bx - 11} y={by - 8} width={22} height={16} rx={6} fill={white ? "var(--default-gray-800)" : "var(--base-900)"} />
                 <text x={bx} y={by + 3} textAnchor="middle" fontSize={7} fontWeight={700} fill={white ? "var(--white)" : "var(--background-0)"}>
                   {s.pct}%
@@ -173,7 +176,7 @@ function RadialChart({ kind = "donut", text = false, count = 7, theme = "default
 
   const h = text ? 132 : 28
   const w = text ? 264 : 56
-  const radius = text ? 126 : 25
+  const radius = card ? (text ? 124 : 24) : text ? 126 : 25
   return (
     <span className={cn(radialChartVariants({ kind, text }), className)}>
       <svg viewBox={`0 0 ${w} ${h}`} className="size-full" role="img" aria-label="half progress chart">
@@ -183,8 +186,8 @@ function RadialChart({ kind = "donut", text = false, count = 7, theme = "default
             <stop offset="100%" stopColor="var(--blue-400)" />
           </linearGradient>
         </defs>
-        <path d={arc(w / 2, h, radius, -90, 90).replace(/ 0 0 1/, " 0 0 1")} fill="none" stroke="var(--blue-alpha-15)" strokeWidth={text ? 2 : 2} />
-        <path d={arc(w / 2, h, radius, -90, -90 + 180 * 0.56)} fill="none" stroke={`url(#half-${text})`} strokeWidth={text ? 3 : 2} strokeLinecap="round" />
+        <path d={arc(w / 2, h, radius, -90, 90).replace(/ 0 0 1/, " 0 0 1")} fill="none" stroke="var(--blue-alpha-15)" strokeWidth={card ? (text ? 8 : 4) : 2} />
+        <path d={arc(w / 2, h, radius, -90, -90 + 180 * (card ? 0.97 : 0.56))} fill="none" stroke={`url(#half-${text})`} strokeWidth={card ? (text ? 8 : 4) : text ? 3 : 2} strokeLinecap="round" />
       </svg>
       {text && label}
     </span>

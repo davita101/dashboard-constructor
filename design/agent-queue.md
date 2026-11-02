@@ -71,7 +71,7 @@ Channel: eyg843by
 | 67  | Chart                 | 9859:3629    | done        | Charts                                                                                                                             |
 | 68  | Chart Component       | 5035:13716   | done        | Charts Components; Parts of Chart (row 67): reuse chart files, add variants                                                        |
 | 69  | Chart Metric          | 9880:5306    | done        | Charts Metrics; Extend chart from row 67 (variant), no new chart primitive                                                         |
-| 70  | Chart Card            | 9903:12833   | blocked     | 3 attempts failed: line-chart tooltip wide/covers left plot/not at Jul, Figma ~100px at Jul |
+| 70  | Chart Card            | 9903:12833   | done        | Charts Cards; recovered from blocked run, tooltip pinned to Figma, card preset on chart primitives |
 | 71  | Chart White           | 12246:59190  | done        | Charts (White); White theme of chart from row 67: variant, not a copy                                                              |
 | 72  | Icons Payment         | 4289:8404    | hold        | SVG icons                                                                                                                          |
 | 73  | Icons Social          | 5030:10817   | hold        | SVG icons                                                                                                                          |

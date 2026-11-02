@@ -1,4 +1,9 @@
 import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { ChartDot, ChartTrend, type ChartShade, type ChartTone } from "@/components/ui/chart-parts"
+import { Link, LinkIcon } from "@/components/ui/link"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "@/lib/utils"
 
 function Card({
@@ -91,6 +96,231 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/* ---------------------------------- Chart-Card ---------------------------------- */
+
+// Figma Charts Cards page (9903:12833): 320px card, Head (icon, title, more), Content (switcher,
+// metrics, chart, legend) and Footer (View More, Download). `dark` is the "White" card on a black image.
+const chartCardVariants = cva("group/chart-card flex w-80 flex-col font-default overflow-hidden rounded-r20 outline -outline-offset-1", {
+  variants: {
+    appearance: {
+      default: "bg-background-0 outline-background-100",
+      dark: "bg-linear-to-b from-black from-75% to-blue-900 outline-white-alpha-10",
+    },
+  },
+  defaultVariants: { appearance: "default" },
+})
+
+function ChartCard({
+  className,
+  appearance = "default",
+  ...props
+}: React.ComponentProps<"div"> & VariantProps<typeof chartCardVariants>) {
+  return (
+    <div
+      data-slot="chart-card"
+      data-appearance={appearance}
+      className={cn(chartCardVariants({ appearance }), className)}
+      {...props}
+    />
+  )
+}
+
+function ChartCardHead({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div data-slot="chart-card-head" className={cn("flex items-center justify-between px-5 pt-5 pb-2", className)} {...props} />
+  )
+}
+
+function ChartCardTitle({
+  className,
+  icon = "/icons/material-bar_chart.svg",
+  children,
+  ...props
+}: React.ComponentProps<"div"> & { icon?: string }) {
+  return (
+    <div data-slot="chart-card-title" className={cn("flex items-center gap-2", className)} {...props}>
+      {icon ? (
+        <span
+          aria-hidden
+          className="size-5 shrink-0 bg-base-700 mask-(--chart-card-icon) mask-contain mask-center mask-no-repeat group-data-[appearance=dark]/chart-card:bg-background-0"
+          style={{ "--chart-card-icon": `url(${icon})` } as React.CSSProperties}
+        />
+      ) : null}
+      <span className="font-default text-11 leading-20 font-bold text-base-700 group-data-[appearance=dark]/chart-card:text-background-0">
+        {children}
+      </span>
+    </div>
+  )
+}
+
+function ChartCardAction({ className, ...props }: React.ComponentProps<"button">) {
+  return (
+    <button
+      type="button"
+      data-slot="chart-card-action"
+      aria-label="More"
+      className={cn(
+        "size-5 shrink-0 cursor-pointer bg-base-700 mask-[url(/icons/material-more-horiz.svg)] mask-contain mask-center mask-no-repeat outline-0 focus-visible:bg-primary-500 group-data-[appearance=dark]/chart-card:bg-background-0",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function ChartCardContent({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="chart-card-content" className={cn("flex flex-col gap-4 p-5", className)} {...props} />
+}
+
+const chartCardRanges = ["Hour", "Day", "Week", "Month"]
+
+function ChartCardSwitcher({
+  className,
+  items = chartCardRanges,
+  defaultValue,
+  ...props
+}: Omit<React.ComponentProps<typeof Tabs>, "children"> & { items?: string[] }) {
+  return (
+    <Tabs data-slot="chart-card-switcher" defaultValue={defaultValue ?? items[0]} className={cn("w-fit", className)} {...props}>
+      <TabsList
+        variant="pill"
+        size="sm"
+        className="bg-background-20 outline -outline-offset-1 outline-background-100 group-data-[appearance=dark]/chart-card:bg-black-alpha-50 group-data-[appearance=dark]/chart-card:outline-0"
+      >
+        {items.map((item) => (
+          <TabsTrigger key={item} value={item}>
+            {item}
+          </TabsTrigger>
+        ))}
+      </TabsList>
+    </Tabs>
+  )
+}
+
+type ChartCardMetricData = {
+  tone: ChartTone
+  shade?: ChartShade
+  heading: string
+  value: string
+  trend: string
+  additionalText: string
+}
+
+const chartCardMetricData: ChartCardMetricData[] = [
+  { tone: "pink", heading: "Revenue", value: "$20,560", trend: "4.2%", additionalText: "vs. $19.432 last" },
+  { tone: "blue", heading: "Views", value: "32,540", trend: "1,05%", additionalText: "vs. 28,540 last" },
+  { tone: "violet", heading: "Sales", value: "645", trend: "4.2%", additionalText: "vs. 585 last" },
+]
+
+function ChartCardMetrics({
+  className,
+  items = chartCardMetricData,
+  ...props
+}: React.ComponentProps<"div"> & { items?: ChartCardMetricData[] }) {
+  return (
+    <div data-slot="chart-card-metrics" className={cn("flex h-24 gap-6 overflow-hidden", className)} {...props}>
+      {items.map((item) => (
+        <div key={item.heading} data-slot="chart-card-metric" className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <ChartDot tone={item.tone} shade={item.shade ?? 600} />
+            <span className="text-10 leading-16 font-bold text-base-500 group-data-[appearance=dark]/chart-card:text-white-alpha-50">
+              {item.heading}
+            </span>
+          </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-20 leading-28 font-semibold text-base-800 group-data-[appearance=dark]/chart-card:text-background-0">
+              {item.value}
+            </span>
+            <ChartTrend direction="up">{item.trend}</ChartTrend>
+          </div>
+          <span className="text-10 leading-16 font-bold text-base-400 group-data-[appearance=dark]/chart-card:text-white-alpha-50">
+            {item.additionalText}
+          </span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// Chart area. `inset` is the plot padding: Figma pads 8 on the light card, 0 on the dark one.
+const chartCardPlotVariants = cva("flex justify-center", {
+  variants: {
+    inset: {
+      none: "px-0 py-4",
+      md: "px-2 py-4",
+    },
+  },
+  defaultVariants: { inset: "md" },
+})
+
+function ChartCardPlot({
+  className,
+  inset,
+  ...props
+}: React.ComponentProps<"div"> & VariantProps<typeof chartCardPlotVariants>) {
+  return <div data-slot="chart-card-plot" className={cn(chartCardPlotVariants({ inset }), className)} {...props} />
+}
+
+type ChartCardLegendItem = { label: string; tone: ChartTone; shade?: ChartShade }
+
+const chartCardLegendData: ChartCardLegendItem[] = [
+  { label: "Month", tone: "pink" },
+  { label: "Avr. Month", tone: "orange" },
+  { label: "Last Month", tone: "green" },
+]
+
+const chartCardLegendVariants = cva("flex px-5", {
+  variants: {
+    type: {
+      horizontal: "flex-row flex-wrap items-center justify-center gap-4",
+      vertical: "flex-col items-center gap-3",
+    },
+  },
+  defaultVariants: { type: "horizontal" },
+})
+
+function ChartCardLegend({
+  className,
+  type,
+  items = chartCardLegendData,
+  ...props
+}: React.ComponentProps<"ul"> & VariantProps<typeof chartCardLegendVariants> & { items?: ChartCardLegendItem[] }) {
+  return (
+    <ul data-slot="chart-card-legend" className={cn(chartCardLegendVariants({ type }), className)} {...props}>
+      {items.map((item, i) => (
+        <li key={i} className="flex items-center gap-2">
+          <ChartDot tone={item.tone} shade={item.shade ?? 600} />
+          <span className="text-10 leading-16 font-semibold text-base-700 group-data-[appearance=dark]/chart-card:text-white-alpha-70">
+            {item.label}
+          </span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+function ChartCardFooter({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="chart-card-footer"
+      className={cn(
+        "flex items-center justify-between gap-4 border-t border-background-100 p-5 group-data-[appearance=dark]/chart-card:border-transparent",
+        className
+      )}
+      {...props}
+    >
+      <Link href="#" variant="700" size="11" className="group-data-[appearance=dark]/chart-card:text-white-alpha-70">
+        View More
+        <LinkIcon icon="/icons/material-chevron-right.svg" />
+      </Link>
+      <Link href="#" variant="blue" size="11" className="group-data-[appearance=dark]/chart-card:text-background-0">
+        <LinkIcon icon="/icons/material-file-download.svg" />
+        Download
+      </Link>
+    </div>
+  )
+}
+
 export {
   Card,
   CardHeader,
@@ -99,4 +329,17 @@ export {
   CardAction,
   CardDescription,
   CardContent,
+  ChartCard,
+  ChartCardHead,
+  ChartCardTitle,
+  ChartCardAction,
+  ChartCardContent,
+  ChartCardSwitcher,
+  ChartCardMetrics,
+  ChartCardPlot,
+  ChartCardLegend,
+  ChartCardFooter,
+  chartCardVariants,
+  chartCardPlotVariants,
+  chartCardLegendVariants,
 }

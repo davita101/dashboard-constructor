@@ -64,10 +64,23 @@ const series = [
   [6, 10, 4, 12, 8, 14, 6, 10, 8],
 ]
 
-const lineData = months.map((month, i) => ({
-  month,
-  ...Object.fromEntries(series.map((s, k) => [`s${k}`, s[i] * 1000])),
-}))
+// `preset="card"` (Figma Charts Cards): three named series and a fixed Jul tooltip.
+const cardPalette = ["var(--pink-500)", "var(--blue-500)", "var(--green-500)"]
+const cardLabels = ["Month", "Avr. Month", "Last Month"]
+const cardTipValues = ["35,454", "28,454", "19,585"]
+const cardSeries = [
+  [56, 54, 63, 58, 64, 57, 61, 66, 61],
+  [33, 40, 47, 41, 50, 46, 53, 56, 60],
+  [26, 30, 34, 29, 36, 28, 33, 40, 31],
+]
+
+const toLineData = (rows: number[][]) =>
+  months.map((month, i) => ({
+    month,
+    ...Object.fromEntries(rows.map((s, k) => [`s${k}`, s[i] * 1000])),
+  }))
+const lineData = toLineData(series)
+const cardLineData = toLineData(cardSeries)
 
 const columnData = months.map((month, i) => ({
   month,
@@ -170,17 +183,23 @@ type Props = {
   lines?: ChartLines
   tooltip?: boolean
   theme?: "default" | "white"
+  preset?: "default" | "card"
   className?: string
 }
 
-function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, theme = "default", className }: Props) {
+function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, theme = "default", preset = "default", className }: Props) {
   const barBg = theme === "white" ? "var(--white-alpha-10)" : "var(--base-100)"
   const uid = React.useId().replace(/:/g, "")
   const isHorizontal =
     kind === "bar" || kind === "bar-double" || kind === "bar-stacked" || kind === "bar-negative"
+  const card = preset === "card"
+  const pal = card ? cardPalette : palette
+  const data = card ? cardLineData : lineData
+  const curve = card ? "linear" : "monotone"
   const config = Object.fromEntries(
-    palette.map((color, i) => [`s${i}`, { label: "Tooltip", color }]),
+    pal.map((color, i) => [`s${i}`, { label: card ? cardLabels[i] : "Tooltip", color }]),
   ) satisfies ChartConfig
+  const isLine = card && (kind === "line" || kind === "line-step" || kind === "line-gradient" || kind === "line-area")
   const grid =
     lines === "none" ? null : (
       <CartesianGrid
@@ -191,7 +210,30 @@ function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, 
     )
   const margin = { top: 0, right: 12, bottom: 0, left: 8 }
   const tip = tooltip ? (
-    <ChartTooltip defaultIndex={5} cursor={false} isAnimationActive={false} content={<ChartTooltipContent />} />
+    <ChartTooltip
+      defaultIndex={isLine ? 6 : 5}
+      // Figma Charts Cards: the line tooltip sits over the right of the plot, left edge near Apr.
+      position={isLine ? { x: 100, y: 84 } : undefined}
+      cursor={false}
+      isAnimationActive={false}
+      content={
+        <ChartTooltipContent
+          labelFormatter={isLine ? () => <span className="text-11 leading-20 font-bold">Views Products</span> : undefined}
+          formatter={
+            isLine
+              ? (value, name, item) => (
+            <div className="-mr-3 flex w-full items-center gap-1.5">
+              <span className="size-1.5 shrink-0 rounded-full" style={{ backgroundColor: item.color }} />
+              <span className="flex-1 text-11 leading-20 font-bold">{cardLabels[Number(String(name).slice(1))] ?? name}</span>
+              <span className="text-11 leading-20 font-bold">{cardTipValues[Number(String(name).slice(1))] ?? Number(value).toLocaleString("en-US")}</span>
+            </div>
+          )
+              : undefined
+          }
+          className={isLine ? "w-39 min-w-0 whitespace-nowrap" : undefined}
+        />
+      }
+    />
   ) : null
 
   const yId = yAxis === "right" ? "r" : "l"
@@ -211,9 +253,9 @@ function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, 
   let chart: React.ReactElement
   if (kind === "line" || kind === "line-step" || kind === "line-gradient") {
     chart = (
-      <LineChart data={lineData} margin={margin}>
+      <LineChart data={data} margin={margin}>
         <defs>
-          {palette.map((c, i) => (
+          {pal.map((c, i) => (
             <Gradient key={i} id={`${uid}-g${i}`} from={c} to="var(--blue-300)" />
           ))}
         </defs>
@@ -221,25 +263,28 @@ function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, 
         {x}
         {vYAxes}
         {tip}
-        {palette.map((c, i) => (
+        {pal.map((c, i) => (
           <Line
             key={i}
             yAxisId={yId}
             dataKey={`s${i}`}
-            type={kind === "line-step" ? "stepAfter" : "monotone"}
+            type={kind === "line-step" ? "stepAfter" : curve}
             stroke={kind === "line-gradient" ? `url(#${uid}-g${i})` : c}
             strokeWidth={2}
             dot={false}
             isAnimationActive={false}
           />
         ))}
+        {card && (yAxis === "right" || yAxis === "both") && yId === "l" && (
+          <Line yAxisId="r" dataKey="s0" stroke="none" dot={false} activeDot={false} isAnimationActive={false} legendType="none" tooltipType="none" />
+        )}
       </LineChart>
     )
   } else if (kind === "line-area") {
     chart = (
-      <AreaChart data={lineData} margin={margin}>
+      <AreaChart data={data} margin={margin}>
         <defs>
-          {palette.map((c, i) => (
+          {pal.map((c, i) => (
             <Gradient key={i} id={`${uid}-a${i}`} from={c} to="var(--background-0)" />
           ))}
         </defs>
@@ -247,12 +292,12 @@ function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, 
         {x}
         {vYAxes}
         {tip}
-        {palette.map((c, i) => (
+        {pal.map((c, i) => (
           <Area
             key={i}
             yAxisId={yId}
             dataKey={`s${i}`}
-            type="monotone"
+            type={curve}
             stroke={c}
             strokeWidth={2}
             fill={`url(#${uid}-a${i})`}
@@ -260,6 +305,9 @@ function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, 
             isAnimationActive={false}
           />
         ))}
+        {card && (yAxis === "right" || yAxis === "both") && yId === "l" && (
+          <Area yAxisId="r" dataKey="s0" stroke="none" dot={false} activeDot={false} fill="none" isAnimationActive={false} legendType="none" tooltipType="none" />
+        )}
       </AreaChart>
     )
   } else if (kind === "candle") {
