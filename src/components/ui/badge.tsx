@@ -147,4 +147,22 @@ function BadgeDot({ className, ...props }: React.ComponentProps<"span">) {
   )
 }
 
-export { Badge, BadgeDot, badgeVariants, type BadgeColor, type BadgeSize, type BadgeVariant }
+/** Figma Badge-Icon icon: a single-color SVG as a mask in the badge text color, sized by the badge (--badge-icon). */
+function BadgeIcon({
+  src,
+  className,
+  style,
+  ...props
+}: React.ComponentProps<"span"> & { src: string }) {
+  return (
+    <span
+      data-slot="badge-icon"
+      aria-hidden
+      className={cn("size-(--badge-icon) shrink-0 bg-current mask-contain mask-center mask-no-repeat", className)}
+      style={{ maskImage: `url(${src})`, ...style }}
+      {...props}
+    />
+  )
+}
+
+export { Badge, BadgeDot, BadgeIcon, badgeVariants, type BadgeColor, type BadgeSize, type BadgeVariant }

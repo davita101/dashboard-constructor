@@ -73,9 +73,21 @@ Channel: eyg843by
 | 69  | Chart Metric          | 9880:5306    | done        | Charts Metrics; Extend chart from row 67 (variant), no new chart primitive                                                         |
 | 70  | Chart Card            | 9903:12833   | done        | Charts Cards; recovered from blocked run, tooltip pinned to Figma, card preset on chart primitives |
 | 71  | Chart White           | 12246:59190  | done        | Charts (White); White theme of chart from row 67: variant, not a copy                                                              |
-| 72  | Icons Payment         | 4289:8404    | hold        | SVG icons                                                                                                                          |
-| 73  | Icons Social          | 5030:10817   | hold        | SVG icons                                                                                                                          |
-| 74  | Icons Flags Rectangle | 11956:33422  | hold        | SVG icons                                                                                                                          |
-| 75  | Logotypes             | 5992:23482   | hold        | SVG logos                                                                                                                          |
-| 76  | Auth Templates        | 7058:304041  | hold        | Sing In, Sing Up, Password, Activation; composite                                                                                  |
-| 77  | Mockups               | 11662:1003   | hold        | composite, last                                                                                                                    |
+| 72  | Icons Payment         | 4289:8404    | hold        | user writes SVGs; SVG icons |
+| 73  | Icons Social          | 5030:10817   | hold        | user writes SVGs; SVG icons |
+| 74  | Icons Flags Rectangle | 11956:33422  | hold        | user writes SVGs; SVG icons |
+| 75  | Logotypes             | 5992:23482   | hold        | user writes SVGs; SVG logos |
+| 76  | Auth Templates        | 7058:304041  | done        | Sing In, Sing Up, Password, Activation; composite                                                                                  |
+| 78  | Navigate Sidebars Footers | 10417:603619 | todo        | Navigate, Sidebars, Footers; reuse sidebar/navigate-footer (rows 63, 65) as variants, no copies |
+| 79  | Code Snippet          | 11407:87015  | todo        | Code Snippet |
+| 80  | Player                | 9402:22996   | todo        | Player; video/audio player |
+| 81  | Icons Material        | 314:956      | hold        | user writes SVGs; 2061 icons |
+| 82  | Icons Lucide          | 15851:208399 | hold        | user writes SVGs; 1767 icons |
+| 83  | Icons Outline Default | 15580:69404  | hold        | user writes SVGs; 90 icons |
+| 84  | Icons Outline Lucide  | 15855:238638 | hold        | user writes SVGs; 1767 icons |
+| 85  | Icons Brands          | 5028:7503    | hold        | user writes SVGs; 217 icons |
+| 86  | Icons Emoji           | 5028:7132    | hold        | user writes SVGs; 611 icons |
+| 87  | Icons Crypto          | 5027:42555   | hold        | user writes SVGs; 62 icons |
+| 88  | Icons AI              | 13351:71669  | hold        | user writes SVGs; 32 icons |
+| 89  | Icons Flags           | 4288:329     | hold        | user writes SVGs; 238 icons |
+| 77  | Mockups               | 11662:1003   | todo        | composite, last                                                                                                                    |

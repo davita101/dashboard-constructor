@@ -11,9 +11,15 @@ const qrCodeVariants = cva(
       type: {
         default: "",
       },
+      // lg: Two-factor Authentication tile, 120x120 with a ~95px code
+      size: {
+        default: "",
+        lg: "size-30 p-3",
+      },
     },
     defaultVariants: {
       type: "default",
+      size: "default",
     },
   }
 )
@@ -21,13 +27,15 @@ const qrCodeVariants = cva(
 function QrCode({
   className,
   type,
+  size,
   ...props
 }: React.ComponentProps<"div"> & VariantProps<typeof qrCodeVariants>) {
   return (
     <div
       data-slot="qr-code"
       data-type={type ?? "default"}
-      className={cn(qrCodeVariants({ type }), className)}
+      data-size={size ?? "default"}
+      className={cn("group/qr-code", qrCodeVariants({ type, size }), className)}
       {...props}
     />
   )
@@ -39,7 +47,7 @@ function QrCodeCode({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="qr-code-code"
       className={cn(
-        "flex size-15 shrink-0 items-center justify-center overflow-hidden [&>img]:size-full [&>svg]:size-full",
+        "flex size-15 shrink-0 items-center group-data-[size=lg]/qr-code:size-24 justify-center overflow-hidden [&>img]:size-full [&>svg]:size-full",
         className
       )}
       {...props}
