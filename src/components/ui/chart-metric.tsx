@@ -23,7 +23,7 @@ const chartMetricCardVariants = cva("group/metric relative flex flex-col overflo
       md: "w-60 rounded-r20",
       lg: "w-80 rounded-r20",
       // Sign-In "New Features" tiles: 250x164, footer clipped by the fixed height.
-      tile: "h-41 w-full max-w-62.5 min-w-0 rounded-r20",
+      tile: "h-41 w-full min-w-0 rounded-r20 lg:max-w-62.5",
       wide: "w-196.25 rounded-r16 data-[appearance=image]:outline-white-alpha-20",
     },
   },

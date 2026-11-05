@@ -41,6 +41,8 @@ const authPanelVariants = cva(
       padding: {
         default: "gap-5 p-5",
         tall: "gap-6 px-5 pt-7 pb-5",
+        // Sign-In-01: bare on the white page panel below lg, a shadowed card from lg.
+        responsive: "gap-0 bg-transparent p-0 outline-transparent lg:gap-5 lg:bg-background-0 lg:p-5 lg:shadow-md lg:outline-background-100",
       },
     },
     defaultVariants: {
