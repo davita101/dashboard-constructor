@@ -99,8 +99,8 @@
         "description": "Split between categories"
       },
       "progress-chart": {
-        "name": "Progress gauge",
-        "description": "Progress toward a goal"
+        "name": "Progress rings",
+        "description": "Several goals as nested rings"
       },
       "metric-line": {
         "name": "Metric with line",
@@ -113,6 +113,54 @@
       "task-card": {
         "name": "Task card",
         "description": "Track work with labels and owners"
+      },
+      "progress-half-chart": {
+        "name": "Progress gauge",
+        "description": "Progress toward a goal"
+      },
+      "line-gradient-chart": {
+        "name": "Gradient line chart",
+        "description": "Trends over time with a gradient"
+      },
+      "column-type-1-chart": {
+        "name": "Column chart (type 1)",
+        "description": "Vertical columns by period"
+      },
+      "column-type-3-chart": {
+        "name": "Column chart (type 3)",
+        "description": "Vertical columns by period"
+      },
+      "column-type-5-chart": {
+        "name": "Column chart (type 5)",
+        "description": "Vertical columns by period"
+      },
+      "column-type-6-chart": {
+        "name": "Column chart (type 6)",
+        "description": "Vertical columns by period"
+      },
+      "metric-column": {
+        "name": "Metric with columns",
+        "description": "Key number and mini columns"
+      },
+      "metric-progress": {
+        "name": "Metric with progress",
+        "description": "Key number and a progress ring"
+      },
+      "metric-line-2": {
+        "name": "Revenue lines",
+        "description": "Amount with two overlapping lines"
+      },
+      "metric-chart": {
+        "name": "Metric chart",
+        "description": "Totals with a breakdown list"
+      },
+      "metric-map": {
+        "name": "Metric map",
+        "description": "Where your numbers come from"
+      },
+      "metric-card": {
+        "name": "Wide metric",
+        "description": "Full-width KPI strip"
       }
     }
   }
