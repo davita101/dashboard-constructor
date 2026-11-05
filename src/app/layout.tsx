@@ -1,10 +1,14 @@
+import { ClerkProvider, Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+import { shadcn } from "@clerk/ui/themes";
+import { Suspense } from "react";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
@@ -21,9 +25,24 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <ClerkProvider appearance={{ theme: shadcn }}>
+          <header className="flex items-center justify-end gap-4 p-4">
+            <Suspense>
+              <Show when="signed-out">
+                <SignInButton />
+                <SignUpButton />
+              </Show>
+              <Show when="signed-in">
+                <UserButton />
+              </Show>
+            </Suspense>
+          </header>
+          {children}
+        </ClerkProvider>
+      </body>
     </html>
   );
 }
