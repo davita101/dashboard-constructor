@@ -7,6 +7,8 @@ import * as React from "react"
 
 import { AuthField } from "@/components/auth/auth-field"
 import { AuthSocialButtons } from "@/components/auth/auth-social-buttons"
+import { rememberMe } from "@/components/auth/remember-me"
+import { authStep } from "@/components/auth/use-reset-guard"
 import {
   Auth,
   AuthContent,
@@ -35,10 +37,12 @@ function SignUpForm({ redirectUrl = "/" }: { redirectUrl?: string }) {
   const router = useRouter()
   const busy = fetchStatus === "fetching"
   const [failed, setFailed] = React.useState<string>()
+  const [remember, setRemember] = React.useState(false)
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setFailed(undefined)
+    rememberMe.set(remember)
     const data = new FormData(event.currentTarget)
     const username = String(data.get("username") ?? "").trim()
     const { error } = await signUp.password({
@@ -52,12 +56,14 @@ function SignUpForm({ redirectUrl = "/" }: { redirectUrl?: string }) {
     } else {
       const sent = await signUp.verifications.sendEmailCode()
       if (sent.error) return
-      router.push("/verify")
+      authStep.set("signup-code")
+      router.push("/check-email")
     }
   }
 
   async function onProvider(provider: keyof typeof strategies) {
     setFailed(undefined)
+    rememberMe.set(remember)
     const { error } = await signUp.sso({
       strategy: strategies[provider],
       redirectUrl,
@@ -106,7 +112,7 @@ function SignUpForm({ redirectUrl = "/" }: { redirectUrl?: string }) {
           </AuthFields>
           <AuthRow>
             <CheckboxField>
-              <Checkbox />
+              <Checkbox checked={remember} onCheckedChange={setRemember} />
               <CheckboxFieldContent>
                 <CheckboxFieldTitle>Remember Me</CheckboxFieldTitle>
               </CheckboxFieldContent>
@@ -116,6 +122,8 @@ function SignUpForm({ redirectUrl = "/" }: { redirectUrl?: string }) {
             </Link>
           </AuthRow>
           {(failed || errors.global?.[0]) && <FieldError>{failed ?? errors.global?.[0]?.message}</FieldError>}
+          {/* Clerk renders its bot-protection challenge here when it needs one. */}
+          <div id="clerk-captcha" />
           <Button type="submit" size="40" className="w-full" disabled={busy}>
             Create Account
           </Button>

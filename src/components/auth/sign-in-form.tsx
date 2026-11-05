@@ -7,6 +7,7 @@ import * as React from "react"
 
 import { AuthField } from "@/components/auth/auth-field"
 import { AuthSocialButtons } from "@/components/auth/auth-social-buttons"
+import { rememberMe } from "@/components/auth/remember-me"
 import {
   Auth,
   AuthContent,
@@ -35,11 +36,13 @@ function SignInForm({ redirectUrl = "/" }: { redirectUrl?: string }) {
   const router = useRouter()
   const busy = fetchStatus === "fetching"
   const [failed, setFailed] = React.useState<string>()
+  const [remember, setRemember] = React.useState(false)
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setFailed(undefined)
     const data = new FormData(event.currentTarget)
+    rememberMe.set(remember)
     const { error } = await signIn.password({
       identifier: String(data.get("email")),
       password: String(data.get("password")),
@@ -54,6 +57,7 @@ function SignInForm({ redirectUrl = "/" }: { redirectUrl?: string }) {
 
   async function onProvider(provider: keyof typeof strategies) {
     setFailed(undefined)
+    rememberMe.set(remember)
     const { error } = await signIn.sso({
       strategy: strategies[provider],
       redirectUrl,
@@ -94,7 +98,7 @@ function SignInForm({ redirectUrl = "/" }: { redirectUrl?: string }) {
       </AuthFields>
       <AuthRow>
         <CheckboxField>
-          <Checkbox />
+          <Checkbox checked={remember} onCheckedChange={setRemember} />
           <CheckboxFieldContent>
             <CheckboxFieldTitle>Remember Me</CheckboxFieldTitle>
           </CheckboxFieldContent>
