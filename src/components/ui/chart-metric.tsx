@@ -22,6 +22,8 @@ const chartMetricCardVariants = cva("group/metric relative flex flex-col overflo
       sm: "w-57.5 rounded-r20",
       md: "w-60 rounded-r20",
       lg: "w-80 rounded-r20",
+      // Sign-In "New Features" tiles: 250x164, footer clipped by the fixed height.
+      tile: "h-41 w-62.5 rounded-r20",
       wide: "w-196.25 rounded-r16 data-[appearance=image]:outline-white-alpha-20",
     },
   },
@@ -86,6 +88,8 @@ const chartMetricBodyVariants = cva("flex", {
     layout: {
       split: "gap-5 px-6 py-4",
       stack: "flex-col gap-7 p-5",
+      // 128px Content of the Sign-In tiles: stats and chart side by side, vertically centered.
+      tile: "h-32 items-center gap-4 px-4",
     },
   },
   defaultVariants: { layout: "split" },
@@ -127,11 +131,13 @@ function ChartMetricStats({
         <span className="text-20 leading-28 font-semibold text-base-900 group-data-[appearance=image]/metric:text-background-0">
           {value}
         </span>
-        <span className="text-10 leading-16 font-bold text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70">
-          {heading}
-        </span>
-        <ChartTrend direction="up" size="md">{up}</ChartTrend>
-        <ChartTrend direction="down" size="md">{down}</ChartTrend>
+        {heading && (
+          <span className="text-10 leading-16 font-bold text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70">
+            {heading}
+          </span>
+        )}
+        {up && <ChartTrend direction="up" size="md">{up}</ChartTrend>}
+        {down && <ChartTrend direction="down" size="md">{down}</ChartTrend>}
       </div>
     </div>
   )

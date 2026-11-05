@@ -11,7 +11,7 @@ export default function SignInPage() {
           <SignInForm />
         </AuthPanel>
       </section>
-      <aside className="hidden overflow-hidden rounded-r20 bg-linear-to-br from-primary-700 to-primary-950 lg:block">
+      <aside className="hidden overflow-hidden rounded-r20 lg:block">
         <AuthShowcase />
       </aside>
     </main>

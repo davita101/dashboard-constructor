@@ -11,7 +11,7 @@ import { openPage, requirePage, sleep } from "./lib/chrome.mjs"
 
 const [arg, width = "1440"] = process.argv.slice(2)
 const slug = arg
-const name = arg?.replace(/W+/g, "-").replace(/^-/, "")
+const name = arg?.replace(/\W+/g, "-").replace(/^-/, "")
 if (!slug) {
   console.error("usage: pnpm -s shot <slug> [width]")
   process.exit(2)
