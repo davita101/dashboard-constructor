@@ -11,3 +11,4 @@ One line each: `- <page>: <what> (<why>)`. The user may veto any line.
 - Each slide combines several existing components (placeholder copy): Tasks = ProgressCircle + AvatarGroup + TaskList; Notifications = Badge + Button + Notification; Calendar = Button + EventCalendar day heads + CalendarEvent; Files = FileUpload + Progress + FileUploadItem; Team = ProfileCard + AvatarGroup + Badge + Button.
 - Extra rows shown only below lg (`lg:hidden`) to fill the taller 360 box.
 - Sign Up: Apple button added (not in Figma)
+- Check Your Email: copy says "code" not "link" (Clerk sends a reset code), "Resend" resends it and the footer switches to a polite status line saying a new code was sent, errors show above the button (Figma draws only the idle card).

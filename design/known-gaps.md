@@ -83,4 +83,4 @@ One line per component: what could not be matched to Figma. Update when fixed.
 - Mockups: device bezel art is a Figma bitmap the plugin cannot export; bezel is drawn with tokens (base-900, approximate thickness/radius, island and camera sizes read from image). Transparent checkerboard screen not reproduced; screen is a slot.
 - Sign In page: slides 2-6 use generated crops of hero.jpg (public/images/auth/hero-2..6.jpg) as placeholders, Figma draws one photo; Forgot password link goes to /forgot-password (page not built); 2FA/verification steps not wired; Apple/Facebook/Google need enabling in Clerk Dashboard.
 - Sign Up: /verify page missing (queue #5); email-code step redirects there
-- Forgot Password: /check-email page (queue #4) not built yet, the form pushes there on success. Layout is the shared split (form + showcase carousel), not the Figma header/footer frame (user choice).
+- Check Your Email: built, but the reset code cannot be entered yet (/verify, queue #5, is not built), so the flow stops here. Forgot Password pushes to /check-email on success. Layout is the shared split (form + showcase carousel), not the Figma header/footer frame (user choice).
