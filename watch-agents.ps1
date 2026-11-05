@@ -5,6 +5,8 @@
 #   -All           also show interactive sessions (by default only `claude -p --agent` loop sessions:
 #                  director, component-builder, ...; each loop step is its own session)
 #   -SummaryEvery  seconds between token summary tables (printed only when something changed)
+#   -Once          replay every recent loop session, print the recap (per agent, per component,
+#                  per session) and exit. -Replay N sets how many sessions to read (default 500).
 #   -Budget        your own token budget per 5-hour window; shows what is left. The real plan
 #                  limit is only known to Anthropic's servers, so this is an estimate you set.
 param(
@@ -15,8 +17,11 @@ param(
   [int]$BigResult = 5000,    # flag tool results larger than this many characters
   [long]$Budget = 0,
   [int]$SummaryRows = 8,     # agent sessions listed in the token summary         # tokens per 5-hour window (0 = only show usage)
+  [int]$Replay = 0,          # sessions replayed at start (0 = $SummaryRows, or 500 with -Once)
+  [switch]$Once,
   [switch]$All
 )
+if ($Replay -le 0) { $Replay = if ($Once) { 500 } else { $SummaryRows } }
 
 $pos = @{}        # file -> bytes read
 $labels = @{}     # file -> agent label
@@ -71,10 +76,19 @@ function Get-Label($file) {
   return $label
 }
 
+# The loop prompts say "Build <Name> (slug <slug>)" / "Review <Name> (slug <slug>, ...)".
+function Get-Component($file) {
+  $top = Join-Path $Dir ((Get-Session $file) + '.jsonl')
+  if (-not (Test-Path $top)) { return '-' }
+  $head = Get-Content $top -TotalCount 12 -Encoding UTF8 -ErrorAction SilentlyContinue
+  foreach ($l in $head) { if ($l -match 'slug ([a-z0-9-]+)') { return $Matches[1] } }
+  return '-'
+}
+
 function Get-Stats($file) {
   if (-not $stats.ContainsKey($file)) {
     $stats[$file] = [pscustomobject]@{
-      Label = (Get-Label $file); Session = (Get-Session $file); Model = ''
+      Label = (Get-Label $file); Session = (Get-Session $file); Model = ''; Component = (Get-Component $file)
       Calls = 0; First = 0; Ctx = 0; Peak = 0; Total = 0; Out = 0; Images = 0
       Seen = New-Object 'System.Collections.Generic.HashSet[string]'; Start = (Get-Date)
     }
@@ -180,8 +194,35 @@ function Show-Summary {
     Write-Host ($full * $n) -NoNewline -ForegroundColor $(if ($colors[$r.Label]) { $colors[$r.Label] } else { 'White' })
   }
   Write-Host ("  total {0}" -f (Format-K $sum)) -ForegroundColor Yellow
+  Show-Rollups
   Show-Window
   Write-Host ''
+}
+
+# Totals over every session seen so far: per agent type and per component.
+function Show-Rollups {
+  $all = $stats.Values
+  if (-not $all) { return }
+  Write-Host ''
+  Write-Host '--- per agent (all sessions seen) ---' -ForegroundColor Yellow
+  Write-Host ('{0,-20} {1,8} {2,6} {3,9} {4,9} {5,9}' -f 'agent', 'sessions', 'calls', 'out', 'total', 'avg/sess') -ForegroundColor DarkGray
+  foreach ($g in ($all | Group-Object Label | Sort-Object { ($_.Group | Measure-Object Total -Sum).Sum } -Descending)) {
+    $tot = ($g.Group | Measure-Object Total -Sum).Sum
+    $color = $colors[$g.Name]; if (-not $color) { $color = 'White' }
+    Write-Host ('{0,-20} {1,8} {2,6} {3,9} {4,9} {5,9}' -f $g.Name, $g.Count, ($g.Group | Measure-Object Calls -Sum).Sum,
+      (Format-K ($g.Group | Measure-Object Out -Sum).Sum), (Format-K $tot), (Format-K ($tot / $g.Count))) -ForegroundColor $color
+  }
+  Write-Host ('{0,-20} {1,8} {2,6} {3,9} {4,9}' -f 'ALL', ($all | Measure-Object).Count, ($all | Measure-Object Calls -Sum).Sum,
+    (Format-K ($all | Measure-Object Out -Sum).Sum), (Format-K ($all | Measure-Object Total -Sum).Sum)) -ForegroundColor Yellow
+  Write-Host '--- per component (builder + director) ---' -ForegroundColor Yellow
+  Write-Host ('{0,-26} {1,8} {2,9} {3,9} {4,9}' -f 'component', 'sessions', 'builder', 'director', 'total') -ForegroundColor DarkGray
+  foreach ($g in ($all | Where-Object { $_.Component -ne '-' } | Group-Object Component |
+      Sort-Object { ($_.Group | Measure-Object Total -Sum).Sum } -Descending | Select-Object -First 15)) {
+    $b = ($g.Group | Where-Object Label -eq 'component-builder' | Measure-Object Total -Sum).Sum
+    $d = ($g.Group | Where-Object Label -eq 'director' | Measure-Object Total -Sum).Sum
+    Write-Host ('{0,-26} {1,8} {2,9} {3,9} {4,9}' -f $g.Name, $g.Count, (Format-K $b), (Format-K $d), (Format-K ($g.Group | Measure-Object Total -Sum).Sum))
+  }
+  Write-Host 'total = context re-read on every call + output, so it is far above billed new tokens.' -ForegroundColor DarkGray
 }
 
 # Usage in the current 5-hour window across every project. A window starts at the
@@ -295,7 +336,7 @@ function Read-New($file) {
 $existing = Get-ChildItem $Dir -Recurse -Filter *.jsonl -ErrorAction SilentlyContinue
 foreach ($f in $existing) { $pos[$f.FullName] = $f.Length }
 $recent = $existing | Where-Object { Test-Session (Get-Session $_.FullName) } |
-  Sort-Object LastWriteTime -Descending | Select-Object -First $SummaryRows
+  Sort-Object LastWriteTime -Descending | Select-Object -First $Replay
 $newest = $recent | Select-Object -First 1
 if ($newest) {
   $files = $recent | Sort-Object LastWriteTime
@@ -313,6 +354,7 @@ if ($newest) {
   Show-Summary; Update-Title
   $dirty = $false
 }
+if ($Once) { return }
 Write-Host "--- watching $Dir (Ctrl+C to stop) ---" -ForegroundColor Yellow
 
 while ($true) {

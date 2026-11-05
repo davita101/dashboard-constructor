@@ -73,21 +73,22 @@ Channel: eyg843by
 | 69  | Chart Metric          | 9880:5306    | done        | Charts Metrics; Extend chart from row 67 (variant), no new chart primitive                                                         |
 | 70  | Chart Card            | 9903:12833   | done        | Charts Cards; recovered from blocked run, tooltip pinned to Figma, card preset on chart primitives |
 | 71  | Chart White           | 12246:59190  | done        | Charts (White); White theme of chart from row 67: variant, not a copy                                                              |
-| 72  | Icons Payment         | 4289:8404    | hold        | user writes SVGs; SVG icons |
-| 73  | Icons Social          | 5030:10817   | hold        | user writes SVGs; SVG icons |
-| 74  | Icons Flags Rectangle | 11956:33422  | hold        | user writes SVGs; SVG icons |
-| 75  | Logotypes             | 5992:23482   | hold        | user writes SVGs; SVG logos |
+| 72  | Icons Payment         | 4289:8404    | done        | 24 SVGs (12 brands x pilled/rounded) in public/icons/payment via scripts/figma-export-page.mjs |
+| 73  | Icons Social          | 5030:10817   | done        | 69 SVGs (23 x color/gray/white) in public/icons/social via scripts/figma-export-page.mjs |
+| 74  | Icons Flags Rectangle | 11956:33422  | done        | 238 SVGs in public/icons/flags-rectangle via scripts/figma-export-variants.mjs |
+| 75  | Logotypes             | 5992:23482   | done        | 324 SVGs (108 x color/monochrome/white) in public/icons/logotypes via scripts/figma-export-page.mjs |
 | 76  | Auth Templates        | 7058:304041  | done        | Sing In, Sing Up, Password, Activation; composite                                                                                  |
 | 78  | Navigate Sidebars Footers | 10417:603619 | done | Navigate, Sidebars, Footers; reuse sidebar/navigate-footer (rows 63, 65) as variants, no copies |
 | 79  | Code Snippet          | 11407:87015  | done | Code Snippet |
 | 80  | Player                | 9402:22996   | done        | Player; video/audio player |
-| 81  | Icons Material        | 314:956      | hold        | user writes SVGs; 2061 icons |
-| 82  | Icons Lucide          | 15851:208399 | hold        | user writes SVGs; 1767 icons |
-| 83  | Icons Outline Default | 15580:69404  | hold        | user writes SVGs; 90 icons |
-| 84  | Icons Outline Lucide  | 15855:238638 | hold        | user writes SVGs; 1767 icons |
-| 85  | Icons Brands          | 5028:7503    | hold        | user writes SVGs; 217 icons |
-| 86  | Icons Emoji           | 5028:7132    | hold        | user writes SVGs; 611 icons |
-| 87  | Icons Crypto          | 5027:42555   | hold        | user writes SVGs; 62 icons |
-| 88  | Icons AI              | 13351:71669  | hold        | user writes SVGs; 32 icons |
-| 89  | Icons Flags           | 4288:329     | hold        | user writes SVGs; 238 icons |
+| 81  | Icons Material        | 314:956      | done | 2061 SVGs in public/icons/material via scripts/export-held-icons.sh |
+| 82  | Icons Lucide          | 15851:208399 | done | 1767 SVGs in public/icons/lucide via scripts/export-held-icons.sh |
+| 83  | Icons Outline Default | 15580:69404  | done | 90 SVGs in public/icons/outline-default via scripts/export-held-icons.sh |
+| 84  | Icons Outline Lucide  | 15855:238638 | done | 1767 SVGs in public/icons/outline-lucide via scripts/export-held-icons.sh |
+| 85  | Icons Brands          | 5028:7503    | done | 217 SVGs in public/icons/brands via scripts/export-held-icons.sh |
+| 86  | Icons Emoji           | 5028:7132    | done | 611 SVGs in public/icons/emoji via scripts/export-held-icons.sh |
+| 87  | Icons Crypto          | 5027:42555   | done | 62 SVGs in public/icons/crypto via scripts/export-held-icons.sh |
+| 88  | Icons AI              | 13351:71669  | done | 32 SVGs in public/icons/ai via scripts/export-held-icons.sh |
+| 89  | Icons Flags           | 4288:329     | done | 238 SVGs in public/icons/flags via scripts/export-held-icons.sh |
 | 77  | Mockups               | 11662:1003   | done        | composite, last                                                                                                                    |
+| 90  | Held (all)            | -            | done | All held icon rows 72-75 and 81-89 exported as SVG. |
