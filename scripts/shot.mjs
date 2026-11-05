@@ -9,7 +9,9 @@ import os from "node:os"
 import path from "node:path"
 import { openPage, requirePage, sleep } from "./lib/chrome.mjs"
 
-const [slug, width = "1440"] = process.argv.slice(2)
+const [arg, width = "1440"] = process.argv.slice(2)
+const slug = arg
+const name = arg?.replace(/W+/g, "-").replace(/^-/, "")
 if (!slug) {
   console.error("usage: pnpm -s shot <slug> [width]")
   process.exit(2)
@@ -18,12 +20,12 @@ const SCALE = 0.6
 const PART = 2400 // CSS px per part, 1440px tall at SCALE
 const MAX_PARTS = 6
 
-const url = `http://localhost:3000/design-system/${slug}`
+const url = slug.startsWith("/") ? `http://localhost:3000${slug}` : `http://localhost:3000/design-system/${slug}`
 await requirePage(url)
 
 const dir = path.join(os.tmpdir(), "shots")
 fs.mkdirSync(dir, { recursive: true })
-for (const f of fs.readdirSync(dir)) if (f.startsWith(`${slug}`) && f.endsWith(".png")) fs.rmSync(path.join(dir, f))
+for (const f of fs.readdirSync(dir)) if (f.startsWith(name) && f.endsWith(".png")) fs.rmSync(path.join(dir, f))
 
 let page
 try {
@@ -48,7 +50,7 @@ try {
       captureBeyondViewport: true,
       clip: { x: 0, y, width: pageWidth, height: Math.min(PART, height - y), scale: SCALE },
     })
-    const file = path.join(dir, parts > 1 ? `${slug}-${i + 1}.png` : `${slug}.png`)
+    const file = path.join(dir, parts > 1 ? `${name}-${i + 1}.png` : `${name}.png`)
     fs.writeFileSync(file, Buffer.from(data, "base64"))
     files.push(file)
   }

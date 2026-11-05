@@ -2,7 +2,7 @@
 
 import * as React from "react"
 
-import { Field, FieldDescription, FieldHeader, FieldLabel, FieldLabelIcon } from "@/components/ui/field"
+import { Field, FieldDescription, FieldError, FieldHeader, FieldLabel, FieldLabelIcon } from "@/components/ui/field"
 import { InputGroup, InputGroupAddon, InputGroupIcon, InputGroupInput } from "@/components/ui/input-group"
 
 // One Input-Pilled of the Figma auth templates: Field (label + help icon) over a pill InputGroup with a
@@ -13,11 +13,13 @@ function AuthField({
   type = "text",
   placeholder,
   description,
+  error,
   ...props
 }: Omit<React.ComponentProps<"input">, "size"> & {
   label: string
   icon: string
   description?: string
+  error?: string
 }) {
   const id = React.useId()
   const password = type === "password"
@@ -35,7 +37,7 @@ function AuthField({
         <InputGroupAddon>
           <InputGroupIcon src={icon} />
         </InputGroupAddon>
-        <InputGroupInput id={id} type={password && visible ? "text" : type} placeholder={placeholder} {...props} />
+        <InputGroupInput id={id} type={password && visible ? "text" : type} placeholder={placeholder} aria-invalid={!!error || undefined} {...props} />
         {password && (
           <InputGroupAddon align="inline-end">
             <button
@@ -50,7 +52,7 @@ function AuthField({
           </InputGroupAddon>
         )}
       </InputGroup>
-      {description && <FieldDescription>{description}</FieldDescription>}
+      {error ? <FieldError>{error}</FieldError> : description && <FieldDescription>{description}</FieldDescription>}
     </Field>
   )
 }
