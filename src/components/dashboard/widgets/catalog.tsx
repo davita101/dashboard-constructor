@@ -44,6 +44,10 @@ type WidgetDef = {
   /** Extra words the search matches besides the translated name / description. */
   keywords: string[]
   preview: React.ReactNode
+  /** Natural width in px (Figma), used to fill rows. Defaults to a chart card, 320. */
+  width?: number
+  /** Natural height in px, used to stack small widgets beside a tall one. Defaults to a line chart card, 689. */
+  height?: number
   /** Takes a whole row on the dashboard (tables, wide strips); never shares one. */
   full?: boolean
   /** What the dashboard renders when it differs from the picker preview (e.g. fluid width). */
@@ -221,35 +225,40 @@ const widgetCatalog: WidgetDef[] = [
   { id: "line-area-chart", category: "charts", icon: ICON("trending_up"), keywords: ["area", "line", "trend"], preview: <CartesianCardPreview kind="line-area" /> },
   { id: "line-step-chart", category: "charts", icon: ICON("alt-route"), keywords: ["step", "line"], preview: <CartesianCardPreview kind="line-step" legend="labels" /> },
   { id: "column-chart", category: "charts", icon: ICON("apps"), keywords: ["column", "bar", "vertical"], preview: <CartesianCardPreview kind="column-2" /> },
-  { id: "bar-chart", category: "charts", icon: ICON("sort"), keywords: ["bar", "horizontal"], preview: <CartesianCardPreview kind="bar" legend="none" wide={true} tall={true} /> },
-  { id: "stacked-bar-chart", category: "charts", icon: ICON("list"), keywords: ["stacked", "bar"], preview: <CartesianCardPreview kind="bar-stacked" legend="none" wide={true} tall={true} /> },
-  { id: "candle-chart", category: "charts", icon: ICON("balance"), keywords: ["candle", "stock", "finance"], preview: <CartesianCardPreview kind="candle" legend="none" wide={true} tall={true} /> },
-  { id: "donut-chart", category: "charts", icon: ICON("refresh"), keywords: ["donut", "ring", "share"], preview: <RadialCardPreview kind="donut" /> },
-  { id: "pie-chart", category: "charts", icon: ICON("monetization-on"), keywords: ["pie", "share"], preview: <RadialCardPreview kind="pie" /> },
-  { id: "progress-chart", category: "charts", icon: ICON("done-all"), keywords: ["progress", "rings", "goal"], preview: <RadialCardPreview kind="progress" /> },
-  { id: "progress-half-chart", category: "charts", icon: ICON("done-all"), keywords: ["progress", "half", "gauge", "goal"], preview: <RadialCardPreview kind="progress-half" /> },
-  { id: "metric-line", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "kpi", "line", "number"], preview: <MetricCardPreview chart="line" /> },
-  { id: "metric-area", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "kpi", "area", "number"], preview: <MetricCardPreview chart="area" /> },
+  { id: "bar-chart", category: "charts", icon: ICON("sort"), keywords: ["bar", "horizontal"], preview: <CartesianCardPreview kind="bar" legend="none" wide={true} tall={true} />, height: 729 },
+  { id: "stacked-bar-chart", category: "charts", icon: ICON("list"), keywords: ["stacked", "bar"], preview: <CartesianCardPreview kind="bar-stacked" legend="none" wide={true} tall={true} />, height: 729 },
+  { id: "candle-chart", category: "charts", icon: ICON("balance"), keywords: ["candle", "stock", "finance"], preview: <CartesianCardPreview kind="candle" legend="none" wide={true} tall={true} />, height: 729 },
+  { id: "donut-chart", category: "charts", icon: ICON("refresh"), keywords: ["donut", "ring", "share"], preview: <RadialCardPreview kind="donut" />, height: 569 },
+  { id: "pie-chart", category: "charts", icon: ICON("monetization-on"), keywords: ["pie", "share"], preview: <RadialCardPreview kind="pie" />, height: 569 },
+  { id: "progress-chart", category: "charts", icon: ICON("done-all"), keywords: ["progress", "rings", "goal"], preview: <RadialCardPreview kind="progress" />, height: 693 },
+  { id: "progress-half-chart", category: "charts", icon: ICON("done-all"), keywords: ["progress", "half", "gauge", "goal"], preview: <RadialCardPreview kind="progress-half" />, height: 505 },
+  { id: "metric-line", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "kpi", "line", "number"], preview: <MetricCardPreview chart="line" />, width: 230, height: 260 },
+  { id: "metric-area", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "kpi", "area", "number"], preview: <MetricCardPreview chart="area" />, width: 230, height: 260 },
   { id: "line-gradient-chart", category: "charts", icon: ICON("trending_up"), keywords: ["gradient", "line", "trend"], preview: <CartesianCardPreview kind="line-gradient" /> },
   { id: "column-type-1-chart", category: "charts", icon: ICON("apps"), keywords: ["column", "bar", "vertical"], preview: <CartesianCardPreview kind="column-1" legend="labels" /> },
   { id: "column-type-3-chart", category: "charts", icon: ICON("apps"), keywords: ["column", "bar", "vertical"], preview: <CartesianCardPreview kind="column-3" /> },
   { id: "column-type-5-chart", category: "charts", icon: ICON("apps"), keywords: ["column", "bar", "vertical"], preview: <CartesianCardPreview kind="column-5" /> },
   { id: "column-type-6-chart", category: "charts", icon: ICON("apps"), keywords: ["column", "bar", "vertical"], preview: <CartesianCardPreview kind="column-6" /> },
-  { id: "metric-column", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "kpi", "column", "number"], preview: <MetricCompactPreview chart="column" /> },
-  { id: "metric-progress", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "kpi", "progress", "number"], preview: <MetricCompactPreview chart="progress" /> },
-  { id: "metric-line-2", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "revenue", "line", "two"], preview: <MetricLine2Preview /> },
-  { id: "metric-chart", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "chart", "amounts", "list"], preview: <MetricLargePreview kind="chart" /> },
-  { id: "metric-map", category: "metrics", icon: ICON("language"), keywords: ["metric", "map", "countries", "geo"], preview: <MetricLargePreview kind="map" /> },
-  { id: "metric-card", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "kpi", "wide", "strip"], preview: <MetricWidePreview />, full: true },
-  { id: "table", category: "tables", icon: ICON("list"), keywords: ["table", "grid", "products", "rows", "data", "orders"], preview: <div className="w-210"><ProductTable /></div>, full: true, board: <ProductTable /> },
-  { id: "task-card", category: "tasks", icon: ICON("event"), keywords: ["task", "todo", "kanban", "card"], preview: <TaskCard /> },
+  { id: "metric-column", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "kpi", "column", "number"], preview: <MetricCompactPreview chart="column" />, width: 230, height: 260 },
+  { id: "metric-progress", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "kpi", "progress", "number"], preview: <MetricCompactPreview chart="progress" />, width: 230, height: 260 },
+  { id: "metric-line-2", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "revenue", "line", "two"], preview: <MetricLine2Preview />, width: 320, height: 309 },
+  { id: "metric-chart", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "chart", "amounts", "list"], preview: <MetricLargePreview kind="chart" />, width: 320, height: 684 },
+  { id: "metric-map", category: "metrics", icon: ICON("language"), keywords: ["metric", "map", "countries", "geo"], preview: <MetricLargePreview kind="map" />, width: 320, height: 751 },
+  { id: "metric-card", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "kpi", "wide", "strip"], preview: <MetricWidePreview />, full: true, height: 168 },
+  { id: "table", category: "tables", icon: ICON("list"), keywords: ["table", "grid", "products", "rows", "data", "orders"], preview: <div className="w-210"><ProductTable /></div>, full: true, board: <ProductTable />, height: 250 },
+  { id: "task-card", category: "tasks", icon: ICON("event"), keywords: ["task", "todo", "kanban", "card"], preview: <TaskCard />, width: 264, height: 304 },
 ]
 
 const widgetsById = new Map(widgetCatalog.map((w) => [w.id, w]))
 const getWidget = (id: string) => widgetsById.get(id)
+const widgetWidth = (id: string) => getWidget(id)?.width ?? 320
+const widgetHeight = (id: string) => getWidget(id)?.height ?? 689
 const isFullWidget = (id: string) => getWidget(id)?.full === true
+
+/** Width / height / full-row facts the layout needs to place widgets. */
+const widgetSizing = { isFull: isFullWidget, widthOf: widgetWidth, heightOf: widgetHeight }
 
 const widgetCategories: WidgetCategory[] = ["charts", "metrics", "tables", "tasks"]
 
-export { getWidget, isFullWidget, widgetCatalog, widgetCategories }
+export { getWidget, isFullWidget, widgetHeight, widgetSizing, widgetWidth, widgetCatalog, widgetCategories }
 export type { WidgetCategory, WidgetDef }

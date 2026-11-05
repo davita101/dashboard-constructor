@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl"
 import * as React from "react"
 
 import { addWidget, useWidgetLayout, type SetLayout, type WidgetLayout } from "@/components/dashboard/widgets/widget-layout"
-import { isFullWidget, widgetCatalog, widgetCategories, type WidgetCategory, type WidgetDef } from "@/components/dashboard/widgets/catalog"
+import { widgetCatalog, widgetCategories, widgetSizing, type WidgetCategory, type WidgetDef } from "@/components/dashboard/widgets/catalog"
 import { Button, ButtonIcon } from "@/components/ui/button"
 import {
   Command,
@@ -69,7 +69,7 @@ function WidgetPickerProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const add = (type: string) => {
-    setLayout((prev) => addWidget(prev, type, isFullWidget))
+    setLayout((prev) => addWidget(prev, type, widgetSizing))
     setOpen(false)
   }
 

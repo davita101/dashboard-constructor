@@ -175,6 +175,9 @@
     "customizeHint": "Drag a widget to rearrange it, or use the bin to remove it.",
     "newRow": "Drop here for a new row",
     "move": "Move {name}",
-    "remove": "Remove {name}"
+    "remove": "Remove {name}",
+    "duplicate": "Duplicate {name}",
+    "removed": "Removed {name}",
+    "undo": "Undo"
   }
 }
