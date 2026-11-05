@@ -1,0 +1,50 @@
+{
+  "nav": {
+    "dashboard": "დაფა",
+    "projects": "პროექტები",
+    "notes": "ჩანაწერები",
+    "files": "ფაილები",
+    "chats": "ჩატები",
+    "mail": "ფოსტა",
+    "users": "მომხმარებლები",
+    "calendar": "კალენდარი",
+    "knowledge-base": "ცოდნის ბაზა",
+    "clients": "კლიენტები",
+    "messenger": "მესენჯერი"
+  },
+  "sidebar": {
+    "label": "დაფა",
+    "project": "ახალი პროექტი",
+    "navigate": "ნავიგაცია",
+    "more": "მეტი",
+    "links": "ბმულები",
+    "settings": "პარამეტრები",
+    "language": "ენა",
+    "nightMode": "ღამის რეჟიმი",
+    "learn": "სწავლა",
+    "collapse": "გვერდითი პანელის ჩაკეცვა",
+    "expand": "გვერდითი პანელის გაშლა",
+    "open": "გვერდითი პანელის გახსნა",
+    "navigation": "ნავიგაცია",
+    "signOut": "გამოსვლა",
+    "account": "ანგარიში"
+  },
+  "navbar": {
+    "search": "ძიება",
+    "notifications": "შეტყობინებები",
+    "help": "დახმარება",
+    "settings": "პარამეტრები",
+    "upgrade": "განახლება",
+    "close": "დახურვა",
+    "dashboard": "დაფა",
+    "news": "სიახლეები",
+    "support": "მხარდაჭერა",
+    "more": "მეტი"
+  },
+  "footer": {
+    "copyright": "© 2078 Global Inc.",
+    "language": "{name} ენა",
+    "chat": "ჩატი",
+    "backToTop": "ზემოთ დაბრუნება"
+  }
+}

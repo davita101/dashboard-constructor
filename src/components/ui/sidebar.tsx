@@ -10,7 +10,7 @@ import { Separator } from "@/components/ui/separator"
 // User-Component (user), User-List-Component (chat), Navigate-Avatar-Group cell (rail item).
 // Icons are masked SVGs from public/icons so text color drives them.
 
-const sidebarVariants = cva("group/sidebar flex flex-col font-default tracking-default text-base-800", {
+const sidebarVariants = cva("group/sidebar relative flex flex-col font-default tracking-default text-base-800 transition-[width] duration-300 ease-in-out motion-reduce:transition-none", {
   variants: {
     // Figma widths: panel 248 (p 12), wide 272 (p 20/12), rail 64 (p 8), icon 64 (p 20/12), flush 248 (p 0)
     layout: {
@@ -34,18 +34,24 @@ const sidebarVariants = cva("group/sidebar flex flex-col font-default tracking-d
 
 type SidebarLayout = NonNullable<VariantProps<typeof sidebarVariants>["layout"]>
 
-/** Figma Sidebar root. `layout` picks the width and padding of each Sidebar-0N set. */
+/**
+ * Figma Sidebar root. `layout` picks the width and padding of each Sidebar-0N set.
+ * `collapsed` (panel only) animates down to the 64 rail while the DOM stays the same: labels, group heads and
+ * trailing slots fade out, so nothing re-lays-out or jumps.
+ */
 function Sidebar({
   className,
   layout = "panel",
   bordered = false,
+  collapsed = false,
   ...props
-}: React.ComponentProps<"aside"> & VariantProps<typeof sidebarVariants>) {
+}: React.ComponentProps<"aside"> & VariantProps<typeof sidebarVariants> & { collapsed?: boolean }) {
   return (
     <aside
       data-slot="sidebar"
       data-layout={layout}
-      className={cn(sidebarVariants({ layout, bordered }), className)}
+      data-collapsed={collapsed || undefined}
+      className={cn(sidebarVariants({ layout, bordered }), collapsed && layout === "panel" && "w-16", className)}
       {...props}
     />
   )
@@ -81,7 +87,7 @@ function SidebarHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="sidebar-header"
-      className={cn("flex h-8 w-full items-center justify-between gap-3 px-0 group-data-[layout=wide]/sidebar:px-2", className)}
+      className={cn("flex h-8 w-full items-center justify-between gap-3 overflow-hidden px-0 group-data-[layout=wide]/sidebar:px-2", className)}
       {...props}
     />
   )
@@ -114,16 +120,38 @@ function SidebarBrand({ className, ...props }: React.ComponentProps<"div">) {
 
 function SidebarTitle({ className, ...props }: React.ComponentProps<"span">) {
   return (
-    <span data-slot="sidebar-title" className={cn("text-13 leading-24 font-bold whitespace-nowrap text-base-800", className)} {...props} />
+    <span data-slot="sidebar-title" className={cn("text-13 leading-24 font-bold whitespace-nowrap text-base-800 transition-opacity duration-200 group-data-[collapsed]/sidebar:opacity-0 group-data-[collapsed]/sidebar:pointer-events-none", className)} {...props} />
   )
 }
 
 function SidebarActions({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="sidebar-actions" className={cn("flex items-center gap-2 text-base-500", className)} {...props} />
+  return <div data-slot="sidebar-actions" className={cn("flex items-center gap-2 text-base-500 transition-opacity duration-200 group-data-[collapsed]/sidebar:opacity-0 group-data-[collapsed]/sidebar:pointer-events-none", className)} {...props} />
+}
+
+/**
+ * Edge handle that collapses / expands the sidebar: a small round button straddling the right border, level with the
+ * logo. It sits in the same spot in both states, so the pointer never has to travel to undo the click.
+ */
+function SidebarToggle({ collapsed = false, className, ...props }: React.ComponentProps<"button"> & { collapsed?: boolean }) {
+  return (
+    <button
+      type="button"
+      data-slot="sidebar-toggle"
+      aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+      aria-expanded={!collapsed}
+      className={cn(
+        "absolute top-5 -right-3 z-10 flex size-6 cursor-pointer items-center justify-center rounded-full bg-background-0 text-base-500 outline outline-background-100 -outline-offset-1 transition-colors hover:text-base-800 focus-visible:ring-2 focus-visible:ring-primary-500",
+        className
+      )}
+      {...props}
+    >
+      <SidebarIcon name="chevron-left" size="16" className={cn("transition-transform duration-300", collapsed && "rotate-180")} />
+    </button>
+  )
 }
 
 function SidebarContent({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="sidebar-content" className={cn("flex min-h-0 flex-1 flex-col", className)} {...props} />
+  return <div data-slot="sidebar-content" className={cn("flex min-h-0 flex-1 flex-col overflow-x-hidden", className)} {...props} />
 }
 
 function SidebarFooter({ className, ...props }: React.ComponentProps<"div">) {
@@ -136,7 +164,7 @@ function SidebarGroup({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 // Figma Head-Item-Component: Default 36 (11/20 semibold), Big 44 (12/20 bold); `line` adds a top/bottom Divider.
-const sidebarGroupHeadVariants = cva("group/head relative flex items-center font-default justify-between pr-4 pl-3 text-base-500", {
+const sidebarGroupHeadVariants = cva("group/head relative flex items-center overflow-hidden font-default justify-between pr-4 pl-3 text-base-500 transition-[height,padding,opacity] duration-300 group-data-[collapsed]/sidebar:h-0 group-data-[collapsed]/sidebar:py-0 group-data-[collapsed]/sidebar:opacity-0", {
   variants: {
     size: { "36": "h-9 py-2", "44": "h-11 py-3" },
     line: { none: "", top: "", bottom: "" },
@@ -187,7 +215,7 @@ function SidebarMenu({
 
 // Figma List-Item-Component: 40px row, active = pill with stroke. `collapsed` = List-Icon-Item (40x40 icon only).
 const sidebarItemVariants = cva(
-  "group/sidebar-item relative flex items-center text-left font-default text-11 leading-20 font-bold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary-500",
+  "group/sidebar-item relative flex items-center overflow-hidden whitespace-nowrap text-left font-default text-11 leading-20 font-bold transition-[color,background-color,outline-color,width,margin,padding] duration-300 outline-none focus-visible:ring-2 focus-visible:ring-primary-500 group-data-[collapsed]/sidebar:mr-0 group-data-[collapsed]/sidebar:w-full group-data-[collapsed]/sidebar:px-2.5",
   {
     variants: {
       active: {
@@ -254,7 +282,7 @@ function SidebarItemRow({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 function SidebarItemLabel({ className, ...props }: React.ComponentProps<"span">) {
-  return <span data-slot="sidebar-item-label" className={cn("min-w-0 flex-1 truncate", className)} {...props} />
+  return <span data-slot="sidebar-item-label" className={cn("min-w-0 flex-1 truncate transition-opacity duration-200 group-data-[collapsed]/sidebar:opacity-0 group-data-[collapsed]/sidebar:pointer-events-none", className)} {...props} />
 }
 
 /** Left slot of a List-Item: swap in Checkbox, Radio, Switch, Avatar, flag or payment icon. */
@@ -264,7 +292,7 @@ function SidebarItemLeading({ className, ...props }: React.ComponentProps<"span"
 
 /** Right side of an item: counter badge, chevron. */
 function SidebarItemEnd({ className, ...props }: React.ComponentProps<"span">) {
-  return <span data-slot="sidebar-item-end" className={cn("flex shrink-0 items-center gap-1 text-base-500", className)} {...props} />
+  return <span data-slot="sidebar-item-end" className={cn("flex shrink-0 items-center gap-1 text-base-500 transition-opacity duration-200 group-data-[collapsed]/sidebar:opacity-0 group-data-[collapsed]/sidebar:pointer-events-none", className)} {...props} />
 }
 
 /** Figma List-Item Level 2-4: 40px arrow cell, +20px per level. */
@@ -422,11 +450,11 @@ function SidebarChatTime({ className, ...props }: React.ComponentProps<"span">) 
 
 /** Figma User-Component: Type Default (48, or the 40px footer) or Compact, State Default / Ghost / Open. */
 const sidebarUserVariants = cva(
-  "group/user flex items-center font-default text-left outline -outline-offset-1 focus-visible:ring-2 focus-visible:ring-primary-500",
+  "group/user flex items-center overflow-hidden font-default text-left whitespace-nowrap outline -outline-offset-1 focus-visible:ring-2 focus-visible:ring-primary-500",
   {
     variants: {
       size: {
-        "40": "h-10 w-full gap-3 rounded-r32 p-1 pr-3",
+        "40": "h-10 w-full gap-3 rounded-r32 p-1 pr-3 transition-[padding] duration-300 group-data-[collapsed]/sidebar:pr-1",
         "48": "h-12 w-full gap-3 rounded-r24 p-2",
         compact: "size-10 justify-center rounded-r24 p-1.5",
       },
@@ -671,6 +699,7 @@ function SidebarTreeItem({
 }
 
 export {
+  SidebarToggle,
   SidebarItemLeading,
   SidebarCard,
   SidebarTree,

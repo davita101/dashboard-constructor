@@ -1,0 +1,50 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "notes": "Notes",
+    "files": "Files",
+    "chats": "Chats",
+    "mail": "Mail",
+    "users": "Users",
+    "calendar": "Calendar",
+    "knowledge-base": "Knowledge Base",
+    "clients": "Clients",
+    "messenger": "Messenger"
+  },
+  "sidebar": {
+    "label": "Dashboard",
+    "project": "New Project",
+    "navigate": "Navigate",
+    "more": "More",
+    "links": "Links",
+    "settings": "Settings",
+    "language": "Language",
+    "nightMode": "Night Mode",
+    "learn": "Learn",
+    "collapse": "Collapse sidebar",
+    "expand": "Expand sidebar",
+    "open": "Open sidebar",
+    "navigation": "Navigation",
+    "signOut": "Sign out",
+    "account": "Account"
+  },
+  "navbar": {
+    "search": "Search",
+    "notifications": "Notifications",
+    "help": "Help",
+    "settings": "Settings",
+    "upgrade": "Upgrade",
+    "close": "Close",
+    "dashboard": "Dashboard",
+    "news": "News",
+    "support": "Support",
+    "more": "More"
+  },
+  "footer": {
+    "copyright": "© 2078 Global Inc.",
+    "language": "{name} Language",
+    "chat": "Chat",
+    "backToTop": "Back to top"
+  }
+}

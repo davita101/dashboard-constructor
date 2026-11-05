@@ -1,5 +1,8 @@
 "use client"
 
+import { useTranslations } from "next-intl"
+
+import { LanguageMenu, useLanguage } from "@/components/dashboard/language"
 import type { DashboardSize } from "@/components/dashboard/use-dashboard-size"
 import {
   NavigateFooter,
@@ -23,17 +26,29 @@ function Social() {
   )
 }
 
+function Language() {
+  const { language } = useLanguage()
+  const t = useTranslations()
+  return (
+    <LanguageMenu
+      trigger={<NavigateFooterLanguage>{t("footer.language", { name: language.native })}</NavigateFooterLanguage>}
+    />
+  )
+}
+
 function Actions() {
+  const t = useTranslations("footer")
   return (
     <NavigateFooterGroup>
-      <NavigateFooterIconButton icon="/icons/material-chat-bubble.svg" aria-label="Chat" />
-      <NavigateFooterIconButton icon="/icons/material-arrow-upward.svg" aria-label="Back to top" />
+      <NavigateFooterIconButton icon="/icons/material-chat-bubble.svg" aria-label={t("chat")} />
+      <NavigateFooterIconButton icon="/icons/material-arrow-upward.svg" aria-label={t("backToTop")} />
     </NavigateFooterGroup>
   )
 }
 
 /** Figma Footer: one row at 1600 and 768, three stacked rows at 360. */
 function DashboardFooter({ size }: { size: DashboardSize }) {
+  const t = useTranslations("footer")
   if (size === "mobile") {
     return (
       <NavigateFooter size="mobile">
@@ -41,11 +56,11 @@ function DashboardFooter({ size }: { size: DashboardSize }) {
           <Social />
         </NavigateFooterRow>
         <NavigateFooterRow>
-          <NavigateFooterLanguage />
+          <Language />
           <Actions />
         </NavigateFooterRow>
         <NavigateFooterRow>
-          <NavigateFooterCopyright>© 2078 Global Inc.</NavigateFooterCopyright>
+          <NavigateFooterCopyright>{t("copyright")}</NavigateFooterCopyright>
         </NavigateFooterRow>
       </NavigateFooter>
     )
@@ -53,9 +68,9 @@ function DashboardFooter({ size }: { size: DashboardSize }) {
   return (
     <NavigateFooter size={size}>
       <NavigateFooterContent>
-        <NavigateFooterCopyright>© 2078 Global Inc.</NavigateFooterCopyright>
+        <NavigateFooterCopyright>{t("copyright")}</NavigateFooterCopyright>
         <Social />
-        <NavigateFooterLanguage />
+        <Language />
         <Actions />
       </NavigateFooterContent>
     </NavigateFooter>
