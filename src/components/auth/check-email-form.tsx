@@ -1,65 +1,29 @@
 "use client"
 
-import { useSignIn } from "@clerk/nextjs"
-import NextLink from "next/link"
+import { useClerk } from "@clerk/nextjs"
+import { useRouter } from "next/navigation"
 import * as React from "react"
 
-import { Auth, AuthContent, AuthDescription, AuthFooter, AuthHead, AuthIcon, AuthTitle } from "@/components/ui/auth"
-import { Button } from "@/components/ui/button"
-import { FieldError } from "@/components/ui/field"
-import { Link } from "@/components/ui/link"
+import { ResetCodeForm } from "@/components/auth/reset-code-form"
+import { SignUpCodeForm } from "@/components/auth/sign-up-code-form"
+import { authStep, useAuthStep } from "@/components/auth/use-reset-guard"
 
-// Figma Check-Email (9543:78360) wired to Clerk: "Resend" sends the reset code again.
+// /check-email serves both code steps: after Sign Up (verify the email) and after Forgot Password (reset code).
+// The step marker says which one; with no marker (page opened by URL) the user goes back to Forgot Password.
+// While the marker is unknown a same-height placeholder is shown, so the card never collapses or jumps.
 function CheckEmailForm() {
-  const { signIn, errors, fetchStatus } = useSignIn()
-  const [resent, setResent] = React.useState(false)
-  const [failed, setFailed] = React.useState<string>()
-  const busy = fetchStatus === "fetching"
+  const marker = useAuthStep()
+  const { loaded } = useClerk()
+  const router = useRouter()
 
-  async function resend(event: React.MouseEvent) {
-    event.preventDefault()
-    setResent(false)
-    setFailed(undefined)
-    try {
-      const { error } = await signIn.resetPasswordEmailCode.sendCode()
-      if (error) setFailed(error.message)
-      else setResent(true)
-    } catch {
-      // Clerk throws when there is no active reset (page opened directly, or the attempt expired).
-      setFailed("This reset has expired. Go back to Forgot Password and request a new code.")
-    }
-  }
+  React.useEffect(() => {
+    const current = authStep.get()
+    if (loaded && current !== "reset-code" && current !== "signup-code") router.replace("/forgot-password")
+  }, [loaded, router])
 
-  return (
-    <Auth size="280" gap="8" className="items-center">
-      <AuthHead>
-        <AuthIcon src="/icons/material-mail-outline.svg" />
-        <AuthTitle className="text-base-800">Check Your Email</AuthTitle>
-        <AuthDescription>We sent a password reset code</AuthDescription>
-      </AuthHead>
-      <AuthContent>
-        {(failed || errors.global?.[0]) && <FieldError>{failed ?? errors.global?.[0]?.message}</FieldError>}
-        <Button size="40" className="w-full" nativeButton={false} render={<a href="mailto:" />}>
-          Open Email App
-        </Button>
-      </AuthContent>
-      <AuthFooter role="status">
-        {resent ? (
-          "We sent you a new code."
-        ) : (
-          <>
-            Didn’t receive a code?
-            <Link variant="blue" size="12" href="#" onClick={resend} aria-disabled={busy}>
-              Resend
-            </Link>
-          </>
-        )}
-      </AuthFooter>
-      <Link variant="blue" size="12" render={<NextLink href="/sign-in" />}>
-        Back to Log In
-      </Link>
-    </Auth>
-  )
+  if (marker === "signup-code") return <SignUpCodeForm />
+  if (marker === "reset-code") return <ResetCodeForm />
+  return <div aria-hidden className="h-81 w-70" />
 }
 
 export { CheckEmailForm }

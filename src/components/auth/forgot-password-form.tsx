@@ -5,6 +5,7 @@ import NextLink from "next/link"
 import { useRouter } from "next/navigation"
 
 import { AuthField } from "@/components/auth/auth-field"
+import { authStep } from "@/components/auth/use-reset-guard"
 import { Auth, AuthContent, AuthDescription, AuthHead, AuthIcon, AuthTitle } from "@/components/ui/auth"
 import { Button } from "@/components/ui/button"
 import { FieldError } from "@/components/ui/field"
@@ -23,6 +24,7 @@ function ForgotPasswordForm() {
     if (created.error) return
     const sent = await signIn.resetPasswordEmailCode.sendCode()
     if (sent.error) return
+    authStep.set("reset-code")
     router.push("/check-email")
   }
 

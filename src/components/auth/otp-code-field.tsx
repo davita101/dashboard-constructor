@@ -5,8 +5,25 @@ import { InputOTP, InputOTPField, InputOTPGroup, InputOTPSlot } from "@/componen
 
 // Figma Input-OTP composite used by Two-factor Authentication and Activation: label, 6 slots of size 48
 // and optional bottom text. `pinActive` pins the Figma "Active" look on the second slot (previews only).
-function OtpCodeField({ label, description, pinActive }: { label: string; description?: string; pinActive?: boolean }) {
+function OtpCodeField({
+  label,
+  description,
+  pinActive,
+  value,
+  onChange,
+  invalid,
+  disabled,
+}: {
+  label: string
+  description?: string
+  pinActive?: boolean
+  value?: string
+  onChange?: (value: string) => void
+  invalid?: boolean
+  disabled?: boolean
+}) {
   const id = React.useId()
+  const controlled = value !== undefined
   return (
     <InputOTPField className="w-full">
       <FieldHeader>
@@ -15,7 +32,16 @@ function OtpCodeField({ label, description, pinActive }: { label: string; descri
           <FieldLabelIcon />
         </FieldLabel>
       </FieldHeader>
-      <InputOTP id={id} maxLength={6} size="48" defaultValue="1">
+      <InputOTP
+        id={id}
+        maxLength={6}
+        size="48"
+        value={value}
+        defaultValue={controlled ? undefined : "1"}
+        onChange={onChange}
+        aria-invalid={invalid || undefined}
+        disabled={disabled}
+      >
         <InputOTPGroup>
           {[0, 1, 2, 3, 4, 5].map((i) => (
             <InputOTPSlot key={i} index={i} state={pinActive && i === 1 ? "active" : undefined} />
