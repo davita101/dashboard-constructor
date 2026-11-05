@@ -1,6 +1,7 @@
 "use client"
 
 import { useSignIn } from "@clerk/nextjs"
+import NextLink from "next/link"
 import { useRouter } from "next/navigation"
 import * as React from "react"
 
@@ -14,6 +15,7 @@ import {
   AuthHead,
   AuthRow,
   AuthTitle,
+  AuthFooter,
 } from "@/components/ui/auth"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -97,7 +99,7 @@ function SignInForm({ redirectUrl = "/" }: { redirectUrl?: string }) {
             <CheckboxFieldTitle>Remember Me</CheckboxFieldTitle>
           </CheckboxFieldContent>
         </CheckboxField>
-        <Link variant="blue" size="12" href="/forgot-password">
+        <Link variant="blue" size="12" render={<NextLink href="/forgot-password" />}>
           Forgot password?
         </Link>
       </AuthRow>
@@ -107,6 +109,12 @@ function SignInForm({ redirectUrl = "/" }: { redirectUrl?: string }) {
       </Button>
       <AuthSocialButtons providers={["google", "facebook", "apple"]} onProvider={onProvider} disabled={busy} />
         </AuthContent>
+        <AuthFooter>
+          Not a member?
+          <Link variant="blue" size="12" render={<NextLink href="/sign-up" />}>
+            Create Account
+          </Link>
+        </AuthFooter>
       </Auth>
     </form>
   )

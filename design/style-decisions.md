@@ -12,3 +12,4 @@ Format: `- <topic>: <choice> (<why>, <date>)`.
 - Inputs: pill (`AuthField`, size 40), buttons size 40 full width (2026-11-05).
 - Photo panels: photo plus a 20% black layer in CSS; the photo is exported from Figma without the cards (2026-11-05).
 - Photo panel at 360: fixed 852px tall, content inset 20px, "New Features" 18/28, tiles 280x164 stacked one per row 12px apart, dots 28px from the bottom (Figma Main (360), 2026-11-05).
+- Password-flow pages (Forgot Password, Check Your Email, Code, Two-factor, Set New Password, Password Reset): same split layout as Sign In / Sign Up (form on the left in `AuthSplit`, the shared showcase carousel on the right). The Figma frames draw a Navigate-01 header + centered card + Footer; the user chose the split layout and no header/footer for these pages (2026-11-05).
