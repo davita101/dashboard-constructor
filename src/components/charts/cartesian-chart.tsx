@@ -211,10 +211,9 @@ function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, 
   const margin = { top: 0, right: 12, bottom: 0, left: 8 }
   const tip = tooltip ? (
     <ChartTooltip
-      defaultIndex={isLine ? 6 : 5}
-      // Figma Charts Cards: the line tooltip sits over the right of the plot, left edge near Apr.
-      position={isLine ? { x: 100, y: 84 } : undefined}
-      cursor={false}
+      // Figma draws the tooltip pinned open (Jul); the card preset shows it on hover instead, following the pointer.
+      defaultIndex={card ? undefined : 5}
+      cursor={card ? { stroke: "var(--base-200)", strokeDasharray: "3 3" } : false}
       isAnimationActive={false}
       content={
         <ChartTooltipContent

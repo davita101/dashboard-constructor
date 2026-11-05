@@ -29,7 +29,6 @@ import {
   ChartMetricList,
   ChartMetricPlot,
   ChartMetricStats,
-  ChartMetricTooltip,
   ChartMetricWideBody,
 } from "@/components/ui/chart-metric"
 import { ProgressCircle } from "@/components/ui/progress-circle"
@@ -177,7 +176,6 @@ function MetricLine2Preview() {
         <ChartMetricPlot>
           <ChartLineArea tone="green" type={2} preserveAspectRatio="none" />
           <ChartLine tone="orange" type={2} preserveAspectRatio="none" />
-          <ChartMetricTooltip className="top-4 left-30" />
         </ChartMetricPlot>
       </div>
       <ChartMetricActions />
@@ -199,7 +197,6 @@ function MetricLargePreview({ kind }: { kind: "chart" | "map" }) {
         ) : (
           <div className="relative pt-5">
             <ChartMap appearance="default" />
-            <ChartMetricTooltip className="top-8 left-24 min-w-14">Tooltip</ChartMetricTooltip>
           </div>
         )}
         <ChartMetricList />
