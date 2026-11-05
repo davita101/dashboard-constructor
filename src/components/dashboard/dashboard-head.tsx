@@ -1,6 +1,9 @@
 "use client"
 
+import { useTranslations } from "next-intl"
+
 import { BreadcrumbTrail } from "@/components/breadcrumb/BreadcrumbTrail"
+import { useWidgetPicker } from "@/components/dashboard/widgets/widget-picker"
 import type { DashboardSize } from "@/components/dashboard/use-dashboard-size"
 import { Button, ButtonIcon } from "@/components/ui/button"
 import { InputGroup, InputGroupAddon, InputGroupIcon, InputGroupInput, InputGroupJoin, InputGroupKbd } from "@/components/ui/input-group"
@@ -38,6 +41,8 @@ function DashboardHeadTop({ size, title }: { size: DashboardSize; title: string 
 /** Figma Head-Dashboard-02: icon button and title, search with the command key, dark action. Mobile stacks and fills. */
 function DashboardHeadMain({ size, title }: { size: DashboardSize; title: string }) {
   const mobile = size === "mobile"
+  const { open } = useWidgetPicker()
+  const t = useTranslations("widgets")
   return (
     <NavigateHead size={mobile ? "mobile" : "desktop"} divider>
       <NavigateHeadBody>
@@ -61,9 +66,9 @@ function DashboardHeadMain({ size, title }: { size: DashboardSize; title: string
               </InputGroupAddon>
             </InputGroup>
           </InputGroupJoin>
-          <Button variant="dark" shape="pill" size="32">
+          <Button variant="dark" shape="pill" size="32" onClick={open}>
             <ButtonIcon src="/icons/material-add-circle.svg" />
-            Button
+            {t("add")}
           </Button>
         </NavigateHeadGroup>
       </NavigateHeadBody>

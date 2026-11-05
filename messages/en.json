@@ -46,5 +46,74 @@
     "language": "{name} Language",
     "chat": "Chat",
     "backToTop": "Back to top"
+  },
+  "widgets": {
+    "title": "Add a widget",
+    "search": "Search widgets...",
+    "add": "Add widget",
+    "empty": "No widgets match \"{query}\"",
+    "hintAdd": "add",
+    "hintNavigate": "navigate",
+    "hintClose": "close",
+    "categories": {
+      "all": "All",
+      "charts": "Charts",
+      "metrics": "Metrics",
+      "tasks": "Tasks"
+    },
+    "items": {
+      "line-chart": {
+        "name": "Line chart",
+        "description": "Trends over time"
+      },
+      "line-area-chart": {
+        "name": "Area chart",
+        "description": "Filled trend with totals"
+      },
+      "line-step-chart": {
+        "name": "Step chart",
+        "description": "Values that change in steps"
+      },
+      "column-chart": {
+        "name": "Column chart",
+        "description": "Compare values by period"
+      },
+      "bar-chart": {
+        "name": "Bar chart",
+        "description": "Rank categories side by side"
+      },
+      "stacked-bar-chart": {
+        "name": "Stacked bar chart",
+        "description": "Parts that add up to a total"
+      },
+      "candle-chart": {
+        "name": "Candle chart",
+        "description": "Open, close, high and low"
+      },
+      "donut-chart": {
+        "name": "Donut chart",
+        "description": "Share of the whole"
+      },
+      "pie-chart": {
+        "name": "Pie chart",
+        "description": "Split between categories"
+      },
+      "progress-chart": {
+        "name": "Progress gauge",
+        "description": "Progress toward a goal"
+      },
+      "metric-line": {
+        "name": "Metric with line",
+        "description": "Key number and a sparkline"
+      },
+      "metric-area": {
+        "name": "Metric with area",
+        "description": "Key number and a filled trend"
+      },
+      "task-card": {
+        "name": "Task card",
+        "description": "Track work with labels and owners"
+      }
+    }
   }
 }

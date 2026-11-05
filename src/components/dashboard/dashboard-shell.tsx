@@ -8,6 +8,7 @@ import { LanguageProvider } from "@/components/dashboard/language"
 import { DashboardNavbar } from "@/components/dashboard/dashboard-navbar"
 import { DashboardSkeleton } from "@/components/dashboard/dashboard-skeleton"
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar"
+import { WidgetPickerProvider } from "@/components/dashboard/widgets/widget-picker"
 import { useDashboardSize } from "@/components/dashboard/use-dashboard-size"
 import { NavbarIconButton } from "@/components/ui/navbar"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
@@ -22,7 +23,9 @@ const COLLAPSED_KEY = "dashboard-sidebar-collapsed"
 function DashboardShell({ children }: { children: React.ReactNode }) {
   return (
     <LanguageProvider>
-      <DashboardShellInner>{children}</DashboardShellInner>
+      <WidgetPickerProvider>
+        <DashboardShellInner>{children}</DashboardShellInner>
+      </WidgetPickerProvider>
     </LanguageProvider>
   )
 }
