@@ -31,7 +31,7 @@ const strategies = {
 } as const
 
 // Figma Sign-In-01 (open form on the panel, social buttons), wired to Clerk's custom flow (password + OAuth).
-function SignInForm({ redirectUrl = "/" }: { redirectUrl?: string }) {
+function SignInForm({ redirectUrl = "/dashboard" }: { redirectUrl?: string }) {
   const { signIn, errors, fetchStatus } = useSignIn()
   const router = useRouter()
   const busy = fetchStatus === "fetching"

@@ -84,3 +84,4 @@ One line per component: what could not be matched to Figma. Update when fixed.
 - Sign In page: slides 2-6 use generated crops of hero.jpg (public/images/auth/hero-2..6.jpg) as placeholders, Figma draws one photo; Forgot password link goes to /forgot-password (page not built); 2FA/verification steps not wired; Apple/Facebook/Google need enabling in Clerk Dashboard.
 - Sign Up: /verify page missing (queue #5); email-code step redirects there
 - Check Your Email: built, but the reset code cannot be entered yet (/verify, queue #5, is not built), so the flow stops here. Forgot Password pushes to /check-email on success. Layout is the shared split (form + showcase carousel), not the Figma header/footer frame (user choice).
+- Dashboard: Print glyph (Head-Dashboard-01) not in public/icons, default icon stands in; Night Mode switch in Sidebar-01 is not wired to a theme.

@@ -6,7 +6,7 @@ import * as React from "react"
 
 // A signed-in user has nothing to do on Sign In / Sign Up (Clerk would answer "already signed in" on submit).
 // Client-side on purpose: reading the session on the server would make these pages dynamic.
-function RedirectIfSignedIn({ to = "/" }: { to?: string }) {
+function RedirectIfSignedIn({ to = "/dashboard" }: { to?: string }) {
   const { isLoaded, isSignedIn } = useAuth()
   const router = useRouter()
 

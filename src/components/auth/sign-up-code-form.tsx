@@ -12,7 +12,7 @@ import { FieldError } from "@/components/ui/field"
 import { Link } from "@/components/ui/link"
 
 // Figma Activation (9543:78538), sign-up flavour, shown on /check-email, wired to Clerk: confirms the email code sent by Sign Up, then finishes the sign-up.
-function SignUpCodeForm({ redirectUrl = "/" }: { redirectUrl?: string }) {
+function SignUpCodeForm({ redirectUrl = "/dashboard" }: { redirectUrl?: string }) {
   const { signUp, errors, fetchStatus } = useSignUp()
   const router = useRouter()
   const ready = useStepGuard("signup-code", signUp.status === "missing_requirements")

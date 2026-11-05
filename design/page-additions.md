@@ -12,3 +12,8 @@ One line each: `- <page>: <what> (<why>)`. The user may veto any line.
 - Extra rows shown only below lg (`lg:hidden`) to fill the taller 360 box.
 - Sign Up: Apple button added (not in Figma)
 - Check Your Email: copy says "code" not "link" (Clerk sends a reset code), "Resend" resends it and the footer switches to a polite status line saying a new code was sent, errors show above the button (Figma draws only the idle card).
+
+## Dashboard (/dashboard/*, Figma "New Page" 1600 / 768 / 360, my-choosen)
+- Dashboard: sidebar toggle (opens Sidebar-01 in a Sheet) shown below 1024 and at 360; Figma draws no way to open the sidebar there.
+- Dashboard: sidebar user card signs out on click (Figma draws no sign-out); sign-in and sign-up now land on /dashboard.
+- Dashboard: sections are /dashboard/<slug> placeholders (Figma content area is an empty frame); "Dashaord" typo in Figma is written "Dashboard".

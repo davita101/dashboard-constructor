@@ -1,4 +1,6 @@
 import * as React from "react"
+import { mergeProps } from "@base-ui/react/merge-props"
+import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
@@ -217,20 +219,26 @@ function SidebarItem({
   collapsed = false,
   tone = "none",
   shape = "pilled",
+  render,
   ...props
-}: React.ComponentProps<"button"> & VariantProps<typeof sidebarItemVariants>) {
-  return (
-    <button
-      type="button"
-      role="listitem"
-      data-slot="sidebar-item"
-      data-active={active || undefined}
-      data-tone={tone}
-      aria-current={active || (tone !== "none" && tone !== "text") ? "page" : undefined}
-      className={cn(sidebarItemVariants({ active, collapsed, tone, shape }), className)}
-      {...props}
-    />
-  )
+}: useRender.ComponentProps<"button"> & VariantProps<typeof sidebarItemVariants>) {
+  // `render={<Link href="…" />}` turns the row into a real link; the default stays a button.
+  return useRender({
+    defaultTagName: "button",
+    props: mergeProps<"button">(
+      {
+        type: render ? undefined : "button",
+        role: "listitem",
+        "data-active": active || undefined,
+        "data-tone": tone,
+        "aria-current": active || (tone !== "none" && tone !== "text") ? "page" : undefined,
+        className: cn(sidebarItemVariants({ active, collapsed, tone, shape }), className),
+      } as React.ComponentProps<"button">,
+      props
+    ),
+    render,
+    state: { slot: "sidebar-item" },
+  })
 }
 
 /** Non-interactive row that holds its own control (Night Mode switch), so no button nests in a button. */
