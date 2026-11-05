@@ -5,8 +5,8 @@ One row per Figma page template. Frames are the 1600 (desktop) and 360 (mobile) 
 
 | # | Page | Route | Desktop frame | Mobile frame | Status | Notes |
 |---|---|---|---|---|---|---|
-| 1 | Sign In | /sign-in | 14056:126280 | 14056:126336 | in-progress | Clerk password + OAuth |
-| 2 | Sign Up | /sign-up | 14056:126293 | 14056:126321 | todo | |
+| 1 | Sign In | /sign-in | 14056:126280 | 14056:126309 | done | Clerk password + OAuth |
+| 2 | Sign Up | /sign-up | 14056:126293 | 14056:126321 | done | Shared carousel (user choice), Apple button added |
 | 3 | Forgot Password | /forgot-password | 14056:126394 | 14056:126352 | todo | |
 | 4 | Check Your Email | /check-email | 14056:126406 | 14056:126376 | todo | |
 | 5 | Code | /verify | 14056:126418 | 14056:126346 | todo | |

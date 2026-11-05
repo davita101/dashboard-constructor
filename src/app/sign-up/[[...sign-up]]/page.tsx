@@ -1,12 +1,10 @@
-import { SignUp } from "@clerk/nextjs";
-import { Suspense } from "react";
+import { AuthSplit } from "@/components/auth/auth-split"
+import { SignUpForm } from "@/components/auth/sign-up-form"
 
 export default function SignUpPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <Suspense>
-        <SignUp />
-      </Suspense>
-    </div>
-  );
+    <AuthSplit>
+      <SignUpForm />
+    </AuthSplit>
+  )
 }
