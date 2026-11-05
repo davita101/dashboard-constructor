@@ -3,7 +3,7 @@
 import Image from "next/image"
 
 import { AuthSocial } from "@/components/ui/auth"
-import { Button, ButtonIcon } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import { SeparatorGroup, SeparatorLabel } from "@/components/ui/separator"
 
 // Figma Divider-Horizontal "OR" + Other: one Outline-Button per provider.
