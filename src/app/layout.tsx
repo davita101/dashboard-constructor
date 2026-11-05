@@ -7,6 +7,7 @@ import { getLocale, getMessages } from "next-intl/server";
 import { Suspense } from "react";
 import { Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
+import { themeInitScript } from "@/components/dashboard/theme-script";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -38,8 +39,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="min-h-full flex flex-col">
         <ClerkProvider appearance={{ theme: shadcn }}>
           <RememberMeGuard />

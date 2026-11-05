@@ -59,7 +59,8 @@
       "all": "All",
       "charts": "Charts",
       "metrics": "Metrics",
-      "tasks": "Tasks"
+      "tasks": "Tasks",
+      "tables": "Tables"
     },
     "items": {
       "line-chart": {
@@ -161,7 +162,19 @@
       "metric-card": {
         "name": "Wide metric",
         "description": "Full-width KPI strip"
+      },
+      "table": {
+        "name": "Table",
+        "description": "Sortable rows with selection"
       }
-    }
+    },
+    "customize": "Customize",
+    "done": "Done",
+    "emptyTitle": "No widgets yet",
+    "emptyDescription": "Add your first widget to start building this dashboard.",
+    "customizeHint": "Drag a widget to rearrange it, or use the bin to remove it.",
+    "newRow": "Drop here for a new row",
+    "move": "Move {name}",
+    "remove": "Remove {name}"
   }
 }

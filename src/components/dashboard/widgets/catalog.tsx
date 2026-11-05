@@ -2,6 +2,7 @@ import * as React from "react"
 
 import { CartesianChart, type CartesianKind } from "@/components/charts/cartesian-chart"
 import { RadialChart } from "@/components/charts/radial-chart"
+import { ProductTable } from "@/components/table/product-table"
 import { TaskCard } from "@/components/task/task-card"
 import {
   ChartCard,
@@ -34,7 +35,7 @@ import {
 import { ProgressCircle } from "@/components/ui/progress-circle"
 import { cn } from "@/lib/utils"
 
-type WidgetCategory = "charts" | "metrics" | "tasks"
+type WidgetCategory = "charts" | "metrics" | "tables" | "tasks"
 
 type WidgetDef = {
   id: string
@@ -44,6 +45,10 @@ type WidgetDef = {
   /** Extra words the search matches besides the translated name / description. */
   keywords: string[]
   preview: React.ReactNode
+  /** Takes a whole row on the dashboard (tables, wide strips); never shares one. */
+  full?: boolean
+  /** What the dashboard renders when it differs from the picker preview (e.g. fluid width). */
+  board?: React.ReactNode
 }
 
 const ICON = (name: string) => `/icons/material-${name}.svg`
@@ -238,11 +243,16 @@ const widgetCatalog: WidgetDef[] = [
   { id: "metric-line-2", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "revenue", "line", "two"], preview: <MetricLine2Preview /> },
   { id: "metric-chart", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "chart", "amounts", "list"], preview: <MetricLargePreview kind="chart" /> },
   { id: "metric-map", category: "metrics", icon: ICON("language"), keywords: ["metric", "map", "countries", "geo"], preview: <MetricLargePreview kind="map" /> },
-  { id: "metric-card", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "kpi", "wide", "strip"], preview: <MetricWidePreview /> },
+  { id: "metric-card", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "kpi", "wide", "strip"], preview: <MetricWidePreview />, full: true },
+  { id: "table", category: "tables", icon: ICON("list"), keywords: ["table", "grid", "products", "rows", "data", "orders"], preview: <div className="w-210"><ProductTable /></div>, full: true, board: <ProductTable /> },
   { id: "task-card", category: "tasks", icon: ICON("event"), keywords: ["task", "todo", "kanban", "card"], preview: <TaskCard /> },
 ]
 
-const widgetCategories: WidgetCategory[] = ["charts", "metrics", "tasks"]
+const widgetsById = new Map(widgetCatalog.map((w) => [w.id, w]))
+const getWidget = (id: string) => widgetsById.get(id)
+const isFullWidget = (id: string) => getWidget(id)?.full === true
 
-export { widgetCatalog, widgetCategories }
+const widgetCategories: WidgetCategory[] = ["charts", "metrics", "tables", "tasks"]
+
+export { getWidget, isFullWidget, widgetCatalog, widgetCategories }
 export type { WidgetCategory, WidgetDef }

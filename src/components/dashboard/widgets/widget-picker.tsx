@@ -3,7 +3,8 @@
 import { useTranslations } from "next-intl"
 import * as React from "react"
 
-import { widgetCatalog, widgetCategories, type WidgetCategory, type WidgetDef } from "@/components/dashboard/widgets/catalog"
+import { addWidget, useWidgetLayout, type SetLayout, type WidgetLayout } from "@/components/dashboard/widgets/widget-layout"
+import { isFullWidget, widgetCatalog, widgetCategories, type WidgetCategory, type WidgetDef } from "@/components/dashboard/widgets/catalog"
 import { Button, ButtonIcon } from "@/components/ui/button"
 import {
   Command,
@@ -32,12 +33,14 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 type Filter = "all" | WidgetCategory
 type ItemKey = Parameters<ReturnType<typeof useTranslations<"widgets">>>[0]
 
-/** Added widgets live here until the dashboard grid renders them. Persisted per browser. */
-const WIDGETS_KEY = "dashboard-widgets"
-
 type WidgetPickerValue = {
+  /** Opens the widget picker. */
   open: () => void
-  widgets: string[]
+  layout: WidgetLayout
+  setLayout: SetLayout
+  /** Customize mode: widgets can be dragged and removed. */
+  customizing: boolean
+  setCustomizing: (on: boolean) => void
 }
 
 const WidgetPickerContext = React.createContext<WidgetPickerValue | null>(null)
@@ -50,15 +53,8 @@ function useWidgetPicker() {
 
 function WidgetPickerProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = React.useState(false)
-  // Read lazily: widgets are not rendered yet, so the server/client difference cannot cause a hydration mismatch.
-  const [widgets, setWidgets] = React.useState<string[]>(() => {
-    if (typeof window === "undefined") return []
-    try {
-      return JSON.parse(window.localStorage.getItem(WIDGETS_KEY) ?? "[]")
-    } catch {
-      return []
-    }
-  })
+  const [customizing, setCustomizing] = React.useState(false)
+  const [layout, setLayout] = useWidgetLayout()
 
   // ⌘K / Ctrl+K opens the picker from anywhere (the navbar search shows the hint).
   React.useEffect(() => {
@@ -72,16 +68,12 @@ function WidgetPickerProvider({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("keydown", onKey)
   }, [])
 
-  const add = (id: string) => {
-    setWidgets((prev) => {
-      const next = [...prev, id]
-      window.localStorage.setItem(WIDGETS_KEY, JSON.stringify(next))
-      return next
-    })
+  const add = (type: string) => {
+    setLayout((prev) => addWidget(prev, type, isFullWidget))
     setOpen(false)
   }
 
-  const value = React.useMemo(() => ({ open: () => setOpen(true), widgets }), [widgets])
+  const value = React.useMemo(() => ({ open: () => setOpen(true), layout, setLayout, customizing, setCustomizing }), [layout, setLayout, customizing])
 
   return (
     <WidgetPickerContext.Provider value={value}>

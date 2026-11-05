@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Switch } from "@/components/ui/switch"
 import { LanguageFlag, LanguageMenu, useLanguage } from "@/components/dashboard/language"
+import { useNightMode } from "@/components/dashboard/theme"
 import { dashboardNav } from "@/components/dashboard/nav"
 import { cn } from "@/lib/utils"
 
@@ -71,6 +72,7 @@ function DashboardSidebar({
   const { signOut } = useClerk()
   const { language } = useLanguage()
   const t = useTranslations("sidebar")
+  const [dark, setDark] = useNightMode()
   const tNav = useTranslations("nav")
   const name = user?.fullName ?? user?.username ?? t("account")
   const email = user?.primaryEmailAddress?.emailAddress ?? ""
@@ -146,8 +148,8 @@ function DashboardSidebar({
               </SidebarItem>
             }
           />
-          <SidebarItemRow className="transition-[height,margin,opacity] duration-300 group-data-[collapsed]/sidebar:my-0 group-data-[collapsed]/sidebar:h-0 group-data-[collapsed]/sidebar:opacity-0">
-            <Switch aria-label={t("nightMode")} tabIndex={collapsed ? -1 : undefined} />
+          <SidebarItemRow onClick={() => setDark(!dark)} className="cursor-pointer transition-[height,margin,opacity] duration-300 group-data-[collapsed]/sidebar:my-0 group-data-[collapsed]/sidebar:h-0 group-data-[collapsed]/sidebar:opacity-0">
+            <Switch aria-label={t("nightMode")} checked={dark} onCheckedChange={setDark} onClick={(e) => e.stopPropagation()} tabIndex={collapsed ? -1 : undefined} />
             <SidebarItemLabel>{t("nightMode")}</SidebarItemLabel>
           </SidebarItemRow>
           <SidebarItem {...hint(t("learn"))}>

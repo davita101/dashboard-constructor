@@ -39,9 +39,9 @@ function DashboardHeadTop({ size, title }: { size: DashboardSize; title: string 
 }
 
 /** Figma Head-Dashboard-02: icon button and title, search with the command key, dark action. Mobile stacks and fills. */
-function DashboardHeadMain({ size, title }: { size: DashboardSize; title: string }) {
+function DashboardHeadMain({ size, title, widgets = false }: { size: DashboardSize; title: string; widgets?: boolean }) {
   const mobile = size === "mobile"
-  const { open } = useWidgetPicker()
+  const { open, customizing, setCustomizing } = useWidgetPicker()
   const t = useTranslations("widgets")
   return (
     <NavigateHead size={mobile ? "mobile" : "desktop"} divider>
@@ -53,6 +53,13 @@ function DashboardHeadMain({ size, title }: { size: DashboardSize; title: string
           <NavigateHeadTitle size="14">{title}</NavigateHeadTitle>
         </NavigateHeadGroup>
         <NavigateHeadGroup gap={3} direction={mobile ? "col" : "row"} className={mobile ? "w-full items-stretch" : undefined}>
+          {widgets && (
+            // Figma Head-Dashboard-03 "Customize": outline pill with a pencil. While editing it reads "Done".
+            <Button variant="outline" shape="pill" size="32" aria-pressed={customizing} onClick={() => setCustomizing(!customizing)}>
+              <ButtonIcon src={customizing ? "/icons/material-done.svg" : "/icons/material-mode.svg"} />
+              {customizing ? t("done") : t("customize")}
+            </Button>
+          )}
           <InputGroupJoin size="32" shape="pill" className={mobile ? undefined : "w-40"}>
             <InputGroup>
               <InputGroupAddon align="inline-start">
@@ -66,10 +73,12 @@ function DashboardHeadMain({ size, title }: { size: DashboardSize; title: string
               </InputGroupAddon>
             </InputGroup>
           </InputGroupJoin>
-          <Button variant="dark" shape="pill" size="32" onClick={open}>
-            <ButtonIcon src="/icons/material-add-circle.svg" />
-            {t("add")}
-          </Button>
+          {widgets && (
+            <Button variant="dark" shape="pill" size="32" onClick={open}>
+              <ButtonIcon src="/icons/material-add-circle.svg" />
+              {t("add")}
+            </Button>
+          )}
         </NavigateHeadGroup>
       </NavigateHeadBody>
     </NavigateHead>

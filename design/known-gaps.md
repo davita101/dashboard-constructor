@@ -85,3 +85,4 @@ One line per component: what could not be matched to Figma. Update when fixed.
 - Sign Up: /verify page missing (queue #5); email-code step redirects there
 - Check Your Email: built, but the reset code cannot be entered yet (/verify, queue #5, is not built), so the flow stops here. Forgot Password pushes to /check-email on success. Layout is the shared split (form + showcase carousel), not the Figma header/footer frame (user choice).
 - Dashboard: Print glyph (Head-Dashboard-01) not in public/icons, default icon stands in; Night Mode switch in Sidebar-01 is not wired to a theme.
+- Table: Figma product photos are not in public/images, so ProductTable uses the banner placeholder as thumbnail. Header sort is built (click cycles asc / desc / off) but Figma draws only a static chevron; it reuses TableCellSort (stacked chevrons). Rows are sample data from the Figma frame.
