@@ -19,8 +19,14 @@ function ProjectStatTile({
 }) {
   return (
     <Card variant="tile" className="h-40">
-      <ProjectCardHead title={title} icon={icon} menu={wide} />
-      <div className="flex px-5">
+      {wide ? (
+        <ProjectCardHead title={title} icon={icon} menu />
+      ) : (
+        <div className="flex justify-center">
+          <ProjectCardHead title={title} icon={icon} menu={false} />
+        </div>
+      )}
+      <div className="flex flex-1 items-center justify-center px-5">
         <CardStatValue size="30" tone={tone}>
           {value}
         </CardStatValue>

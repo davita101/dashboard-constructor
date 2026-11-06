@@ -16,7 +16,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const { slug } = await params
   const detail = await getProjectDetail(slug)
   if (!detail) notFound()
-  const [t, events] = await Promise.all([getTranslations("nav"), getProjectEvents()])
+  const [t, events, projects] = await Promise.all([getTranslations("nav"), getProjectEvents(), getProjects()])
 
   return (
     <DashboardPage
@@ -25,7 +25,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       panel={false}
       head={<ProjectPageHead name={detail.project.name} logo={detail.project.logo} />}
     >
-      <ProjectDashboardCard detail={detail} events={events.filter((e) => e.projectId === detail.project.id)} />
+      <ProjectDashboardCard detail={detail} events={events} projects={projects} />
     </DashboardPage>
   )
 }

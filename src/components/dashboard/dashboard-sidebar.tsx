@@ -36,6 +36,7 @@ import {
   SidebarUserName,
   SidebarUserText,
 } from "@/components/ui/sidebar"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { Switch } from "@/components/ui/switch"
 import { LanguageFlag, LanguageMenu, useLanguage } from "@/components/dashboard/language"
 import { useNightMode } from "@/components/dashboard/theme"
@@ -116,11 +117,9 @@ function DashboardSidebar({
     window.localStorage.setItem(PROJECTS_OPEN_KEY, treeOpen ? "0" : "1")
     setTreeStored(!treeOpen)
   }
-  // The open project tree needs Sidebar-Dashboards-04's 296 width; otherwise Sidebar-01 (248).
-  const tree = treeOpen && !collapsed
 
   return (
-    <Sidebar layout={tree ? "tree" : "panel"} bordered collapsed={collapsed} className={cn("justify-between", className)} aria-label={t("label")}>
+    <Sidebar bordered collapsed={collapsed} className={cn("justify-between", className)} aria-label={t("label")}>
       {withHead && (
         <>
           <SidebarHeader>
@@ -135,146 +134,150 @@ function DashboardSidebar({
           <SidebarToggle collapsed={collapsed} onClick={onToggleCollapsed} aria-label={collapsed ? t("expand") : t("collapse")} />
         </>
       )}
-      <SidebarContent className="flex-none gap-4 overflow-y-auto">
-        <SidebarGroup>
-          <GroupHead label={t("navigate")} />
-          {/* Sidebar-Dashboards-04 insets its list items 4px inside the 264 menu. */}
-          <SidebarMenu className={cn(tree && "pl-1")}>
-            {dashboardNav.map((n) => {
-              const active = n.href === "/dashboard" ? pathname === n.href : pathname.startsWith(n.href)
-              if (n.slug === "projects" && projects.length > 0) {
-                const open = treeOpen
-                const toggle = toggleTree
-                return (
-                  <React.Fragment key={n.slug}>
-                    <div className="relative">
-                      <SidebarItem active={active} shape={tree ? "rounded" : "pilled"} {...hint(tNav("projects"))} render={<Link href={n.href} onClick={onNavigate} />}>
-                        <SidebarIcon name={tree ? "assignment" : n.icon} className={active ? "text-base-800" : "text-base-500"} />
-                        <SidebarItemLabel>{tNav("projects")}</SidebarItemLabel>
-                        <SidebarItemEnd>
-                          <SidebarIcon name="chevron-right" className="invisible" />
-                        </SidebarItemEnd>
-                      </SidebarItem>
-                      {!collapsed && (
-                        <button
-                          type="button"
-                          aria-expanded={open}
-                          aria-label={open ? tProjects("collapse") : tProjects("expand")}
-                          onClick={toggle}
-                          className="absolute top-1/2 right-4 flex -translate-y-1/2 items-center rounded-r6 text-base-500 outline-none hover:text-base-800 focus-visible:ring-2 focus-visible:ring-primary-500"
-                        >
-                          <SidebarIcon name={open ? "expand-less" : "expand-more"} />
-                        </button>
-                      )}
-                    </div>
-                    {open && !collapsed &&
-                      projects.map((project) => {
-                        const projectHref = `${PROJECTS_HREF}/${project.slug}`
-                        const current = project.slug === activeSlug
-                        return (
-                          <React.Fragment key={project.id}>
-                            <SidebarTreeRow>
-                              <SidebarTreeGuide level="2" active={current} />
-                              <SidebarItem tone={current ? "text" : "none"} render={<Link href={projectHref} onClick={onNavigate} />}>
-                                <SidebarItemIndent level="2" marker="none" />
-                                <Image src={project.logo} alt="" width={20} height={20} className="size-5 shrink-0 object-contain" />
-                                <SidebarItemLabel>{project.name}</SidebarItemLabel>
-                              </SidebarItem>
-                            </SidebarTreeRow>
-                            {current &&
-                              projectSubItems.map((sub) => {
-                                // Tab state lives in the page; the sidebar marks the project dashboard.
-                                const subActive = sub.key === "dashboard"
-                                return (
-                                  <SidebarTreeRow key={sub.key}>
-                                    <SidebarTreeGuide level="2" />
-                                    <SidebarTreeGuide level="3" active={subActive} />
-                                    <SidebarItem tone={subActive ? "text" : "none"} render={<Link href={`${projectHref}${sub.path}`} onClick={onNavigate} />}>
-                                      <SidebarItemIndent level="3" marker="none" />
-                                      <SidebarIcon name={sub.icon} className={subActive ? "text-base-800" : "text-base-500"} />
-                                      <SidebarItemLabel>{tProjects(sub.key)}</SidebarItemLabel>
-                                    </SidebarItem>
-                                  </SidebarTreeRow>
-                                )
-                              })}
-                          </React.Fragment>
-                        )
-                      })}
-                  </React.Fragment>
-                )
-              }
-              return (
-                <SidebarItem key={n.slug} active={active} {...hint(tNav((n.slug || "dashboard") as NavKey))} render={<Link href={n.href} onClick={onNavigate} />}>
-                  <SidebarIcon name={n.icon} className={active ? "text-base-800" : "text-base-500"} />
-                  <SidebarItemLabel>{tNav((n.slug || "dashboard") as NavKey)}</SidebarItemLabel>
-                  <SidebarItemEnd>
-                    {n.badge && (
-                      <Badge variant="black" size="square-16">
-                        {n.badge}
-                      </Badge>
-                    )}
-                    {n.chevron && <SidebarIcon name="chevron-right" />}
-                  </SidebarItemEnd>
-                </SidebarItem>
-              )
-            })}
-          </SidebarMenu>
-        </SidebarGroup>
-        <SidebarGroup>
-          <GroupHead label={t("more")} />
-        </SidebarGroup>
-        <SidebarGroup>
-          <GroupHead label={t("links")} />
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarItem {...hint(t("settings"))}>
-            <SidebarIcon name="settings" className="text-base-500" />
-            <SidebarItemLabel>{t("settings")}</SidebarItemLabel>
-            <SidebarItemEnd>
-              <SidebarIcon name="expand-more" />
-            </SidebarItemEnd>
-          </SidebarItem>
-          <LanguageMenu
-            side="right"
-            align="end"
-            trigger={
-              <SidebarItem {...hint(t("language"))}>
-                <LanguageFlag language={language} />
-                <SidebarItemLabel>{t("language")}</SidebarItemLabel>
+      {/* One scroll for the menu groups and the footer, so the long project tree never splits the sidebar. */}
+      <ScrollArea className="min-h-0 flex-1">
+        <div className="flex min-h-full flex-col justify-between gap-4">
+          <SidebarContent className="flex-none gap-4">
+            <SidebarGroup>
+              <GroupHead label={t("navigate")} />
+              <SidebarMenu>
+                {dashboardNav.map((n) => {
+                  const active = n.href === "/dashboard" ? pathname === n.href : pathname.startsWith(n.href)
+                  if (n.slug === "projects" && projects.length > 0) {
+                    const open = treeOpen
+                    const toggle = toggleTree
+                    return (
+                      <React.Fragment key={n.slug}>
+                        <div className="relative">
+                          <SidebarItem active={active} {...hint(tNav("projects"))} render={<Link href={n.href} onClick={onNavigate} />}>
+                            <SidebarIcon name={n.icon} className={active ? "text-base-800" : "text-base-500"} />
+                            <SidebarItemLabel>{tNav("projects")}</SidebarItemLabel>
+                            <SidebarItemEnd>
+                              <SidebarIcon name="chevron-right" className="invisible" />
+                            </SidebarItemEnd>
+                          </SidebarItem>
+                          {!collapsed && (
+                            <button
+                              type="button"
+                              aria-expanded={open}
+                              aria-label={open ? tProjects("collapse") : tProjects("expand")}
+                              onClick={toggle}
+                              className="absolute top-1/2 right-4 flex -translate-y-1/2 items-center rounded-r6 text-base-500 outline-none hover:text-base-800 focus-visible:ring-2 focus-visible:ring-primary-500"
+                            >
+                              <SidebarIcon name={open ? "expand-less" : "expand-more"} />
+                            </button>
+                          )}
+                        </div>
+                        {open && !collapsed &&
+                          projects.map((project) => {
+                            const projectHref = `${PROJECTS_HREF}/${project.slug}`
+                            const current = project.slug === activeSlug
+                            return (
+                              <React.Fragment key={project.id}>
+                                <SidebarTreeRow>
+                                  <SidebarTreeGuide level="2" active={current} />
+                                  <SidebarItem tone={current ? "text" : "none"} title={project.name} render={<Link href={projectHref} onClick={onNavigate} />}>
+                                    <SidebarItemIndent level="2" marker="none" />
+                                    <Image src={project.logo} alt="" width={20} height={20} className="size-5 shrink-0 object-contain" />
+                                    <SidebarItemLabel>{project.name}</SidebarItemLabel>
+                                  </SidebarItem>
+                                </SidebarTreeRow>
+                                {current &&
+                                  projectSubItems.map((sub) => {
+                                    // Tab state lives in the page; the sidebar marks the project dashboard.
+                                    const subActive = sub.key === "dashboard"
+                                    return (
+                                      <SidebarTreeRow key={sub.key}>
+                                        <SidebarTreeGuide level="2" />
+                                        <SidebarTreeGuide level="3" active={subActive} />
+                                        <SidebarItem tone={subActive ? "text" : "none"} render={<Link href={`${projectHref}${sub.path}`} onClick={onNavigate} />}>
+                                          <SidebarItemIndent level="3" marker="none" />
+                                          <SidebarIcon name={sub.icon} className={subActive ? "text-base-800" : "text-base-500"} />
+                                          <SidebarItemLabel>{tProjects(sub.key)}</SidebarItemLabel>
+                                        </SidebarItem>
+                                      </SidebarTreeRow>
+                                    )
+                                  })}
+                              </React.Fragment>
+                            )
+                          })}
+                      </React.Fragment>
+                    )
+                  }
+                  return (
+                    <SidebarItem key={n.slug} active={active} {...hint(tNav((n.slug || "dashboard") as NavKey))} render={<Link href={n.href} onClick={onNavigate} />}>
+                      <SidebarIcon name={n.icon} className={active ? "text-base-800" : "text-base-500"} />
+                      <SidebarItemLabel>{tNav((n.slug || "dashboard") as NavKey)}</SidebarItemLabel>
+                      <SidebarItemEnd>
+                        {n.badge && (
+                          <Badge variant="black" size="square-16">
+                            {n.badge}
+                          </Badge>
+                        )}
+                        {n.chevron && <SidebarIcon name="chevron-right" />}
+                      </SidebarItemEnd>
+                    </SidebarItem>
+                  )
+                })}
+              </SidebarMenu>
+            </SidebarGroup>
+            <SidebarGroup>
+              <GroupHead label={t("more")} />
+            </SidebarGroup>
+            <SidebarGroup>
+              <GroupHead label={t("links")} />
+            </SidebarGroup>
+          </SidebarContent>
+          <SidebarFooter>
+            <SidebarMenu>
+              <SidebarItem {...hint(t("settings"))}>
+                <SidebarIcon name="settings" className="text-base-500" />
+                <SidebarItemLabel>{t("settings")}</SidebarItemLabel>
                 <SidebarItemEnd>
-                  <span className="text-10 font-bold text-base-500">{language.code.toUpperCase()}</span>
                   <SidebarIcon name="expand-more" />
                 </SidebarItemEnd>
               </SidebarItem>
-            }
-          />
-          <SidebarItemRow onClick={() => setDark(!dark)} className="cursor-pointer transition-[height,margin,opacity] duration-300 group-data-[collapsed]/sidebar:my-0 group-data-[collapsed]/sidebar:h-0 group-data-[collapsed]/sidebar:opacity-0">
-            <Switch aria-label={t("nightMode")} checked={dark} onCheckedChange={setDark} onClick={(e) => e.stopPropagation()} tabIndex={collapsed ? -1 : undefined} />
-            <SidebarItemLabel>{t("nightMode")}</SidebarItemLabel>
-          </SidebarItemRow>
-          <SidebarItem {...hint(t("learn"))}>
-            <SidebarIcon name="school" className="text-base-500" />
-            <SidebarItemLabel>{t("learn")}</SidebarItemLabel>
-          </SidebarItem>
-        </SidebarMenu>
-        <SidebarUser aria-label={t("signOut")} onClick={() => signOut({ redirectUrl: "/sign-in" })}>
-          <Avatar size="32">
-            <AvatarImage src={user?.imageUrl ?? "/images/avatars/avatar-1.png"} alt="" />
-            <AvatarFallback>{name.slice(0, 1)}</AvatarFallback>
-          </Avatar>
-          <SidebarUserText className="transition-opacity duration-200 group-data-[collapsed]/sidebar:opacity-0">
-            <SidebarUserName>{name}</SidebarUserName>
-            <SidebarUserEmail>{email}</SidebarUserEmail>
-          </SidebarUserText>
-          <SidebarIcon
-            name="expand-less"
-            size="16"
-            className="text-base-500 transition-opacity duration-200 group-data-[collapsed]/sidebar:opacity-0"
-          />
-        </SidebarUser>
-      </SidebarFooter>
+              <LanguageMenu
+                side="right"
+                align="end"
+                trigger={
+                  <SidebarItem {...hint(t("language"))}>
+                    <LanguageFlag language={language} />
+                    <SidebarItemLabel>{t("language")}</SidebarItemLabel>
+                    <SidebarItemEnd>
+                      <span className="text-10 font-bold text-base-500">{language.code.toUpperCase()}</span>
+                      <SidebarIcon name="expand-more" />
+                    </SidebarItemEnd>
+                  </SidebarItem>
+                }
+              />
+              <SidebarItemRow onClick={() => setDark(!dark)} className="cursor-pointer transition-[height,margin,opacity] duration-300 group-data-[collapsed]/sidebar:my-0 group-data-[collapsed]/sidebar:h-0 group-data-[collapsed]/sidebar:opacity-0">
+                <Switch aria-label={t("nightMode")} checked={dark} onCheckedChange={setDark} onClick={(e) => e.stopPropagation()} tabIndex={collapsed ? -1 : undefined} />
+                <SidebarItemLabel>{t("nightMode")}</SidebarItemLabel>
+              </SidebarItemRow>
+              <SidebarItem {...hint(t("learn"))}>
+                <SidebarIcon name="school" className="text-base-500" />
+                <SidebarItemLabel>{t("learn")}</SidebarItemLabel>
+              </SidebarItem>
+            </SidebarMenu>
+            <SidebarUser aria-label={t("signOut")} onClick={() => signOut({ redirectUrl: "/sign-in" })}>
+              <Avatar size="32">
+                <AvatarImage src={user?.imageUrl ?? "/images/avatars/avatar-1.png"} alt="" />
+                <AvatarFallback>{name.slice(0, 1)}</AvatarFallback>
+              </Avatar>
+              <SidebarUserText className="transition-opacity duration-200 group-data-[collapsed]/sidebar:opacity-0">
+                <SidebarUserName>{name}</SidebarUserName>
+                <SidebarUserEmail>{email}</SidebarUserEmail>
+              </SidebarUserText>
+              <SidebarIcon
+                name="expand-less"
+                size="16"
+                className="text-base-500 transition-opacity duration-200 group-data-[collapsed]/sidebar:opacity-0"
+              />
+            </SidebarUser>
+          </SidebarFooter>
+        </div>
+      </ScrollArea>
     </Sidebar>
   )
 }

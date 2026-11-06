@@ -8,14 +8,14 @@ import { ProjectStatTile } from "@/components/projects/ProjectStatTile"
 import { Card } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import type { ProjectDetail, ProjectEvent } from "@/lib/projects/types"
+import type { Project, ProjectDetail, ProjectEvent } from "@/lib/projects/types"
 
 const tabKeys = ["dashboard", "stages", "tasks", "messages", "chat", "members", "customer", "files", "activity"] as const
 
 const icon = (name: string) => `/icons/material-${name}.svg`
 
 /** Figma main card (1128x1176, r20): pill tabs head, divider, stat tiles and the lower group. */
-async function ProjectDashboardCard({ detail, events }: { detail: ProjectDetail; events: ProjectEvent[] }) {
+async function ProjectDashboardCard({ detail, events, projects }: { detail: ProjectDetail; events: ProjectEvent[]; projects: Project[] }) {
   const [t, tTabs, tEvents, format] = await Promise.all([
     getTranslations("projectPage.stats"),
     getTranslations("projectPage.tabs"),
@@ -62,7 +62,7 @@ async function ProjectDashboardCard({ detail, events }: { detail: ProjectDetail;
               <ProjectMembersCard team={detail.team} />
             </div>
           </div>
-          <ProjectEventsCard title={tEvents("title")} events={events} projects={[project]} className="lg:h-182" />
+          <ProjectEventsCard title={tEvents("title")} events={events} projects={projects} groupHead="inline" className="lg:h-182" />
         </div>
       </div>
     </Card>

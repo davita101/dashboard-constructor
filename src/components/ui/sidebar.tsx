@@ -21,8 +21,6 @@ const sidebarVariants = cva("group/sidebar relative flex flex-col font-default t
       flush: "w-62 gap-0 p-0",
       // Figma Sidebar-Commerce-01 (296, p 12/20, gap 40), -02/-04 (296, p 24, gap 16), -03 (296, p 20, gap 16)
       commerce: "w-74 gap-10 px-5 py-3",
-      // Figma Sidebar-Dashboards-04 (296, 16 inset → 264 menu): Projects tree with guide lines.
-      tree: "w-74 gap-4 p-4",
       "commerce-card": "w-74 gap-4 p-6",
       "commerce-card-sm": "w-74 gap-4 p-5",
     },
@@ -53,7 +51,7 @@ function Sidebar({
       data-slot="sidebar"
       data-layout={layout}
       data-collapsed={collapsed || undefined}
-      className={cn(sidebarVariants({ layout, bordered }), collapsed && (layout === "panel" || layout === "tree") && "w-16", className)}
+      className={cn(sidebarVariants({ layout, bordered }), collapsed && layout === "panel" && "w-16", className)}
       {...props}
     />
   )

@@ -229,13 +229,13 @@ type Finance = { income: number; incomeTrend: number; profit: number; profitTren
 - [ ] 16. Links + actions: Add New Project, Quick Add, project click, "…" menus
 - [x] 17. Loading + empty states
 - [ ] 18. i18n strings + number/date formatting
-- [ ] 19. Visual pass vs Figma (spacing, type, colors, dark mode) — sidebar done (296 tree layout on Projects, guide lines, Figma offsets measured in browser; icons `assignment`/`restore` + square logos still missing, see known-gaps); FinancialStats rings fixed size (finance prop unused)
+- [ ] 19. Visual pass vs Figma (spacing, type, colors, dark mode) — sidebar done (one Sidebar-01 248 on all pages per user, project tree with guide lines, one scroll for groups + footer; `restore` icon + square logos missing, see known-gaps); FinancialStats rings fixed size (finance prop unused)
 - [ ] 20. Responsive: Projects (768) + (360)
 - [ ] 21. Validate: browser vs export, console, tsc, lint, build, known-gaps
 
 ## Open Questions
 
-- **Q1 Sidebar:** should Projects use Sidebar-Dashboards-04 (296, project tree, no footer), or should we add the project tree to the existing Sidebar-01 (248, keeps settings/user footer)?
+- **Q1 Sidebar (answered 2026-11-06: one sidebar for every page, keep existing nav, single scroll):** should Projects use Sidebar-Dashboards-04 (296, project tree, no footer), or should we add the project tree to the existing Sidebar-01 (248, keeps settings/user footer)?
 - **Q2 Head-Dashboard-01:** should it be a full-width top bar with a divider on all dashboard pages (as in this frame) or only on Projects?
 - **Q3 Routes:** this frame is `/dashboard/projects`, while the sidebar highlights *Develop Chat Application → Dashboard*. Should it be `/dashboard/projects/[slug]` with the overview as that project's dashboard, or the global overview?
 - **Q4 Quick Add:** where do Member, Message and File go? Is it a dialog or a page?
@@ -249,7 +249,8 @@ Handoff: `design/handoff/project-editor-1600/` (tree.txt with node ids, img/proj
 - [x] B. `CompanyCard.tsx`, `ProjectStagesCard.tsx`
 - [x] C. `ProjectMembersCard.tsx` + `ui/member-row.tsx` (keys added)
 - [x] Wire B + C in, tsc + build green, browser check at 1600 vs img/project-1600.png (layout matches; 7 tile/stage icons missing, see known-gaps `ProjectPage`)
-- [ ] Commit
+- [x] Commit `3c3866d`
+- [x] Fix pass (`design/handoff/project-editor-1600/review.md`): centered tiles, stage item separators, all events + inline group head
 - [ ] Breadcrumb shows "Projects", Figma shows "Dashboard"; project page has no 360 frame read yet (stacks below `lg`)
 - [ ] Then step 16: Add New Project / Quick Add Project / project click → `/dashboard/projects/[slug]` (sidebar project rows + sub-items already link there)
 

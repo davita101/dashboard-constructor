@@ -56,11 +56,13 @@ async function ProjectEventsCard({
   projects,
   title,
   className,
+  groupHead = "stacked",
 }: {
   events: ProjectEvent[]
   projects: Project[]
   title?: string
   className?: string
+  groupHead?: "stacked" | "inline"
 }) {
   const t = await getTranslations("projects.events")
   const tEmpty = await getTranslations("projects.empty")
@@ -113,8 +115,17 @@ async function ProjectEventsCard({
                   <TableCellLogo src={project.logo} alt="" />
                 </TableCell>
                 <TableCellContent className="py-0">
-                  <TableCellTitle className="truncate">{project.name}</TableCellTitle>
-                  <TableCellDescription>{t("count", { count: items.length })}</TableCellDescription>
+                  {groupHead === "inline" ? (
+                    <div className="flex min-w-0 items-baseline gap-1">
+                      <TableCellTitle className="truncate">{project.name}</TableCellTitle>
+                      <TableCellDescription className="shrink-0 text-base-500">{t("count", { count: items.length })}</TableCellDescription>
+                    </div>
+                  ) : (
+                    <>
+                      <TableCellTitle className="truncate">{project.name}</TableCellTitle>
+                      <TableCellDescription>{t("count", { count: items.length })}</TableCellDescription>
+                    </>
+                  )}
                 </TableCellContent>
               </TableCell>
               {items.map((event) => {
