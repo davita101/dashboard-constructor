@@ -42,7 +42,7 @@ function ProjectSummaryCard({ project }: { project: Project }) {
           <TableCellContent className="min-w-0">
             <TableCellTitle className="truncate">
               <Link
-                href={`/dashboard/projects/${project.slug}`}
+                href={`/dashboard/projects/${project.slug}/dashboard`}
                 className="rounded-r12 outline-none after:absolute after:inset-0 after:z-1 after:rounded-r12 focus-visible:after:ring-2 focus-visible:after:ring-primary-500 focus-visible:after:ring-inset"
               >
                 {project.name}

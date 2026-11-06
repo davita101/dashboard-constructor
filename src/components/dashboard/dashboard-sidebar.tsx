@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl"
 import Image from "next/image"
 import Link from "next/link"
 import * as React from "react"
-import { usePathname, useSearchParams } from "next/navigation"
+import { usePathname } from "next/navigation"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -48,18 +48,18 @@ export type SidebarProject = Pick<Project, "id" | "slug" | "name" | "logo">
 
 const PROJECTS_OPEN_KEY = "dashboard-sidebar-projects-open"
 
-// Figma Sidebar-Dashboards-04: sub-items of the open project, mapped to the project page tabs (`?tab=`).
+// Figma Sidebar-Dashboards-04: sub-items of the open project, mapped to the project page tabs (`/<slug>/<tab>`).
 const projectSubItems = [
-  { key: "dashboard", icon: "dashboard", path: "" },
-  { key: "stages", icon: "list", path: "?tab=stages" },
-  { key: "tasks", icon: "restore", path: "?tab=tasks" },
-  { key: "messages", icon: "chat-bubble", path: "?tab=messages" },
-  { key: "chat", icon: "forum", path: "?tab=chat" },
+  { key: "dashboard", icon: "dashboard", path: "dashboard" },
+  { key: "stages", icon: "list", path: "stages" },
+  { key: "tasks", icon: "restore", path: "tasks" },
+  { key: "messages", icon: "chat-bubble", path: "messages" },
+  { key: "chat", icon: "forum", path: "chat" },
 ] as const
 
 const PROJECTS_HREF = "/dashboard/projects"
 
-/** Sub-items of the open project; the one matching the page's `?tab=` gets the dark guide and text. */
+/** Sub-items of the open project; the one matching the path's tab segment gets the dark guide and text. */
 function ProjectSubItems({ projectHref, tab, onNavigate }: { projectHref: string; tab: string; onNavigate?: () => void }) {
   const t = useTranslations("sidebarProjects")
   return projectSubItems.map((sub) => {
@@ -68,7 +68,7 @@ function ProjectSubItems({ projectHref, tab, onNavigate }: { projectHref: string
       <SidebarTreeRow key={sub.key}>
         <SidebarTreeGuide level="2" />
         <SidebarTreeGuide level="3" active={active} />
-        <SidebarItem tone={active ? "text" : "none"} render={<Link href={`${projectHref}${sub.path}`} onClick={onNavigate} />}>
+        <SidebarItem tone={active ? "text" : "none"} render={<Link href={`${projectHref}/${sub.path}`} onClick={onNavigate} />}>
           <SidebarItemIndent level="3" marker="none" />
           <SidebarIcon name={sub.icon} className={active ? "text-base-800" : "text-base-500"} />
           <SidebarItemLabel>{t(sub.key)}</SidebarItemLabel>
@@ -76,11 +76,6 @@ function ProjectSubItems({ projectHref, tab, onNavigate }: { projectHref: string
       </SidebarTreeRow>
     )
   })
-}
-
-function ProjectSubItemsFromUrl({ projectHref, onNavigate }: { projectHref: string; onNavigate?: () => void }) {
-  const tab = useSearchParams().get("tab") ?? "dashboard"
-  return <ProjectSubItems projectHref={projectHref} tab={tab} onNavigate={onNavigate} />
 }
 
 type NavKey = Parameters<ReturnType<typeof useTranslations<"nav">>>[0]
@@ -135,6 +130,7 @@ function DashboardSidebar({
   const hint = (label: string) => (collapsed ? { "aria-label": label, title: label } : {})
   // /dashboard/projects/<slug>: the project whose branch is open and drawn dark.
   const activeSlug = pathname.split("/")[3]
+  const activeTab = pathname.split("/")[4] ?? "dashboard"
   const onProjects = pathname === PROJECTS_HREF || pathname.startsWith(`${PROJECTS_HREF}/`)
   const treeOpen = projects.length > 0 && (treeStored ?? onProjects)
   const toggleTree = () => {
@@ -200,18 +196,13 @@ function DashboardSidebar({
                               <React.Fragment key={project.id}>
                                 <SidebarTreeRow>
                                   <SidebarTreeGuide level="2" active={current} />
-                                  <SidebarItem tone={current ? "text" : "none"} title={project.name} render={<Link href={projectHref} onClick={onNavigate} />}>
+                                  <SidebarItem tone={current ? "text" : "none"} title={project.name} render={<Link href={`${projectHref}/dashboard`} onClick={onNavigate} />}>
                                     <SidebarItemIndent level="2" marker="none" />
                                     <Image src={project.logo} alt="" width={20} height={20} className="size-5 shrink-0 object-contain" />
                                     <SidebarItemLabel>{project.name}</SidebarItemLabel>
                                   </SidebarItem>
                                 </SidebarTreeRow>
-                                {current && (
-                                  // useSearchParams needs a Suspense boundary; the fallback marks Dashboard.
-                                  <React.Suspense fallback={<ProjectSubItems projectHref={projectHref} tab="dashboard" onNavigate={onNavigate} />}>
-                                    <ProjectSubItemsFromUrl projectHref={projectHref} onNavigate={onNavigate} />
-                                  </React.Suspense>
-                                )}
+                                {current && <ProjectSubItems projectHref={projectHref} tab={activeTab} onNavigate={onNavigate} />}
                               </React.Fragment>
                             )
                           })}

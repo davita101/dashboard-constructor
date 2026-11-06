@@ -220,7 +220,7 @@ const sidebarItemVariants = cva(
     variants: {
       active: {
         true: "bg-background-0 text-base-800 outline outline-background-100 -outline-offset-1",
-        false: "text-base-600 hover:bg-background-20 hover:text-base-800",
+        false: "text-base-600 hover:bg-background-30 hover:text-base-800",
       },
       collapsed: {
         true: "size-10 shrink-0 justify-center p-2.5",
