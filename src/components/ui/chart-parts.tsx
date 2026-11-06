@@ -287,14 +287,14 @@ function ChartTrend({
   size = "sm",
   children,
   ...props
-}: React.ComponentProps<"span"> & { direction: "up" | "down"; icon?: "trend" | "arrow"; size?: "sm" | "md" }) {
+}: React.ComponentProps<"span"> & { direction: "up" | "down"; icon?: "trend" | "arrow"; size?: "sm" | "md" | "stack" }) {
   return (
     <span
       data-slot="chart-trend"
       data-direction={direction}
       className={cn(
         "inline-flex items-center text-10 leading-16 font-bold",
-        size === "md" ? "gap-2" : "gap-1",
+        size === "md" ? "gap-2" : size === "stack" ? "flex-col items-start" : "gap-1",
         direction === "up" ? "text-green-600" : "text-danger-600",
         className,
       )}
@@ -304,7 +304,7 @@ function ChartTrend({
         aria-hidden
         className={cn(
           "shrink-0 bg-current mask-contain",
-          size === "md" ? "size-5" : "size-4",
+          size === "md" ? "size-5" : size === "stack" ? "size-6" : "size-4",
           " mask-center mask-no-repeat",
           icon === "arrow"
             ? direction === "up"
@@ -318,6 +318,22 @@ function ChartTrend({
       {children}
     </span>
   )
+}
+
+const chartValueVariants = cva("font-default text-24 leading-36 font-medium tracking-default", {
+  variants: {
+    tone: {
+      green: "text-green-600",
+      purple: "text-purple-600",
+      danger: "text-danger-600",
+    },
+  },
+  defaultVariants: { tone: "green" },
+})
+
+/** Figma Finance card amount: 24/36 medium number in a palette color (Projects Income / Profit). */
+function ChartValue({ className, tone, ...props }: React.ComponentProps<"span"> & VariantProps<typeof chartValueVariants>) {
+  return <span data-slot="chart-value" className={cn(chartValueVariants({ tone }), className)} {...props} />
 }
 
 /* ---------------------------------- Progress-Card ---------------------------------- */
@@ -811,6 +827,7 @@ export {
   ChartProgressCard,
   ChartStep,
   ChartTrend,
+  ChartValue,
   chartAmountVariants,
   chartCandleVariants,
   chartColumnVariants,

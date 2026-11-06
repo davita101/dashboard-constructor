@@ -67,6 +67,20 @@ export default function TabsSwitchPreviewPage() {
         ))
       )}
 
+      <Section title="Tab-Group-Pilled (size 28, Projects list card)">
+        <Backdrop tone="default">
+          <Tabs defaultValue="One">
+            <TabsList variant="pill" size="28">
+              {["Last Projects", "On Deadline", "Costs"].map((item) => (
+                <TabsTrigger key={item} value={item === "Last Projects" ? "One" : item}>
+                  {item}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+        </Backdrop>
+      </Section>
+
       {variants.map((variant) => (
         <Section key={variant} title={`Switcher-Icon-Horizontal-${shapeName[variant]}-Group (Default / Black / White)`}>
           {tones.map((tone) => (

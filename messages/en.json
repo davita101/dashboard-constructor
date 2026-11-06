@@ -174,5 +174,80 @@
     "duplicate": "Duplicate {name}",
     "removed": "Removed {name}",
     "undo": "Undo"
+  },
+  "projects": {
+    "greeting": "Hi, {name}",
+    "greetingAnonymous": "Hi there",
+    "addProject": "Add New Project",
+    "stats": {
+      "projects": "Projects",
+      "tasks": "Tasks",
+      "members": "Members",
+      "files": "Files"
+    },
+    "events": {
+      "title": "Latest events",
+      "more": "More",
+      "viewAll": "View all",
+      "count": "{count, plural, one {# Event} other {# Events}}",
+      "kind": {
+        "member": "Added New Member",
+        "comment": "Add Comment",
+        "stage": "Add Stages",
+        "file": "Add Files",
+        "task": "Added Task"
+      }
+    },
+    "finance": {
+      "more": "More options for {title}",
+      "viewAll": "View all",
+      "income": "Incoming income",
+      "profit": "Profit from income"
+    },
+    "quickAdd": {
+      "project": "Project",
+      "stages": "Stages",
+      "task": "Task",
+      "member": "Member",
+      "message": "Message",
+      "file": "File"
+    },
+    "empty": {
+      "projectsTitle": "No projects yet",
+      "projectsDescription": "Create a project to see it here.",
+      "eventsTitle": "No events yet",
+      "eventsDescription": "Project activity will show up here."
+    },
+    "list": {
+      "tabs": {
+        "last": "Last Projects",
+        "deadline": "On Deadline",
+        "costs": "Costs"
+      },
+      "more": "More",
+      "viewAll": "View all",
+      "addMember": "Add member to {name}",
+      "stages": "{count, plural, one {# Stage} other {# Stages}}",
+      "deadline": "Deadline: {date}",
+      "income": "Income: {amount}",
+      "tasks": "{count, plural, one {# task} other {# tasks}}"
+    },
+    "financialStats": {
+      "title": "Financial Statistics",
+      "more": "More options for Financial Statistics",
+      "viewAll": "View all",
+      "income": "Income",
+      "cost": "Cost",
+      "profit": "Profit"
+    }
+  },
+  "sidebarProjects": {
+    "expand": "Expand projects",
+    "collapse": "Collapse projects",
+    "dashboard": "Dashboard",
+    "stages": "Stages",
+    "tasks": "Tasks",
+    "messages": "Messages",
+    "chat": "Chat"
   }
 }

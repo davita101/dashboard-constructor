@@ -1,5 +1,7 @@
+import type * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
+import { Badge, type BadgeColor } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 
 const radialChartVariants = cva("relative inline-flex shrink-0 items-center justify-center", {
@@ -9,6 +11,7 @@ const radialChartVariants = cva("relative inline-flex shrink-0 items-center just
       pie: "size-32",
       progress: "",
       "progress-half": "",
+      rings: "",
     },
     text: {
       true: "",
@@ -23,6 +26,23 @@ const radialChartVariants = cva("relative inline-flex shrink-0 items-center just
   ],
   defaultVariants: { kind: "donut", text: false },
 })
+
+type RingItem = {
+  label: string
+  /** Token palette name: stroke is var(--<color>-500), badge uses the same color. */
+  color: Extract<BadgeColor, "blue" | "orange" | "green" | "purple" | "red" | "sky" | "pink">
+  /** Ring diameter in px. */
+  size: number
+  /** Badge top-left corner in px, relative to the chart box. */
+  badge: { left: number; top: number }
+}
+
+// Figma Financial Statistics "Charts" frame (208x207): Income / Cost / Profit.
+const defaultRings: RingItem[] = [
+  { label: "Income", color: "blue", size: 207, badge: { left: 146, top: 2 } },
+  { label: "Cost", color: "orange", size: 144, badge: { left: 32.5, top: 141 } },
+  { label: "Profit", color: "green", size: 90, badge: { left: 78.5, top: 91 } },
+]
 
 const sliceColors = [
   "var(--blue-500)",
@@ -72,10 +92,36 @@ type Props = VariantProps<typeof radialChartVariants> & {
   count?: number
   theme?: "default" | "white"
   preset?: "default" | "card"
+  /** kind="rings": concentric outline circles with a Badge label each. */
+  items?: RingItem[]
   className?: string
 }
 
-function RadialChart({ kind = "donut", text = false, count = 7, theme = "default", preset = "default", className }: Props) {
+function RadialChart({ kind = "donut", text = false, count = 7, theme = "default", preset = "default", items = defaultRings, className }: Props) {
+  if (kind === "rings") {
+    return (
+      <span
+        className={cn(radialChartVariants({ kind, text }), "h-51.75 w-52", className)}
+        role="img"
+        aria-label={items.map((i) => i.label).join(", ")}
+      >
+        {items.map((item) => (
+          <span
+            key={item.label}
+            aria-hidden
+            className="absolute top-1/2 left-1/2 -translate-1/2 rounded-full outline -outline-offset-1 outline-(--ring-color)"
+            style={{ width: item.size, height: item.size, "--ring-color": `var(--${item.color}-500)` } as React.CSSProperties}
+          />
+        ))}
+        {items.map((item) => (
+          <Badge key={item.label} color={item.color} className="absolute" style={{ left: item.badge.left, top: item.badge.top }}>
+            {item.label}
+          </Badge>
+        ))}
+      </span>
+    )
+  }
+
   const white = theme === "white"
   const card = preset === "card"
   const label = (
@@ -194,4 +240,4 @@ function RadialChart({ kind = "donut", text = false, count = 7, theme = "default
   )
 }
 
-export { RadialChart, radialChartVariants }
+export { RadialChart, radialChartVariants, type RingItem }

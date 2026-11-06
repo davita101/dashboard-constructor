@@ -7,7 +7,7 @@ import { DashboardFooter } from "@/components/dashboard/dashboard-footer"
 import { LanguageProvider } from "@/components/dashboard/language"
 import { DashboardNavbar } from "@/components/dashboard/dashboard-navbar"
 import { DashboardSkeleton } from "@/components/dashboard/dashboard-skeleton"
-import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar"
+import { DashboardSidebar, type SidebarProject } from "@/components/dashboard/dashboard-sidebar"
 import { WidgetPickerProvider } from "@/components/dashboard/widgets/widget-picker"
 import { useDashboardSize } from "@/components/dashboard/use-dashboard-size"
 import { NavbarIconButton } from "@/components/ui/navbar"
@@ -20,17 +20,17 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/s
  */
 const COLLAPSED_KEY = "dashboard-sidebar-collapsed"
 
-function DashboardShell({ children }: { children: React.ReactNode }) {
+function DashboardShell({ children, projects = [] }: { children: React.ReactNode; projects?: SidebarProject[] }) {
   return (
     <LanguageProvider>
       <WidgetPickerProvider>
-        <DashboardShellInner>{children}</DashboardShellInner>
+        <DashboardShellInner projects={projects}>{children}</DashboardShellInner>
       </WidgetPickerProvider>
     </LanguageProvider>
   )
 }
 
-function DashboardShellInner({ children }: { children: React.ReactNode }) {
+function DashboardShellInner({ children, projects }: { children: React.ReactNode; projects: SidebarProject[] }) {
   const t = useTranslations("sidebar")
   const size = useDashboardSize()
   const [open, setOpen] = React.useState(false)
@@ -67,7 +67,7 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
             <SheetTrigger render={<NavbarIconButton icon="/icons/material-sidebar.svg" label={t("open")} />} />
             <SheetContent side="left">
               <SheetTitle>{t("navigation")}</SheetTitle>
-              <DashboardSidebar className="h-full" onNavigate={() => setOpen(false)} />
+              <DashboardSidebar className="h-full" projects={projects} onNavigate={() => setOpen(false)} />
             </SheetContent>
           </Sheet>
         }
@@ -79,7 +79,7 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
     return (
       <div className="flex min-h-svh bg-background-20 font-default">
         <div className="sticky top-0 z-40 h-svh shrink-0 self-start">
-          <DashboardSidebar className="h-full" withHead collapsed={collapsed} onToggleCollapsed={toggleCollapsed} />
+          <DashboardSidebar className="h-full" projects={projects} withHead collapsed={collapsed} onToggleCollapsed={toggleCollapsed} />
         </div>
         <div className="flex min-w-0 flex-1 flex-col">
           {navbar}

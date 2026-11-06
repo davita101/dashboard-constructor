@@ -67,6 +67,9 @@ const buttonVariants = cva(
         bare: "text-current outline-current before:hidden hover:opacity-70",
         // Gray toolbar icon action (e.g. mail input formatting icons)
         muted: "text-base-500 outline-base-alpha-20 before:hidden hover:text-base-700 active:text-base-800",
+        // Text action with a gray icon on no fill (Projects Quick Add tiles): dark label, base-500 icon
+        plain:
+          "justify-start text-base-800 outline-base-alpha-20 before:hidden hover:text-base-900 data-disabled:opacity-50 [&_[data-slot=button-icon]]:text-base-500",
         // Figma Misc Close (11956:33166) / Upload (11956:33373): gray, blue on hover, dark when pressed,
         // Active at 30% when disabled. data-force pins a state for previews.
         "icon-action":
@@ -92,6 +95,8 @@ const buttonVariants = cva(
         "icon-24": "size-6 rounded-r6 text-10 leading-16 [--btn-icon:--spacing(3)]",
         "icon-20": "size-5 rounded-r6 text-10 leading-16 [--btn-icon:--spacing(4)]",
         "icon-16": "size-4 rounded-r4 text-9 leading-16 [--btn-icon:--spacing(3)]",
+        // Figma 20-high action: 20px icon, 12px gap, no side padding (Projects Quick Add)
+        "tile-20": "h-5 gap-3 rounded-r6 px-0 text-10 leading-16 [--btn-icon:--spacing(5)] [--btn-px:0px]",
         // Icon fills the whole 20px box (Figma 20x20 toolbar icons)
         "glyph-20": "size-5 rounded-r6 p-0 [--btn-icon:--spacing(5)] [--btn-px:0px] [--btn-tx:0px]",
       },

@@ -106,6 +106,11 @@ export default function ChartPreviewPage() {
           <RadialChart kind="progress" />
         </Cell>
       </Section>
+      <Section title="Rings-Chart">
+        <Cell caption="Type=Rings (Income / Cost / Profit)">
+          <RadialChart kind="rings" />
+        </Cell>
+      </Section>
       <Section title="Progress-Half-Chart">
         <Cell caption="Type=Text, Style=Default">
           <RadialChart kind="progress-half" text />

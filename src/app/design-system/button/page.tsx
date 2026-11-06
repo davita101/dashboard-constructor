@@ -32,6 +32,7 @@ const counterStyle: Record<ButtonVariant, { variant: BadgeVariant; color?: Badge
   "white-soft": { variant: "white" },
   bare: { variant: "ghost" },
   muted: { variant: "ghost" },
+  plain: { variant: "ghost" },
   "icon-action": { variant: "ghost" },
 }
 const counterSize: Record<(typeof sizes)[number], BadgeSize> = {
@@ -74,6 +75,18 @@ function Rows({ render }: { render: (variant: ButtonVariant) => React.ReactNode 
 export default function ButtonPreviewPage() {
   return (
     <main className="flex flex-1 flex-col gap-16 bg-background-10 px-4 py-20 md:px-20">
+      <Section title="variant=plain size=tile-20 (Projects Quick Add action)">
+        <div className="flex gap-6">
+          <Button variant="plain" size="tile-20">
+            <ButtonIcon src={defaultIcon} />
+            Project
+          </Button>
+          <Button variant="plain" size="tile-20" disabled>
+            <ButtonIcon src={defaultIcon} />
+            Disabled
+          </Button>
+        </div>
+      </Section>
       <Section title="Type=Default: sizes 60 → 16 (Pilled, Rounded)">
         <Rows
           render={(variant) =>

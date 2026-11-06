@@ -14,7 +14,7 @@ const stroke =
   "before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:bg-linear-to-b before:p-px before:[mask:linear-gradient(black_0_0)_content-box_exclude,linear-gradient(black_0_0)]"
 
 const badgeVariants = cva(
-  "group/badge relative inline-flex w-fit shrink-0 items-center justify-center gap-(--badge-gap) overflow-hidden px-(--badge-px) font-default tracking-default whitespace-nowrap transition-all outline-none focus-visible:ring-3 focus-visible:ring-primary-alpha-30 has-data-[icon=inline-end]:pe-(--badge-icon-px) has-data-[icon=inline-start]:ps-(--badge-icon-px) has-[>[data-slot=avatar]:first-child]:ps-(--badge-avatar-px) [&>svg]:pointer-events-none [&>svg]:size-(--badge-icon) [&>svg]:shrink-0",
+  "group/badge relative inline-flex w-fit shrink-0 items-center justify-center gap-(--badge-gap) overflow-hidden px-(--badge-px) font-default tracking-default whitespace-nowrap transition-all outline-none focus-visible:ring-3 focus-visible:ring-primary-alpha-30 has-data-[icon=inline-end]:pe-(--badge-icon-px) has-data-[icon=inline-start]:ps-(--badge-icon-px) has-[>[data-slot=avatar]:first-child]:ps-(--badge-avatar-px) [&>svg]:pointer-events-none [&>svg]:size-(--badge-icon) [&>svg]:shrink-0 [&>img]:pointer-events-none [&>img]:size-(--badge-icon) [&>img]:shrink-0",
   {
     variants: {
       variant: {
@@ -91,7 +91,7 @@ const badgeVariants = cva(
       // Badge-Icon: the icon fills a fixed square, no padding
       {
         size: ["square-60", "square-48", "square-40", "square-32", "square-24", "square-20", "square-16", "square-12"],
-        className: "has-[>svg]:px-0",
+        className: "has-[>svg]:px-0 has-[>img]:px-0",
       },
     ],
     defaultVariants: {

@@ -11,6 +11,8 @@ import {
   ChartMap,
   ChartPie,
   ChartProgressCard,
+  ChartTrend,
+  ChartValue,
   ChartStep,
   type ChartShade,
   type ChartTone,
@@ -261,6 +263,19 @@ export default function ChartComponentPreviewPage() {
             </Cell>
           )),
         )}
+      </Section>
+      <Section title="Finance value + stacked trend (Projects)">
+        {(["green", "purple"] as const).map((tone) => (
+          <Cell key={tone} caption={`ChartValue ${tone}`}>
+            <ChartValue tone={tone}>$ 14.000</ChartValue>
+          </Cell>
+        ))}
+        <Cell caption="ChartTrend size=stack up">
+          <ChartTrend direction="up" size="stack">+23%</ChartTrend>
+        </Cell>
+        <Cell caption="ChartTrend size=stack down">
+          <ChartTrend direction="down" size="stack">-11%</ChartTrend>
+        </Cell>
       </Section>
       <Section title="Chart-Columns-Mini-Component">
         {[...withDark, "white" as ChartTone].map((tone) => (
