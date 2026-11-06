@@ -12,6 +12,7 @@ import { getProjectEvents, getProjectFinance, getProjects, getProjectTotals } fr
 
 // Figma "Dashboard: Projects" → Projects (1600) 14061:68482. Content is built step by step (design/handoff/projects-1600/audit.md).
 // Desktop body: KPI row (4 × 264, gap 24) above three columns 264 | 456 | 360 (gap 24) = the 1128 column.
+// Columns keep the Figma ratio (fr) so narrower desktops shrink instead of overflowing; below xl Events drops under the first two.
 export default async function ProjectsPage() {
   const [t, tFinance, totals, finance, projects, events] = await Promise.all([
     getTranslations("nav"),
@@ -26,7 +27,7 @@ export default async function ProjectsPage() {
     <DashboardPage title={t("projects")} topBar="full" panel={false} head={<ProjectsGreeting />}>
       <div className="flex flex-col gap-6">
         <ProjectStats totals={totals} />
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[--spacing(66)_--spacing(114)_--spacing(90)]">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-[minmax(0,264fr)_minmax(0,456fr)_minmax(0,360fr)]">
           <div className="flex flex-col gap-6">
             <QuickAddCard />
             <FinanceMetricCard title={tFinance("income")} amount={finance.income} trend={finance.incomeTrend} tone="green" />
@@ -34,7 +35,7 @@ export default async function ProjectsPage() {
             <FinancialStatsCard finance={finance} />
           </div>
           <ProjectListCard projects={projects} />
-          <ProjectEventsCard events={events} projects={projects} />
+          <ProjectEventsCard events={events} projects={projects} className="lg:col-span-2 xl:col-span-1" />
         </div>
       </div>
     </DashboardPage>

@@ -18,10 +18,10 @@ import {
 function Social() {
   return (
     <NavigateFooterGroup>
-      <NavigateFooterIconButton icon="/icons/material-default-icon.svg" aria-label="Facebook" />
+      <NavigateFooterIconButton icon="/icons/social/facebook-gray.svg" aria-label="Facebook" />
       <NavigateFooterIconButton icon="/icons/brands/x-twitter.png" aria-label="X" />
       <NavigateFooterIconButton icon="/icons/material-instagram.svg" aria-label="Instagram" />
-      <NavigateFooterIconButton icon="/icons/material-default-icon.svg" aria-label="Pinterest" />
+      <NavigateFooterIconButton icon="/icons/social/pinterest-gray.svg" aria-label="Pinterest" />
     </NavigateFooterGroup>
   )
 }

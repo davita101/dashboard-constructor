@@ -84,7 +84,7 @@ function ProjectListCard({ projects }: { projects: Project[] }) {
                 </Empty>
               </div>
             ) : (
-            <ScrollArea className="h-full">
+            <ScrollArea className="h-full" scrollbar="track">
               <ul className="flex flex-col gap-3 pr-5 pl-3">
                 {[...projects].sort(sorters[key]).map((project) => (
                   <li key={project.id}>

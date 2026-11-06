@@ -11,11 +11,13 @@ import { DashboardSidebar, type SidebarProject } from "@/components/dashboard/da
 import { WidgetPickerProvider } from "@/components/dashboard/widgets/widget-picker"
 import { useDashboardSize } from "@/components/dashboard/use-dashboard-size"
 import { NavbarIconButton } from "@/components/ui/navbar"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 
 /**
  * Figma "New Page": Navigate-01 on top, Sidebar-01 (248) + content, Footer at the bottom.
  * Every dashboard route renders inside this shell (src/app/dashboard/layout.tsx).
+ * Desktop/tablet: the sidebar stays put and the content column scrolls in a ScrollArea (no window scroll).
  * Tablet docks the same collapsible sidebar (starts as the rail); on mobile it opens from the navbar toggle in a Sheet.
  */
 const COLLAPSED_KEY = "dashboard-sidebar-collapsed"
@@ -77,15 +79,18 @@ function DashboardShellInner({ children, projects }: { children: React.ReactNode
   // Desktop + tablet: the sidebar is docked (tablet starts as the rail) and owns the full height with logo head; navbar, content and footer sit to its right.
   if (!mobile) {
     return (
-      <div className="flex min-h-svh bg-background-20 font-default">
-        <div className="sticky top-0 z-40 h-svh shrink-0 self-start">
+      <div className="flex h-svh bg-background-20 font-default">
+        <div className="z-40 h-svh shrink-0">
           <DashboardSidebar className="h-full" projects={projects} withHead collapsed={collapsed} onToggleCollapsed={toggleCollapsed} />
         </div>
-        <div className="flex min-w-0 flex-1 flex-col">
-          {navbar}
-          <main className="min-w-0 flex-1">{children}</main>
-          <DashboardFooter size={size} />
-        </div>
+        {/* Content scrolls in its own ScrollArea so the page bar is the Figma 4x96 Scroll, same as the sidebar's. */}
+        <ScrollArea className="h-svh min-w-0 flex-1">
+          <div className="flex min-h-svh flex-col">
+            {navbar}
+            <main className="min-w-0 flex-1">{children}</main>
+            <DashboardFooter size={size} />
+          </div>
+        </ScrollArea>
       </div>
     )
   }

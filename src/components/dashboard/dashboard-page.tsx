@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator"
 
 /**
  * Figma "Content" of New Page: Head-Dashboard-01, Head-Dashboard-02 and the content panel.
- * Page spacing (Figma): 1600 = 48 top, 112 sides (1128 column), 32 gaps; 768 = 32 top, 36 sides; 360 = 20 top and sides, 24 gap, panel full bleed.
+ * Page spacing (Figma): 1600 = 48 top, 112 sides (1128 column), 32 gaps; narrower desktops keep 36 sides (column max 1128 + 2 × 36); 768 = 32 top, 36 sides; 360 = 20 top and sides, 24 gap, panel full bleed.
  */
 /**
  * `widgets` turns on the Customize and Add Widget actions (pages that render a WidgetBoard).
@@ -39,7 +39,7 @@ function DashboardPage({
   const mainHead = head ?? <DashboardHeadMain size={size} title={title} widgets={widgets} />
 
   const column = (
-    <div className="mx-auto flex w-full max-w-282 flex-col gap-6 md:gap-8 md:px-9 md:py-8 lg:px-0 lg:py-12">
+    <div className="mx-auto flex w-full max-w-300 flex-col gap-6 md:gap-8 md:px-9 md:py-8 lg:py-12">
       <div className="flex flex-col gap-6 px-5 pt-5 md:gap-8 md:p-0">
         {!full && <DashboardHeadTop size={size} title={title} crumbs={crumbs} />}
         {mainHead}

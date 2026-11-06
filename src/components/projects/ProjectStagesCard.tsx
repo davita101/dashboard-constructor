@@ -47,14 +47,14 @@ async function ProjectStagesCard({ stages }: { stages: ProjectStage[] }) {
                 <Separator />
                 <div className="flex h-10 items-center">
                   <div className="flex flex-1 items-center justify-around px-2">
-                    <Stat icon="/icons/material-flag.svg" label={t("tasks")}>{stage.tasks}</Stat>
-                    <Stat icon="/icons/material-group.svg" label={t("members")}>{stage.members}</Stat>
+                    <Stat icon="/icons/material/material-flag.svg" label={t("tasks")}>{stage.tasks}</Stat>
+                    <Stat icon="/icons/material/material-group.svg" label={t("members")}>{stage.members}</Stat>
                     <Stat icon="/icons/material-cloud.svg" label={t("files")}>{stage.files}</Stat>
                   </div>
                   <Separator orientation="vertical" />
                   <div className="flex flex-1 items-center justify-around px-2">
-                    <Stat icon="/icons/material-alarm.svg" label={t("start")}>{short(stage.start)}</Stat>
-                    <Stat icon="/icons/material-alarm.svg" label={t("end")}>{short(stage.end)}</Stat>
+                    <Stat icon="/icons/material/material-alarm.svg" label={t("start")}>{short(stage.start)}</Stat>
+                    <Stat icon="/icons/material/material-alarm.svg" label={t("end")}>{short(stage.end)}</Stat>
                   </div>
                 </div>
               </Card>

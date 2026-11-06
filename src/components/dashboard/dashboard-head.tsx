@@ -18,8 +18,7 @@ function DashboardHeadTop({ size, title, crumbs }: { size: DashboardSize; title:
   const actions: [string, string][] = [
     ["Help Chat", "/icons/material-help.svg"],
     ["Docs", "/icons/material-insert-drive-file.svg"],
-    // Print glyph is not in public/icons yet (design/known-gaps.md).
-    ["Print", ICON],
+    ["Print", "/icons/material/material-print.svg"],
   ]
   return (
     <NavigateHead size={mobile ? "mobile" : "desktop"}>

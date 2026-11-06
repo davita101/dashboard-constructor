@@ -14,8 +14,7 @@ import {
 } from "@/components/ui/table-cell"
 import type { Project } from "@/lib/projects/types"
 
-// Stages, Deadline and Tasks icons (clear_all, alarm, restore) are not in public/icons yet (known-gaps).
-const DEFAULT_ICON = "/icons/material-default-icon.svg"
+const icon = (name: string) => `/icons/material/material-${name}.svg`
 
 /** Figma project list Item (424x152 r12): brand + team head, progress row, 2x2 facts grid. */
 function ProjectSummaryCard({ project }: { project: Project }) {
@@ -28,10 +27,10 @@ function ProjectSummaryCard({ project }: { project: Project }) {
   const income = format.number(project.income, { style: "currency", currency: "USD", maximumFractionDigits: 0 })
 
   const facts = [
-    { icon: DEFAULT_ICON, text: t("stages", { count: project.stages }) },
-    { icon: DEFAULT_ICON, text: t("deadline", { date: deadline }) },
+    { icon: icon("clear-all"), text: t("stages", { count: project.stages }) },
+    { icon: icon("alarm"), text: t("deadline", { date: deadline }) },
     { icon: "/icons/material-account-balance-wallet.svg", text: t("income", { amount: income }) },
-    { icon: DEFAULT_ICON, text: t("tasks", { count: project.tasks }) },
+    { icon: icon("restore"), text: t("tasks", { count: project.tasks }) },
   ]
 
   return (

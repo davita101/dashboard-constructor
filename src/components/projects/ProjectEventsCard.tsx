@@ -24,14 +24,13 @@ import { cn } from "@/lib/utils"
 import type { Project, ProjectEvent, ProjectEventKind } from "@/lib/projects/types"
 
 // Figma Badge-Icon-Pilled color per event kind: add_circle green, message blue, clear_all orange, download cyan.
-// "task" has no Figma sample color or icon (last row not read): purple + default icon, see known-gaps.
-// message, clear_all and the task icon are not in public/icons yet: default icon stands in.
+// "task" has no Figma sample color (last row not read): purple assumed, see known-gaps.
 const kinds: Record<ProjectEventKind, { color: BadgeColor; icon: string }> = {
   member: { color: "green", icon: "/icons/material-add-circle.svg" },
-  comment: { color: "blue", icon: "/icons/material-default-icon.svg" },
-  stage: { color: "orange", icon: "/icons/material-default-icon.svg" },
+  comment: { color: "blue", icon: "/icons/material/material-message.svg" },
+  stage: { color: "orange", icon: "/icons/material/material-clear-all.svg" },
   file: { color: "cyan", icon: "/icons/material-file-download.svg" },
-  task: { color: "purple", icon: "/icons/material-default-icon.svg" },
+  task: { color: "purple", icon: "/icons/material/material-task.svg" },
 }
 
 type Group = { project: Project; events: ProjectEvent[] }
@@ -73,7 +72,7 @@ async function ProjectEventsCard({
     format.dateTime(new Date(at), { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "UTC" })
 
   return (
-    <Card variant="panel" className={cn("lg:h-197", className)}>
+    <Card variant="panel" className={cn("gap-0 lg:h-197", className)}>
       <div className="flex shrink-0 items-center justify-between">
         <TableCell size="60">
           <TableCellTitle>{title ?? t("title")}</TableCellTitle>
@@ -106,7 +105,7 @@ async function ProjectEventsCard({
           </Empty>
         </div>
       ) : (
-      <ScrollArea className="min-h-0 flex-1">
+      <ScrollArea className="min-h-0 flex-1" scrollbar="track">
         <div className="flex flex-col p-1 pe-5">
           {groups.map(({ project, events: items }) => (
             <section key={project.id} aria-label={project.name} className="flex flex-col">

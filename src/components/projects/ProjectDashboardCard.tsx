@@ -12,7 +12,7 @@ import { projectTabKeys, type ProjectTabKey } from "@/lib/projects/tabs"
 import { Empty, EmptyDescription, EmptyHeader, EmptyIcon, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import type { Project, ProjectDetail, ProjectEvent } from "@/lib/projects/types"
 
-const icon = (name: string) => `/icons/material-${name}.svg`
+const icon = (name: string) => `/icons/material/material-${name}.svg`
 
 /** Figma main card (1128x1176, r20): pill tabs head, divider, stat tiles and the lower group. */
 async function ProjectDashboardCard({

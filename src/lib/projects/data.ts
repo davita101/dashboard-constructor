@@ -12,9 +12,12 @@ import type {
 // Mock data for the Projects section, copied from Figma "Projects (1600)" (14061:68482).
 // Async getters so pages read it like an API; replace the bodies with fetch calls later, keep the signatures.
 
+// Figma uses square brand marks (round 20-28 logos), not wordmarks: public/icons/brands.
+const BRAND = "/icons/brands"
 const LOGO = "/icons/logotypes"
-// Apple, Kickstarter and WeChat logos are not in public/icons yet (design/known-gaps.md): default logo until supplied.
-const DEFAULT_LOGO = `${LOGO}/default-logo-color.svg`
+const brand = (name: string) => `${BRAND}/${name}.svg`
+// Marks the Figma draws but brands/ doesn't hold (Android Application for Bank, Banner Development, Website): default mark.
+const DEFAULT_LOGO = brand("default")
 
 const members: Member[] = [
   { id: "m1", name: "John Smith", avatar: "/images/avatars/avatar-1.png" },
@@ -49,19 +52,19 @@ const project = (
 
 // Sidebar order (Figma Sidebar-Dashboards-04), then the two extra cards of the Last Projects list.
 const projects: Project[] = [
-  project("p1", "Develop Chat Application", `${LOGO}/adobe-color.svg`, { updatedAt: "2078-09-10T12:00:00Z" }),
-  project("p2", "City Advertising Campaign", DEFAULT_LOGO, { updatedAt: "2078-09-09T12:00:00Z", progress: 64, deadline: "2078-10-02" }),
-  project("p3", "File transfer application", `${LOGO}/whatsapp-color.svg`, { progress: 42, income: 3200, deadline: "2078-11-14" }),
-  project("p4", "Banner Development", `${LOGO}/zoom-color.svg`, { progress: 75, income: 1800, deadline: "2078-09-30" }),
-  project("p5", "Development of Dashboards", `${LOGO}/airbnb-color.svg`, { progress: 30, income: 7400, deadline: "2078-12-01" }),
-  project("p6", "Android Application for Bank", DEFAULT_LOGO, { progress: 55, income: 9100, deadline: "2078-10-20" }),
-  project("p7", "Website Development", `${LOGO}/twitch-color.svg`, { progress: 18, income: 2600, deadline: "2078-11-05" }),
+  project("p1", "Develop Chat Application", brand("adobe"), { updatedAt: "2078-09-10T12:00:00Z" }),
+  project("p2", "City Advertising Campaign", brand("apple"), { updatedAt: "2078-09-09T12:00:00Z", progress: 64, deadline: "2078-10-02" }),
+  project("p3", "File transfer application", brand("whatsapp"), { progress: 42, income: 3200, deadline: "2078-11-14" }),
+  project("p4", "Banner Development", brand("zoom"), { progress: 75, income: 1800, deadline: "2078-09-30" }),
+  project("p5", "Development of Dashboards", brand("airbnb"), { progress: 30, income: 7400, deadline: "2078-12-01" }),
+  project("p6", "Android Application for Bank", brand("tech-crunch"), { progress: 55, income: 9100, deadline: "2078-10-20" }),
+  project("p7", "Website Development", brand("twitch"), { progress: 18, income: 2600, deadline: "2078-11-05" }),
   project("p8", "Android Application for Bank", DEFAULT_LOGO, { progress: 92, income: 4300, deadline: "2078-09-28" }),
   project("p9", "Banner Development", DEFAULT_LOGO, { progress: 10, income: 900, deadline: "2079-01-15" }),
-  project("p10", "File transfer application", DEFAULT_LOGO, { progress: 67, income: 2100, deadline: "2078-10-11" }),
+  project("p10", "File transfer application", brand("kakao-talk"), { progress: 67, income: 2100, deadline: "2078-10-11" }),
   project("p11", "Website", DEFAULT_LOGO, { progress: 50, income: 1500, deadline: "2078-12-24" }),
-  project("p12", "Web Application Development", DEFAULT_LOGO, { updatedAt: "2078-09-08T12:00:00Z" }),
-  project("p13", "Facebook Application", `${LOGO}/zoom-color.svg`, { updatedAt: "2078-09-07T12:00:00Z" }),
+  project("p12", "Web Application Development", brand("kickstarter"), { updatedAt: "2078-09-08T12:00:00Z" }),
+  project("p13", "Facebook Application", brand("zoom"), { updatedAt: "2078-09-07T12:00:00Z" }),
 ].map((p, i, all) => {
   // Same names repeat in the Figma sidebar: keep slugs unique.
   const dup = all.slice(0, i).some((q) => q.slug === p.slug)
