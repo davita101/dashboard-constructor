@@ -35,18 +35,53 @@ import { cn } from "@/lib/utils"
 type ItemKey = Parameters<ReturnType<typeof useTranslations<"widgets">>>[0]
 
 /**
- * Figma "Dashboard: Home". The board is the 1128 column split into 8 tracks of 120 with 24 gaps, rows of at least 164:
- * metric tiles 2 x 1 (264 x 164), charts 3 x 3 (408 x 540), wide charts the whole row x 3; dense flow stacks
- * tiles beside the charts (Main 1600 "current section"). Tables and strips take the whole row at their own height.
+ * Figma "Dashboard: Home". The board is the 1128 column split into 24 tracks of 24 with 24 gaps (span n = 48n - 24),
+ * rows of at least 164: metric tiles 6 x 1 (264 x 164); charts 9 x 3 (408 x 540) beside a column of tiles
+ * (Main 1600 "current section"), or 8 x 3 (360 x 540) three to a row when no tiles sit beside them (frame "EXAMPLE");
+ * wide charts the whole row x 3. Dense flow stacks tiles beside the charts. Tables and strips take the whole row at their own height.
  * Container queries: from 576 (768 frames: 696 board, 632 beside our icon rail) 2 tracks, tiles one each, charts both; 360 frames are 1 track, 12 gap.
  */
 // contain-size: fixed footprints never stretch their rows (a chart's content could push 540 to 569); only `full` sizes its row.
 const SPAN: Record<WidgetSize, string> = {
-  sm: "contain-size @xl:col-span-1 @5xl:col-span-2",
-  md: "contain-size row-span-2 @xl:col-span-2 @5xl:col-span-3",
-  lg: "contain-size row-span-3 @xl:col-span-2 @5xl:col-span-3",
-  wide: "contain-size row-span-3 @xl:col-span-2 @5xl:col-span-8",
-  full: "@xl:col-span-2 @5xl:col-span-8",
+  sm: "contain-size @xl:col-span-1 @5xl:col-span-6",
+  md: "contain-size row-span-2 @xl:col-span-2",
+  lg: "contain-size row-span-3 @xl:col-span-2",
+  wide: "contain-size row-span-3 @xl:col-span-2 @5xl:col-span-24",
+  full: "@xl:col-span-2 @5xl:col-span-24",
+}
+
+/**
+ * Desktop placement: a chart is 9 tracks in a row with a tile column (2 charts + tiles), 8 in a row of 3 charts.
+ * Tiles paired with charts are pinned to the last 6 tracks, so dense flow stacks them in the column beside the charts
+ * even when they come first in the order (otherwise they would line up across a row of their own).
+ */
+const PLACE = { beside: "@5xl:col-span-9", third: "@5xl:col-span-8", tileColumn: "@5xl:col-start-19" }
+
+const isChart = (size: WidgetSize) => size === "lg" || size === "md"
+
+/**
+ * Picks each widget's desktop placement. The board splits into sections at every whole-row widget; in a section, each run
+ * of up to 3 tiles pairs with 2 charts (408 + 408 + 264 column), and the charts left over go 3 to a row (360 each).
+ */
+function placements(layout: WidgetItem[]): Map<string, string> {
+  const spans = new Map<string, string>()
+  const flush = (section: WidgetItem[]) => {
+    const charts = section.filter((i) => isChart(widgetSize(i.type)))
+    const tiles = section.filter((i) => !isChart(widgetSize(i.type)))
+    const tileRows = Math.min(Math.ceil(tiles.length / 3), Math.ceil(charts.length / 2))
+    charts.forEach((c, i) => spans.set(c.id, i < 2 * tileRows ? PLACE.beside : PLACE.third))
+    tiles.slice(0, 3 * tileRows).forEach((tile) => spans.set(tile.id, PLACE.tileColumn))
+  }
+  let section: WidgetItem[] = []
+  for (const item of layout) {
+    const size = widgetSize(item.type)
+    if (size === "wide" || size === "full") {
+      flush(section)
+      section = []
+    } else section.push(item)
+  }
+  flush(section)
+  return spans
 }
 
 /**
@@ -133,6 +168,7 @@ function WidgetBoard() {
   if (!hydrated) return null
 
   const active = activeId ? layout.find((i) => i.id === activeId) : undefined
+  const spans = placements(layout)
 
   if (layout.length === 0)
     return (
@@ -232,11 +268,12 @@ function WidgetBoard() {
       >
         <SortableContext items={layout.map((i) => i.id)} strategy={reflowStrategy}>
           <div data-slot="widget-grid" className="@container">
-            <div className="grid auto-rows-[minmax(164px,auto)] grid-flow-dense grid-cols-1 gap-3 @xl:grid-cols-2 @xl:gap-6 @5xl:grid-cols-8">
+            <div className="grid auto-rows-[minmax(164px,auto)] grid-flow-dense grid-cols-1 gap-3 @xl:grid-cols-2 @xl:gap-6 @5xl:grid-cols-24">
             {layout.map((item) => (
               <BoardWidget
                 key={item.id}
                 item={item}
+                span={spans.get(item.id)}
                 customizing={customizing}
                 isNew={known !== null && !known.has(item.id)}
                 onRemove={() => remove(item)}
@@ -272,12 +309,15 @@ const EXIT_MS = 200
 
 function BoardWidget({
   item,
+  span,
   customizing,
   isNew,
   onRemove,
   onDuplicate,
 }: {
   item: WidgetItem
+  /** Desktop column placement, from `placements`. */
+  span?: string
   customizing: boolean
   isNew: boolean
   onRemove: () => void
@@ -297,7 +337,7 @@ function BoardWidget({
     window.setTimeout(onRemove, EXIT_MS)
   }
   return (
-    <div ref={setNodeRef} style={{ transform: CSS.Translate.toString(transform), transition }} className={cn("min-w-0", SPAN[widgetSize(item.type)])}>
+    <div ref={setNodeRef} style={{ transform: CSS.Translate.toString(transform), transition }} className={cn("min-w-0", SPAN[widgetSize(item.type)], span)}>
       {/* Animation lives on an inner wrapper so it never fights the sortable transform above. */}
       <div
         className={cn(
