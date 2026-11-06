@@ -229,7 +229,7 @@ type Finance = { income: number; incomeTrend: number; profit: number; profitTren
 - [ ] 16. Links + actions: Add New Project, Quick Add, project click, "…" menus
 - [x] 17. Loading + empty states
 - [ ] 18. i18n strings + number/date formatting
-- [ ] 19. Visual pass vs Figma (spacing, type, colors, dark mode) — known: sidebar indent shows ↳ arrows (Figma: vertical guide lines); Stages/Tasks sidebar icons unverified (list/check stand-ins); brand logos are wordmarks (need square icons); FinancialStats rings fixed size (finance prop unused)
+- [ ] 19. Visual pass vs Figma (spacing, type, colors, dark mode) — sidebar done (296 tree layout on Projects, guide lines, Figma offsets measured in browser; icons `assignment`/`restore` + square logos still missing, see known-gaps); FinancialStats rings fixed size (finance prop unused)
 - [ ] 20. Responsive: Projects (768) + (360)
 - [ ] 21. Validate: browser vs export, console, tsc, lint, build, known-gaps
 
@@ -241,3 +241,16 @@ type Finance = { income: number; incomeTrend: number; profit: number; profitTren
 - **Q4 Quick Add:** where do Member, Message and File go? Is it a dialog or a page?
 - **Q5 "…" menus:** which items? None are drawn.
 - **Q6 Tabs:** what does "Costs" sort by: income, cost, or a filter?
+
+## Project page `/dashboard/projects/[slug]` (Figma 14061:76419) — in progress
+
+Handoff: `design/handoff/project-editor-1600/` (tree.txt with node ids, img/project-1600.png). Data: `getProjectDetail(slug)` + `ProjectDetail` types (done).
+- [x] A. Route `[slug]/page.tsx`, `ProjectPageHead`, `ProjectDashboardCard` (9 tabs, only Dashboard has content), `ProjectStatTile` ×10, `ProjectCardHead` (shared head + more menu)
+- [x] B. `CompanyCard.tsx`, `ProjectStagesCard.tsx`
+- [x] C. `ProjectMembersCard.tsx` + `ui/member-row.tsx` (keys added)
+- [x] Wire B + C in, tsc + build green, browser check at 1600 vs img/project-1600.png (layout matches; 7 tile/stage icons missing, see known-gaps `ProjectPage`)
+- [ ] Commit
+- [ ] Breadcrumb shows "Projects", Figma shows "Dashboard"; project page has no 360 frame read yet (stacks below `lg`)
+- [ ] Then step 16: Add New Project / Quick Add Project / project click → `/dashboard/projects/[slug]` (sidebar project rows + sub-items already link there)
+
+Token budget (user request): one agent at a time, Haiku for small steps, Sonnet for components, short briefs with exact node ids, one small screenshot per check.

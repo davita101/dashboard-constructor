@@ -44,6 +44,34 @@ export type ProjectTotals = {
   files: number
 }
 
+// --- Project page (Figma Projects (1600) 14061:76419: per-project dashboard) ---
+
+export type ProjectStage = {
+  id: string
+  /** 1-based position, shown in the number badge. */
+  index: number
+  name: string
+  tasks: number
+  members: number
+  files: number
+  /** ISO dates. */
+  start: string
+  end: string
+}
+
+export type TeamMember = Member & { role: string }
+
+export type ProjectDetail = {
+  project: Project
+  company: { name: string; logo: string; description: string }
+  /** 0–100, "Project implementation" tile. */
+  implementation: number
+  counts: { messages: number; stages: number; members: number; files: number }
+  tasks: { new: number; inWork: number; done: number; failed: number }
+  stages: ProjectStage[]
+  team: TeamMember[]
+}
+
 export type ProjectFinance = {
   income: number
   /** Percent change, signed. */

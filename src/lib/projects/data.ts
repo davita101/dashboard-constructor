@@ -1,4 +1,13 @@
-import type { Member, Project, ProjectEvent, ProjectFinance, ProjectTotals } from "@/lib/projects/types"
+import type {
+  Member,
+  Project,
+  ProjectDetail,
+  ProjectEvent,
+  ProjectFinance,
+  ProjectStage,
+  ProjectTotals,
+  TeamMember,
+} from "@/lib/projects/types"
 
 // Mock data for the Projects section, copied from Figma "Projects (1600)" (14061:68482).
 // Async getters so pages read it like an API; replace the bodies with fetch calls later, keep the signatures.
@@ -76,6 +85,57 @@ const events: ProjectEvent[] = [
 // Figma KPI row and finance cards. Served as totals (not derived from the mock list, which is shorter than the real one).
 const totals: ProjectTotals = { projects: 21, tasks: 145, members: 12, files: 432 }
 const finance: ProjectFinance = { income: 14000, incomeTrend: 23, profit: 4560, profitTrend: -11, cost: 9440 }
+
+// Figma project page (14061:76419): same detail for every project until real data exists.
+const stage = (index: number, name: string, start: string, end: string): ProjectStage => ({
+  id: `s${index}`,
+  index,
+  name,
+  tasks: 10,
+  members: 4,
+  files: 5,
+  start,
+  end,
+})
+
+const projectTeam: TeamMember[] = [
+  { id: "t1", name: "John Smith", role: "Designer", avatar: "/images/avatars/avatar-1.png" },
+  { id: "t2", name: "Leslie Alexander", role: "Developer", avatar: "/images/avatars/avatar-2.png" },
+  { id: "t3", name: "Arlene McCoy", role: "Developer", avatar: "/images/avatars/avatar-3.png" },
+  { id: "t4", name: "Guy Hawkins", role: "Developer", avatar: "/images/avatars/avatar-4.png" },
+  { id: "t5", name: "Brooklyn Simmons", role: "Developer", avatar: "/images/avatars/avatar-5.png" },
+  { id: "t6", name: "Ronald Richards", role: "Developer", avatar: "/images/avatars/avatar-6.png" },
+  { id: "t7", name: "Annette Black", role: "Developer", avatar: "/images/avatars/avatar-1.png" },
+  { id: "t8", name: "Theresa Webb", role: "Developer", avatar: "/images/avatars/avatar-2.png" },
+]
+
+function detailFor(project: Project): ProjectDetail {
+  return {
+    project,
+    company: {
+      name: "Facebook Company ltd",
+      logo: `${LOGO}/adobe-color.svg`,
+      description:
+        "Facebook, Inc. is an American technology conglomerate based in Menlo Park, California. It was founded by Mark Zuckerberg, along with his fellow roommates and students at Harvard College, who were Eduardo Saverin, Andrew McCollum, Dustin Moskovitz and Chris Hughes, originally as TheFacebook.com—today's Facebook, a popular global social networking service. Facebook is one of the most valuable companies. It is considered one of the Big Five companies in the information",
+    },
+    implementation: 56,
+    counts: { messages: 10, stages: 6, members: 6, files: 12 },
+    tasks: { new: 12, inWork: 3, done: 7, failed: 2 },
+    stages: [
+      stage(1, "Analytics and Task Settings", "2078-11-21", "2078-11-29"),
+      stage(2, "Engineering and Design", "2078-11-29", "2078-12-05"),
+      stage(3, "Development and Testing", "2078-11-29", "2078-12-05"),
+      stage(4, "Customer Approval", "2078-11-29", "2078-12-05"),
+      stage(5, "Launch of the project", "2078-11-29", "2078-12-05"),
+    ],
+    team: projectTeam,
+  }
+}
+
+export async function getProjectDetail(slug: string): Promise<ProjectDetail | undefined> {
+  const project = projects.find((p) => p.slug === slug)
+  return project ? { ...detailFor(project), project: { ...project, deadline: "2078-12-22" } } : undefined
+}
 
 export async function getProjects(): Promise<Project[]> {
   return projects

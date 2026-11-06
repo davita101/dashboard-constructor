@@ -21,6 +21,8 @@ const sidebarVariants = cva("group/sidebar relative flex flex-col font-default t
       flush: "w-62 gap-0 p-0",
       // Figma Sidebar-Commerce-01 (296, p 12/20, gap 40), -02/-04 (296, p 24, gap 16), -03 (296, p 20, gap 16)
       commerce: "w-74 gap-10 px-5 py-3",
+      // Figma Sidebar-Dashboards-04 (296, 16 inset → 264 menu): Projects tree with guide lines.
+      tree: "w-74 gap-4 p-4",
       "commerce-card": "w-74 gap-4 p-6",
       "commerce-card-sm": "w-74 gap-4 p-5",
     },
@@ -51,7 +53,7 @@ function Sidebar({
       data-slot="sidebar"
       data-layout={layout}
       data-collapsed={collapsed || undefined}
-      className={cn(sidebarVariants({ layout, bordered }), collapsed && layout === "panel" && "w-16", className)}
+      className={cn(sidebarVariants({ layout, bordered }), collapsed && (layout === "panel" || layout === "tree") && "w-16", className)}
       {...props}
     />
   )
@@ -224,7 +226,7 @@ const sidebarItemVariants = cva(
       },
       collapsed: {
         true: "size-10 shrink-0 justify-center p-2.5",
-        false: "my-1 mr-1 h-8 w-[calc(100%-4px)] gap-2 px-3 py-1.5",
+        false: "my-1 mr-1 h-8 w-[calc(100%-4px)] gap-4 px-3 py-1.5",
       },
       // Figma List-Item / Icon-Item selected looks: Select 1 outline, Select 2 primary, Select 3 soft, Select 4 dark.
       tone: {
@@ -295,22 +297,60 @@ function SidebarItemEnd({ className, ...props }: React.ComponentProps<"span">) {
   return <span data-slot="sidebar-item-end" className={cn("flex shrink-0 items-center gap-1 text-base-500 transition-opacity duration-200 group-data-[collapsed]/sidebar:opacity-0 group-data-[collapsed]/sidebar:pointer-events-none", className)} {...props} />
 }
 
-/** Figma List-Item Level 2-4: 40px arrow cell, +20px per level. */
+/**
+ * Figma List-Item Level 2-4. `arrow`: 40px arrow cell, +20px per level (Sidebar-01 component set).
+ * `none`: blank cell (Figma 40/80/120 minus the item gap) for Sidebar-Dashboards-04, whose tree shows guide lines (`SidebarTreeGuide`) instead.
+ */
 const sidebarItemIndentVariants = cva("flex h-4 shrink-0 items-center text-base-500", {
-  variants: { level: { "2": "w-10 pl-1", "3": "w-15 pl-6", "4": "w-20 pl-11" } },
-  defaultVariants: { level: "2" },
+  variants: {
+    level: { "2": "", "3": "", "4": "" },
+    marker: { arrow: "", none: "" },
+  },
+  compoundVariants: [
+    { marker: "arrow", level: "2", className: "w-10 pl-1" },
+    { marker: "arrow", level: "3", className: "w-15 pl-6" },
+    { marker: "arrow", level: "4", className: "w-20 pl-11" },
+    { marker: "none", level: "2", className: "w-6" },
+    { marker: "none", level: "3", className: "w-16" },
+    { marker: "none", level: "4", className: "w-26" },
+  ],
+  defaultVariants: { level: "2", marker: "arrow" },
 })
 
 function SidebarItemIndent({
   className,
   level = "2",
+  marker = "arrow",
   ...props
 }: React.ComponentProps<"span"> & VariantProps<typeof sidebarItemIndentVariants>) {
   return (
-    <span data-slot="sidebar-item-indent" aria-hidden className={cn(sidebarItemIndentVariants({ level }), className)} {...props}>
-      <SidebarIcon name="subdirectory-arrow-right" size="16" />
+    <span data-slot="sidebar-item-indent" aria-hidden className={cn(sidebarItemIndentVariants({ level, marker }), className)} {...props}>
+      {marker === "arrow" && <SidebarIcon name="subdirectory-arrow-right" size="16" />}
     </span>
   )
+}
+
+/** Full-height (40px) wrapper of a tree row, so its guide lines stay continuous across the item's 4px margins. */
+function SidebarTreeRow({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="sidebar-tree-row" className={cn("relative", className)} {...props} />
+}
+
+// Figma Sidebar-Dashboards-04 "Left Line": 1px guide per ancestor level, base-800 beside the active branch.
+const sidebarTreeGuideVariants = cva("pointer-events-none absolute inset-y-0 w-px transition-opacity duration-200 group-data-[collapsed]/sidebar:opacity-0", {
+  variants: {
+    level: { "2": "left-5", "3": "left-15.25" },
+    active: { true: "bg-base-800", false: "bg-background-100" },
+  },
+  defaultVariants: { level: "2", active: false },
+})
+
+function SidebarTreeGuide({
+  className,
+  level = "2",
+  active = false,
+  ...props
+}: React.ComponentProps<"span"> & VariantProps<typeof sidebarTreeGuideVariants>) {
+  return <span data-slot="sidebar-tree-guide" aria-hidden className={cn(sidebarTreeGuideVariants({ level, active }), className)} {...props} />
 }
 
 /** Figma text-only chat row (Sidebar-08 "Chats"): 12px base-600 label, active gets the pill. */
@@ -727,6 +767,8 @@ export {
   SidebarItemEnd,
   SidebarIconBar,
   SidebarItemIndent,
+  SidebarTreeGuide,
+  SidebarTreeRow,
   SidebarItemLabel,
   SidebarItemRow,
   SidebarMessage,

@@ -29,6 +29,8 @@ import {
   SidebarMenu,
   SidebarTitle,
   SidebarToggle,
+  SidebarTreeGuide,
+  SidebarTreeRow,
   SidebarUser,
   SidebarUserEmail,
   SidebarUserName,
@@ -45,14 +47,16 @@ export type SidebarProject = Pick<Project, "id" | "slug" | "name" | "logo">
 
 const PROJECTS_OPEN_KEY = "dashboard-sidebar-projects-open"
 
-// Figma Sidebar-Dashboards-04: sub-items of the active project. Per-project routes do not exist yet.
+// Figma Sidebar-Dashboards-04: sub-items of the open project. They map to the project page tabs; only Dashboard has content so far.
 const projectSubItems = [
-  { key: "dashboard", icon: "dashboard", href: "/dashboard/projects" },
-  { key: "stages", icon: "list", href: "#" },
-  { key: "tasks", icon: "check", href: "#" },
-  { key: "messages", icon: "chat-bubble", href: "#" },
-  { key: "chat", icon: "forum", href: "#" },
+  { key: "dashboard", icon: "dashboard", path: "" },
+  { key: "stages", icon: "list", path: "?tab=stages" },
+  { key: "tasks", icon: "restore", path: "?tab=tasks" },
+  { key: "messages", icon: "chat-bubble", path: "?tab=messages" },
+  { key: "chat", icon: "forum", path: "?tab=chat" },
 ] as const
+
+const PROJECTS_HREF = "/dashboard/projects"
 
 type NavKey = Parameters<ReturnType<typeof useTranslations<"nav">>>[0]
 
@@ -104,9 +108,19 @@ function DashboardSidebar({
     return v === null ? null : v === "1"
   })
   const hint = (label: string) => (collapsed ? { "aria-label": label, title: label } : {})
+  // /dashboard/projects/<slug>: the project whose branch is open and drawn dark.
+  const activeSlug = pathname.split("/")[3]
+  const onProjects = pathname === PROJECTS_HREF || pathname.startsWith(`${PROJECTS_HREF}/`)
+  const treeOpen = projects.length > 0 && (treeStored ?? onProjects)
+  const toggleTree = () => {
+    window.localStorage.setItem(PROJECTS_OPEN_KEY, treeOpen ? "0" : "1")
+    setTreeStored(!treeOpen)
+  }
+  // The open project tree needs Sidebar-Dashboards-04's 296 width; otherwise Sidebar-01 (248).
+  const tree = treeOpen && !collapsed
 
   return (
-    <Sidebar bordered collapsed={collapsed} className={cn("justify-between", className)} aria-label={t("label")}>
+    <Sidebar layout={tree ? "tree" : "panel"} bordered collapsed={collapsed} className={cn("justify-between", className)} aria-label={t("label")}>
       {withHead && (
         <>
           <SidebarHeader>
@@ -124,20 +138,18 @@ function DashboardSidebar({
       <SidebarContent className="flex-none gap-4 overflow-y-auto">
         <SidebarGroup>
           <GroupHead label={t("navigate")} />
-          <SidebarMenu>
+          {/* Sidebar-Dashboards-04 insets its list items 4px inside the 264 menu. */}
+          <SidebarMenu className={cn(tree && "pl-1")}>
             {dashboardNav.map((n) => {
               const active = n.href === "/dashboard" ? pathname === n.href : pathname.startsWith(n.href)
               if (n.slug === "projects" && projects.length > 0) {
-                const open = treeStored ?? active
-                const toggle = () => {
-                  window.localStorage.setItem(PROJECTS_OPEN_KEY, open ? "0" : "1")
-                  setTreeStored(!open)
-                }
+                const open = treeOpen
+                const toggle = toggleTree
                 return (
                   <React.Fragment key={n.slug}>
                     <div className="relative">
-                      <SidebarItem active={active} {...hint(tNav("projects"))} render={<Link href={n.href} onClick={onNavigate} />}>
-                        <SidebarIcon name={n.icon} className={active ? "text-base-800" : "text-base-500"} />
+                      <SidebarItem active={active} shape={tree ? "rounded" : "pilled"} {...hint(tNav("projects"))} render={<Link href={n.href} onClick={onNavigate} />}>
+                        <SidebarIcon name={tree ? "assignment" : n.icon} className={active ? "text-base-800" : "text-base-500"} />
                         <SidebarItemLabel>{tNav("projects")}</SidebarItemLabel>
                         <SidebarItemEnd>
                           <SidebarIcon name="chevron-right" className="invisible" />
@@ -156,23 +168,38 @@ function DashboardSidebar({
                       )}
                     </div>
                     {open && !collapsed &&
-                      projects.map((project, i) => (
-                        <React.Fragment key={project.id}>
-                          <SidebarItem render={<Link href="/dashboard/projects" onClick={onNavigate} />}>
-                            <SidebarItemIndent level="2" />
-                            <Image src={project.logo} alt="" width={16} height={16} className="size-4 shrink-0 object-contain" />
-                            <SidebarItemLabel>{project.name}</SidebarItemLabel>
-                          </SidebarItem>
-                          {i === 0 &&
-                            projectSubItems.map((sub) => (
-                              <SidebarItem key={sub.key} active={sub.key === "dashboard" && active} render={<Link href={sub.href} onClick={onNavigate} />}>
-                                <SidebarItemIndent level="3" />
-                                <SidebarIcon name={sub.icon} className={sub.key === "dashboard" && active ? "text-base-800" : "text-base-500"} />
-                                <SidebarItemLabel>{tProjects(sub.key)}</SidebarItemLabel>
+                      projects.map((project) => {
+                        const projectHref = `${PROJECTS_HREF}/${project.slug}`
+                        const current = project.slug === activeSlug
+                        return (
+                          <React.Fragment key={project.id}>
+                            <SidebarTreeRow>
+                              <SidebarTreeGuide level="2" active={current} />
+                              <SidebarItem tone={current ? "text" : "none"} render={<Link href={projectHref} onClick={onNavigate} />}>
+                                <SidebarItemIndent level="2" marker="none" />
+                                <Image src={project.logo} alt="" width={20} height={20} className="size-5 shrink-0 object-contain" />
+                                <SidebarItemLabel>{project.name}</SidebarItemLabel>
                               </SidebarItem>
-                            ))}
-                        </React.Fragment>
-                      ))}
+                            </SidebarTreeRow>
+                            {current &&
+                              projectSubItems.map((sub) => {
+                                // Tab state lives in the page; the sidebar marks the project dashboard.
+                                const subActive = sub.key === "dashboard"
+                                return (
+                                  <SidebarTreeRow key={sub.key}>
+                                    <SidebarTreeGuide level="2" />
+                                    <SidebarTreeGuide level="3" active={subActive} />
+                                    <SidebarItem tone={subActive ? "text" : "none"} render={<Link href={`${projectHref}${sub.path}`} onClick={onNavigate} />}>
+                                      <SidebarItemIndent level="3" marker="none" />
+                                      <SidebarIcon name={sub.icon} className={subActive ? "text-base-800" : "text-base-500"} />
+                                      <SidebarItemLabel>{tProjects(sub.key)}</SidebarItemLabel>
+                                    </SidebarItem>
+                                  </SidebarTreeRow>
+                                )
+                              })}
+                          </React.Fragment>
+                        )
+                      })}
                   </React.Fragment>
                 )
               }

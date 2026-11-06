@@ -11,14 +11,14 @@ function Card({
   size = "default",
   variant = "default",
   ...props
-}: React.ComponentProps<"div"> & { size?: "default" | "sm"; variant?: "default" | "panel" | "stat" | "item" }) {
+}: React.ComponentProps<"div"> & { size?: "default" | "sm"; variant?: "default" | "panel" | "stat" | "item" | "tile" }) {
   return (
     <div
       data-slot="card"
       data-size={size}
       data-variant={variant}
       className={cn(
-        "group/card flex flex-col gap-(--card-spacing) overflow-hidden rounded-xl bg-card py-(--card-spacing) text-sm text-card-foreground ring-1 ring-foreground/10 [--card-spacing:--spacing(4)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[variant=panel]:rounded-none data-[variant=panel]:bg-background-0 data-[variant=panel]:py-0 data-[variant=panel]:ring-0 data-[variant=panel]:outline data-[variant=panel]:outline-background-100 data-[variant=panel]:-outline-offset-1 md:data-[variant=panel]:rounded-r20 data-[size=sm]:[--card-spacing:--spacing(3)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 data-[variant=stat]:h-16 data-[variant=stat]:flex-row data-[variant=stat]:items-center data-[variant=stat]:justify-between data-[variant=stat]:rounded-r36 data-[variant=stat]:bg-background-0 data-[variant=stat]:py-0 data-[variant=stat]:ps-7 data-[variant=stat]:pe-5 data-[variant=stat]:ring-0 data-[variant=stat]:outline data-[variant=stat]:outline-background-100 data-[variant=stat]:-outline-offset-1 data-[variant=item]:gap-0 data-[variant=item]:rounded-r12 data-[variant=item]:bg-background-0 data-[variant=item]:p-2 data-[variant=item]:ring-0 data-[variant=item]:outline data-[variant=item]:outline-background-100 data-[variant=item]:-outline-offset-1 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
+        "group/card flex flex-col gap-(--card-spacing) overflow-hidden rounded-xl bg-card py-(--card-spacing) text-sm text-card-foreground ring-1 ring-foreground/10 [--card-spacing:--spacing(4)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[variant=panel]:rounded-none data-[variant=panel]:bg-background-0 data-[variant=panel]:py-0 data-[variant=panel]:ring-0 data-[variant=panel]:outline data-[variant=panel]:outline-background-100 data-[variant=panel]:-outline-offset-1 md:data-[variant=panel]:rounded-r20 data-[size=sm]:[--card-spacing:--spacing(3)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 data-[variant=stat]:h-16 data-[variant=stat]:flex-row data-[variant=stat]:items-center data-[variant=stat]:justify-between data-[variant=stat]:rounded-r36 data-[variant=stat]:bg-background-0 data-[variant=stat]:py-0 data-[variant=stat]:ps-7 data-[variant=stat]:pe-5 data-[variant=stat]:ring-0 data-[variant=stat]:outline data-[variant=stat]:outline-background-100 data-[variant=stat]:-outline-offset-1 data-[variant=item]:gap-0 data-[variant=item]:rounded-r12 data-[variant=item]:bg-background-0 data-[variant=item]:p-2 data-[variant=item]:ring-0 data-[variant=item]:outline data-[variant=item]:outline-background-100 data-[variant=item]:-outline-offset-1 data-[variant=tile]:gap-0 data-[variant=tile]:rounded-r16 data-[variant=tile]:bg-background-0 data-[variant=tile]:py-0 data-[variant=tile]:ring-0 data-[variant=tile]:outline data-[variant=tile]:outline-background-100 data-[variant=tile]:-outline-offset-1 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
         className
       )}
       {...props}
@@ -323,9 +323,33 @@ function ChartCardFooter({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
-/** Card `stat` (Figma Projects KPI Item): the number, 20/28 medium. */
-function CardStatValue({ className, ...props }: React.ComponentProps<"span">) {
-  return <span data-slot="card-stat-value" className={cn("font-default text-20 leading-28 font-medium text-base-800", className)} {...props} />
+const cardStatValueVariants = cva("font-default", {
+  variants: {
+    // 20: Projects KPI Item. 30: project page stat tile (Figma 30/400, centered in the 100px content).
+    size: {
+      "20": "text-20 leading-28 font-medium",
+      "30": "text-30 leading-48 font-normal",
+    },
+    tone: {
+      default: "text-base-700",
+      blue: "text-blue-600",
+      yellow: "text-yellow-600",
+      green: "text-green-600",
+      red: "text-danger-600",
+    },
+  },
+  compoundVariants: [{ size: "20", tone: "default", className: "text-base-800" }],
+  defaultVariants: { size: "20", tone: "default" },
+})
+
+/** Card `stat` / `tile`: the number. Size 20/28 medium (KPI Item) or 30/48 regular (stat tile); `tone` colors the number. */
+function CardStatValue({
+  className,
+  size,
+  tone,
+  ...props
+}: React.ComponentProps<"span"> & VariantProps<typeof cardStatValueVariants>) {
+  return <span data-slot="card-stat-value" className={cn(cardStatValueVariants({ size, tone }), className)} {...props} />
 }
 
 /** Card `stat`: the label after the number, 11/20 bold. */

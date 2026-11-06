@@ -249,5 +249,60 @@
     "tasks": "Tasks",
     "messages": "Messages",
     "chat": "Chat"
+  },
+  "projectPage": {
+    "members": {
+      "title": "Members",
+      "more": "More",
+      "viewAll": "View all",
+      "message": "Message {name}",
+      "call": "Call {name}"
+    },
+    "card": {
+      "more": "More",
+      "viewAll": "View all"
+    },
+    "head": {
+      "logo": "Project logo",
+      "save": "Save Project"
+    },
+    "tabs": {
+      "label": "Project sections",
+      "dashboard": "Dashboard",
+      "stages": "Stages",
+      "tasks": "Tasks",
+      "messages": "Messages",
+      "chat": "Chat",
+      "members": "Members",
+      "customer": "Customer",
+      "files": "Files",
+      "activity": "Activity"
+    },
+    "stats": {
+      "implementation": "Project implementation",
+      "deadline": "Deadline",
+      "messages": "Messages",
+      "stages": "Stages",
+      "members": "Members",
+      "files": "Files",
+      "newTasks": "New Tasks",
+      "inWork": "Task In Work",
+      "doneTasks": "Done Tasks",
+      "failedTasks": "Failed Tasks"
+    },
+    "company": {
+      "title": "Company"
+    },
+    "stages": {
+      "title": "Project Stages",
+      "tasks": "Tasks",
+      "members": "Members",
+      "files": "Files",
+      "start": "Start date",
+      "end": "End date"
+    },
+    "events": {
+      "title": "Latest events"
+    }
   }
 }

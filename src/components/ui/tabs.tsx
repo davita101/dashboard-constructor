@@ -53,6 +53,8 @@ const tabsListVariants = cva(
         micro: "h-6",
         // Tab-Group-Pilled (Projects list card): 28px group, no padding, no fill or stroke
         "28": "h-7 p-0",
+        // Tab-Group-Pilled (project page): 32px group, no padding, no fill or stroke
+        "32": "h-8 p-0",
       },
     },
     compoundVariants: [
@@ -67,7 +69,7 @@ const tabsListVariants = cva(
       { variant: "pill", size: "default", className: "group-data-vertical/tabs:rounded-r20" },
       { variant: "pill", size: "sm", className: "group-data-vertical/tabs:rounded-r16" },
       { variant: "pill", size: "xs", className: "group-data-vertical/tabs:rounded-r12" },
-      { variant: "pill", size: "28", tone: "default", className: "bg-transparent outline-0" },
+      { variant: "pill", size: ["28", "32"], tone: "default", className: "bg-transparent outline-0" },
     ],
     defaultVariants: {
       variant: "default",
@@ -145,6 +147,8 @@ const tabsTriggerVariants = cva(
         xs: "h-5 rounded-r4 px-1.5 text-8 leading-12 [&_svg:not([class*='size-'])]:size-3",
         micro: "h-4 rounded-r4 px-1.5 text-8 leading-12 [&_svg:not([class*='size-'])]:size-3",
         "28": "h-7 px-2.5 text-10 leading-16",
+        // Tab-Group-Pilled (project page): item 32, 11px text, 20px side padding (8 text + 12 item)
+        "32": "h-8 px-5 text-11 leading-20",
       },
       iconOnly: {
         true: "aspect-square flex-none",
@@ -169,7 +173,7 @@ const tabsTriggerVariants = cva(
       // Tab-Group-Pilled item: 10px text, base-600 idle, base-800 active
       {
         variant: "pill",
-        size: "28",
+        size: ["28", "32"],
         tone: "default",
         className: "text-base-600 hover:text-base-800 data-active:text-base-800",
       },

@@ -1,0 +1,576 @@
+14061:76419 Projects (1600) [frame] 1600x1572
+  14061:76420 Content [frame] 1600x1572
+    14061:76421 Sidebar-Dashboards-04 [instance] 296x1572
+      I14061:76421;6939:280959 Content [frame] 264x800
+        I14061:76421;9070:316244 Logo-Head-Sidebar-Component [instance] 264x32
+          I14061:76421;9070:316244;8999:262810 Logo [frame] 121x32
+            I14061:76421;9070:316244;9580:382448 Default [instance] 32x32
+            I14061:76421;9070:316244;8999:258406 New Project [text] 77x24 "New Project" 13/700
+          I14061:76421;9070:316244;12610:197995 Right [frame] 40x16
+            I14061:76421;9070:316244;8999:262812 material-bolt [instance] 16x16
+            I14061:76421;9070:316244;12610:192527 material-sidebar [instance] 16x16
+        I14061:76421;6939:280960 Menu [frame] 264x764
+          I14061:76421;6939:280961 Head-Item-Component [instance] 264x44
+            I14061:76421;6939:280961;6827:35279 Heading [text] 53x20 "Navigate" 12/700
+            I14061:76421;6939:280961;6827:35280 Right [frame] 20x20
+              I14061:76421;6939:280961;6827:35281 Badge [frame] 22x20
+              I14061:76421;6939:280961;6827:35283 material-keyboard_arrow_up [instance] 20x20
+          I14061:76421;6939:280962 Navigate-List-Group [instance] 264x720
+            I14061:76421;6939:280962;14126:72754 Content [slot] 264x720
+              I14061:76421;6939:280962;14191:128406 List Item Component [instance] 264x40 r6
+              I14061:76421;6939:280962;14191:128407 List Item Component [instance] 264x40 r8
+              I14061:76421;6939:280962;14191:128408 List Item Component [instance] 264x40 r6
+              I14061:76421;6939:280962;14191:128409 List Item Component [instance] 264x40 r6
+              I14061:76421;6939:280962;14191:128410 List Item Component [instance] 264x40 r6
+              I14061:76421;6939:280962;14191:128411 List Item Component [instance] 264x40 r6
+              I14061:76421;6939:280962;14191:128412 List Item Component [instance] 264x40 r6
+              I14061:76421;6939:280962;14191:128413 List Item Component [instance] 264x40 r6
+              I14061:76421;6939:280962;14191:128414 List Item Component [instance] 264x40 r6
+              I14061:76421;6939:280962;14191:128415 List Item Component [instance] 264x40 r6
+              I14061:76421;6939:280962;14191:128416 List Item Component [instance] 264x40 r6
+              I14061:76421;6939:280962;14191:128417 List Item Component [instance] 264x40 r6
+              I14061:76421;6939:280962;14191:128418 List Item Component [instance] 264x40 r6
+              I14061:76421;6939:280962;14191:128419 List Item Component [instance] 264x40 r6
+              I14061:76421;6939:280962;14191:128420 List Item Component [instance] 264x40 r6
+              I14061:76421;6939:280962;14191:128421 List Item Component [instance] 264x40 r6
+              I14061:76421;6939:280962;14191:128422 List Item Component [instance] 264x40 r6
+              I14061:76421;6939:280962;14191:128423 List Item Component [instance] 264x40 r6
+      I14061:76421;6939:280964 Menu [frame] 264x284
+        I14061:76421;6939:280965 Head-Item-Component [instance] 264x44
+          I14061:76421;6939:280965;6827:35279 Heading [text] 31x20 "More" 12/700
+          I14061:76421;6939:280965;6827:35280 Right [frame] 20x20
+            I14061:76421;6939:280965;6827:35281 Badge [frame] 22x20
+            I14061:76421;6939:280965;6827:35283 material-keyboard_arrow_up [instance] 20x20
+        I14061:76421;6939:280966 Navigate-List-Group [instance] 264x240
+          I14061:76421;6939:280966;14126:72754 Content [slot] 264x240
+            I14061:76421;6939:280966;14192:17534 List Item Component [instance] 264x40 r6
+            I14061:76421;6939:280966;14192:17535 List Item Component [instance] 264x40 r6
+            I14061:76421;6939:280966;14192:17536 List Item Component [instance] 264x40 r6
+            I14061:76421;6939:280966;14192:17537 List Item Component [instance] 264x40 r6
+            I14061:76421;6939:280966;14192:17538 List Item Component [instance] 264x40 r6
+            I14061:76421;6939:280966;14192:17539 List Item Component [instance] 264x40 r6
+      I14061:76421;6939:280967 Links [frame] 264x284
+        I14061:76421;6939:280968 Head-Item-Component [instance] 264x44
+          I14061:76421;6939:280968;6827:35279 Heading [text] 32x20 "Links" 12/700
+          I14061:76421;6939:280968;6827:35280 Right [frame] 20x20
+            I14061:76421;6939:280968;6827:35281 Badge [frame] 22x20
+            I14061:76421;6939:280968;6827:35283 material-keyboard_arrow_up [instance] 20x20
+        I14061:76421;6939:280969 Navigate-List-Group [instance] 264x240
+          I14061:76421;6939:280969;14126:72754 Content [slot] 264x240
+            I14061:76421;6939:280969;14192:10055 List Item Component [instance] 264x40 r6
+            I14061:76421;6939:280969;14192:10056 List Item Component [instance] 264x40 r6
+            I14061:76421;6939:280969;14192:10057 List Item Component [instance] 264x40 r6
+            I14061:76421;6939:280969;14192:10058 List Item Component [instance] 264x40 r6
+            I14061:76421;6939:280969;14192:10059 List Item Component [instance] 264x40 r6
+            I14061:76421;6939:280969;14192:10060 List Item Component [instance] 264x40 r6
+    14061:76422 Content [frame] 1304x1572
+      14061:76423 Navigate-Dashboard [instance] 1304x64
+        I14061:76423;6862:85334 Logo [frame] 173x32
+        I14061:76423;6862:85342 Input-Pilled [instance] 200x32
+          I14061:76423;6862:85342;10464:508754 Top [frame] 300x16
+          I14061:76423;6862:85342;10464:508759 Input [frame] 200x32 r32
+            I14061:76423;6862:85342;10464:508760 Left [frame] 161x16
+              I14061:76423;6862:85342;11563:156755 Tags [frame] 175x20
+              I14061:76423;6862:85342;10464:508761 Button [frame] 57x24
+              I14061:76423;6862:85342;10464:508763 Checkbox [frame] 28x20
+              I14061:76423;6862:85342;10464:508765 Radio [frame] 22x20
+              I14061:76423;6862:85342;10464:508767 Switcher [frame] 38x20
+              I14061:76423;6862:85342;10464:508769 Left Icon [frame] 24x16
+                I14061:76423;6862:85342;10464:508770 Icon [instance] 16x16
+              I14061:76423;6862:85342;10464:508771 Payment [frame] 38x20
+              I14061:76423;6862:85342;10464:508773 Avatar [frame] 24x24
+              I14061:76423;6862:85342;10464:508775 Country [frame] 20x16
+              I14061:76423;6862:85342;12058:268557 Colors [frame] 22x20
+              I14061:76423;6862:85342;10464:508777 Center [frame] 133x16
+                I14061:76423;6862:85342;10464:508778 Text [text] 109x16 "Search ..." 10/600
+            I14061:76423;6862:85342;10464:508779 Right [frame] 39x20
+              I14061:76423;6862:85342;10464:508782 Add Text [frame] 34x16
+              I14061:76423;6862:85342;10464:508784 Button [frame] 35x20
+                I14061:76423;6862:85342;10464:508785 Right Button [instance] 33x20 r32
+              I14061:76423;6862:85342;10464:508780 Right Icon [frame] 24x16
+              I14061:76423;6862:85342;10464:508786 Command Keys [frame] 67x20
+              I14061:76423;6862:85342;10464:508788 Select [frame] 22x16
+          I14061:76423;6862:85342;10464:508790 Bottom [frame] 300x16
+        I14061:76423;6862:85337 Menu [slot] 222x20
+          I14061:76423;6862:85338 Dashboard [text] 59x20 "Dashboard" 11/700
+          I14061:76423;6862:85339 About Us [text] 31x20 "News" 11/700
+          I14061:76423;6862:85340 News [text] 44x20 "Support" 11/700
+          I14061:76423;6862:85341 Contacts [text] 28x20 "More" 11/700
+        I14061:76423;6862:85343 Buttons [frame] 319x32
+          I14061:76423;6862:85344 Ghost-Button [instance] 32x32 r8
+            I14061:76423;6862:85344;4309:65100 Icon [instance] 16x16
+          I14061:76423;6862:85345 Ghost-Button [instance] 32x32 r8
+            I14061:76423;6862:85345;4309:65100 Icon [instance] 16x16
+          I14061:76423;6862:85346 Ghost-Button [instance] 32x32 r8
+            I14061:76423;6862:85346;4309:65100 Icon [instance] 16x16
+          I14061:76423;6862:85347 Dark-Button [instance] 99x32 r32
+            I14061:76423;6862:85347;8985:475682 Icon [instance] 16x16
+            I14061:76423;6862:85347;8985:475683 Text [frame] 59x20
+              I14061:76423;6862:85347;8985:475684 Button [text] 47x20 "Upgrade" 11/700
+            I14061:76423;6862:85347;13289:99876 Counter [frame] 20x16
+            I14061:76423;6862:85347;8985:475685 Icon [instance] 16x16
+            I14061:76423;6862:85347;8985:475686 Icon [instance] 16x16
+          I14061:76423;6866:50100 Avatar-Image [instance] 32x32 r32
+            I14061:76423;6866:50100;9469:353686 Image [frame] 32x32 r300
+            I14061:76423;6866:50100;11747:582059 Story [ellipse] 38x38
+            I14061:76423;6866:50100;11747:582060 Progress [group] 38x38
+              I14061:76423;6866:50100;11747:582061 Progress [ellipse] 38x38
+              I14061:76423;6866:50100;11747:582062 Progress [ellipse] 38x38
+            I14061:76423;6866:50100;9469:356028 Status [instance] 8x8 r8
+            I14061:76423;6866:50100;12414:15051 Badge-Square-Pilled [instance] 12x12 r16
+          I14061:76423;6862:85554 Outline-Button [instance] 32x32 r32
+            I14061:76423;6862:85554;4284:68095 Icon [instance] 16x16
+      14061:76424 Top [frame] 1304x56
+        14290:108851 Head-Dashboard-01 [instance] 1264x32
+          I14290:108851;14283:163612 Group [frame] 976x24
+            I14290:108851;14283:163615 Breadcrumb-Group [instance] 976x24
+              I14290:108851;14283:163615;14128:127257 Content [slot] 93x24
+                I14290:108851;14283:163615;14283:163614 Item [instance] 93x24
+          I14290:108851;14283:163616 Group [frame] 256x32
+            I14290:108851;14283:163617 Item [instance] 98x32 r8
+              I14290:108851;14283:163617;4309:65398 Icon [instance] 16x16
+              I14290:108851;14283:163617;4309:65399 Text [frame] 66x20
+                I14290:108851;14283:163617;4309:65400 Button [text] 54x20 "Help Chat" 11/700
+              I14290:108851;14283:163617;13289:98343 Counter [frame] 20x16
+              I14290:108851;14283:163617;4309:65401 Icon [instance] 16x16
+              I14290:108851;14283:163617;4309:65402 Icon [instance] 16x16
+            I14290:108851;14283:163618 Item [instance] 72x32 r8
+              I14290:108851;14283:163618;4309:65398 Icon [instance] 16x16
+              I14290:108851;14283:163618;4309:65399 Text [frame] 40x20
+                I14290:108851;14283:163618;4309:65400 Button [text] 28x20 "Docs" 11/700
+              I14290:108851;14283:163618;13289:98343 Counter [frame] 20x16
+              I14290:108851;14283:163618;4309:65401 Icon [instance] 16x16
+              I14290:108851;14283:163618;4309:65402 Icon [instance] 16x16
+            I14290:108851;14283:163619 Item [instance] 70x32 r8
+              I14290:108851;14283:163619;4309:65398 Icon [instance] 16x16
+              I14290:108851;14283:163619;4309:65399 Text [frame] 38x20
+                I14290:108851;14283:163619;4309:65400 Button [text] 26x20 "Print" 11/700
+              I14290:108851;14283:163619;13289:98343 Counter [frame] 20x16
+              I14290:108851;14283:163619;4309:65401 Icon [instance] 16x16
+              I14290:108851;14283:163619;4309:65402 Icon [instance] 16x16
+      14061:76426 Content [frame] 1304x1388
+        14290:139453 Head-Dashboard-17 [instance] 1128x84
+          I14290:139453;14290:137676 Heading [frame] 808x60
+            I14290:139453;14290:138485 Avatar-Logo [instance] 60x60 r32
+              I14290:139453;14290:138485;5994:28025 Drips [instance] 36x36
+            I14290:139453;14290:137678 Project Name [text] 92x24 "Project Name" 14/700
+          I14290:139453;14290:137679 Group [frame] 320x32
+            I14290:139453;14290:137681 Main Button [instance] 120x32 r32
+              I14290:139453;14290:137681;8985:475682 Icon [instance] 16x16
+              I14290:139453;14290:137681;8985:475683 Text [frame] 80x20
+                I14290:139453;14290:137681;8985:475684 Button [text] 68x20 "Save Project" 11/700
+              I14290:139453;14290:137681;13289:99876 Counter [frame] 20x16
+              I14290:139453;14290:137681;8985:475685 Icon [instance] 16x16
+              I14290:139453;14290:137681;8985:475686 Icon [instance] 16x16
+        14061:76428 Content [frame] 1128x1176 r20
+          14061:76429 Head [frame] 1128x64
+            14061:76430 Tab-Group-Pilled [instance] 776x32
+              I14061:76430;14123:5436 Content [slot] 776x32
+                I14061:76430;14123:5436;14290:141789 Item [instance] 99x32 r20
+                  I14061:76430;14123:5436;14290:141789;4327:24012 Left Icon [frame] 20x20
+                  I14061:76430;14123:5436;14290:141789;4323:46912 Text [frame] 75x20
+                    I14061:76430;14123:5436;14290:141789;4323:46579 Tab [text] 59x20 "Dashboard" 11/700
+                  I14061:76430;14123:5436;14290:141789;10643:124043 Right Badge [frame] 20x20
+                  I14061:76430;14123:5436;14290:141789;4327:24104 Right Icon [frame] 20x20
+                I14061:76430;14123:5436;14290:141790 Item [instance] 78x32 r20
+                  I14061:76430;14123:5436;14290:141790;4327:24222 Left icon [frame] 20x20
+                  I14061:76430;14123:5436;14290:141790;4323:46943 Text [frame] 54x20
+                    I14061:76430;14123:5436;14290:141790;4323:46944 Tab [text] 38x20 "Stages" 11/700
+                  I14061:76430;14123:5436;14290:141790;10655:571296 Right Badge [frame] 20x20
+                  I14061:76430;14123:5436;14290:141790;4327:24629 Right Icon [frame] 20x20
+                I14061:76430;14123:5436;14290:141791 Item [instance] 72x32 r20
+                  I14061:76430;14123:5436;14290:141791;4327:24222 Left icon [frame] 20x20
+                  I14061:76430;14123:5436;14290:141791;4323:46943 Text [frame] 48x20
+                    I14061:76430;14123:5436;14290:141791;4323:46944 Tab [text] 32x20 "Tasks" 11/700
+                  I14061:76430;14123:5436;14290:141791;10655:571296 Right Badge [frame] 20x20
+                  I14061:76430;14123:5436;14290:141791;4327:24629 Right Icon [frame] 20x20
+                I14061:76430;14123:5436;14290:141792 Item [instance] 96x32 r20
+                  I14061:76430;14123:5436;14290:141792;4327:24222 Left icon [frame] 20x20
+                  I14061:76430;14123:5436;14290:141792;4323:46943 Text [frame] 72x20
+                    I14061:76430;14123:5436;14290:141792;4323:46944 Tab [text] 56x20 "Messages" 11/700
+                  I14061:76430;14123:5436;14290:141792;10655:571296 Right Badge [frame] 20x20
+                  I14061:76430;14123:5436;14290:141792;4327:24629 Right Icon [frame] 20x20
+                I14061:76430;14123:5436;14290:141793 Item [instance] 66x32 r20
+                  I14061:76430;14123:5436;14290:141793;4327:24222 Left icon [frame] 20x20
+                  I14061:76430;14123:5436;14290:141793;4323:46943 Text [frame] 42x20
+                    I14061:76430;14123:5436;14290:141793;4323:46944 Tab [text] 26x20 "Chat" 11/700
+                  I14061:76430;14123:5436;14290:141793;10655:571296 Right Badge [frame] 20x20
+                  I14061:76430;14123:5436;14290:141793;4327:24629 Right Icon [frame] 20x20
+                I14061:76430;14123:5436;14290:141794 Item [instance] 91x32 r20
+                  I14061:76430;14123:5436;14290:141794;4327:24222 Left icon [frame] 20x20
+                  I14061:76430;14123:5436;14290:141794;4323:46943 Text [frame] 67x20
+                    I14061:76430;14123:5436;14290:141794;4323:46944 Tab [text] 51x20 "Members" 11/700
+                  I14061:76430;14123:5436;14290:141794;10655:571296 Right Badge [frame] 20x20
+                  I14061:76430;14123:5436;14290:141794;4327:24629 Right Icon [frame] 20x20
+                I14061:76430;14123:5436;14290:141795 Item [instance] 94x32 r20
+                  I14061:76430;14123:5436;14290:141795;4327:24222 Left icon [frame] 20x20
+                  I14061:76430;14123:5436;14290:141795;4323:46943 Text [frame] 70x20
+                    I14061:76430;14123:5436;14290:141795;4323:46944 Tab [text] 54x20 "Customer" 11/700
+                  I14061:76430;14123:5436;14290:141795;10655:571296 Right Badge [frame] 20x20
+                  I14061:76430;14123:5436;14290:141795;4327:24629 Right Icon [frame] 20x20
+                I14061:76430;14123:5436;14290:141796 Item [instance] 66x32 r20
+                  I14061:76430;14123:5436;14290:141796;4327:24222 Left icon [frame] 20x20
+                  I14061:76430;14123:5436;14290:141796;4323:46943 Text [frame] 42x20
+                    I14061:76430;14123:5436;14290:141796;4323:46944 Tab [text] 26x20 "Files" 11/700
+                  I14061:76430;14123:5436;14290:141796;10655:571296 Right Badge [frame] 20x20
+                  I14061:76430;14123:5436;14290:141796;4327:24629 Right Icon [frame] 20x20
+                I14061:76430;14123:5436;14290:141797 Item [instance] 82x32 r20
+                  I14061:76430;14123:5436;14290:141797;4327:24222 Left icon [frame] 20x20
+                  I14061:76430;14123:5436;14290:141797;4323:46943 Text [frame] 58x20
+                    I14061:76430;14123:5436;14290:141797;4323:46944 Tab [text] 42x20 "Activity" 11/700
+                  I14061:76430;14123:5436;14290:141797;10655:571296 Right Badge [frame] 20x20
+                  I14061:76430;14123:5436;14290:141797;4327:24629 Right Icon [frame] 20x20
+          14061:76431 Content [frame] 1128x1112
+            14061:76432 Group [frame] 1088x332
+              14061:76433 Group [frame] 340x332
+                14061:76434 Deadline [frame] 340x160 r16
+                  14061:76435 Head [frame] 340x60
+                    14061:76436 Text-Cell [instance] 280x60
+                      I14061:76436;5383:168929 material-default-icon [instance] 20x20
+                      I14061:76436;15833:197735 material-default-icon [instance] 20x20
+                      I14061:76436;5027:42403 Heading [text] 126x20 "Project implementation" 11/700
+                      I14061:76436;5036:633 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76436;5037:655 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76436;9646:126943 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76436;5279:87744 material-keyboard_arrow_down [instance] 20x20
+                      I14061:76436;10020:56646 Sort Down [frame] 16x16
+                      I14061:76436;10020:78585 Sort Up [frame] 16x16
+                    14061:76437 Icon-Cell [instance] 60x60
+                      I14061:76437;5028:7471 material-more_horiz [instance] 24x24
+                  14061:76438 Content [frame] 340x100
+                    14061:76439 22.12.2054 [text] 62x48 "56%" 30/400
+                14061:76440 Deadline [frame] 340x160 r16
+                  14061:76441 Head [frame] 340x60
+                    14061:76442 Text-Cell [instance] 280x60
+                      I14061:76442;5383:168929 material-default-icon [instance] 20x20
+                      I14061:76442;15833:197735 material-default-icon [instance] 20x20
+                      I14061:76442;5027:42403 Heading [text] 48x20 "Deadline" 11/700
+                      I14061:76442;5036:633 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76442;5037:655 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76442;9646:126943 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76442;5279:87744 material-keyboard_arrow_down [instance] 20x20
+                      I14061:76442;10020:56646 Sort Down [frame] 16x16
+                      I14061:76442;10020:78585 Sort Up [frame] 16x16
+                    14061:76443 Icon-Cell [instance] 60x60
+                      I14061:76443;5028:7471 material-more_horiz [instance] 24x24
+                  14061:76444 Content [frame] 340x100
+                    14061:76445 22.12.2054 [text] 154x48 "22.12.2078" 30/400
+              14061:76446 Content [frame] 736x332
+                14061:76447 Item [frame] 175x160 r16
+                  14061:76448 Text-Cell [instance] 175x60
+                    I14061:76448;5383:168929 material-message [instance] 20x20
+                    I14061:76448;15833:197735 material-default-icon [instance] 20x20
+                    I14061:76448;5027:42403 Heading [text] 56x20 "Messages" 11/700
+                    I14061:76448;5036:633 Heading [text] 45x20 "Heading" 11/700
+                    I14061:76448;5037:655 Heading [text] 45x20 "Heading" 11/700
+                    I14061:76448;9646:126943 Heading [text] 45x20 "Heading" 11/700
+                    I14061:76448;5279:87744 material-keyboard_arrow_down [instance] 20x20
+                    I14061:76448;10020:56646 Sort Down [frame] 16x16
+                    I14061:76448;10020:78585 Sort Up [frame] 16x16
+                  14061:76449 Content [frame] 175x100
+                    14061:76450 10 [text] 33x48 "10" 30/400
+                14061:76451 Item [frame] 175x160 r16
+                  14061:76452 Head [frame] 175x60
+                    14061:76453 Text-Cell [instance] 175x60
+                      I14061:76453;5383:168929 material-clear_all [instance] 20x20
+                      I14061:76453;15833:197735 material-default-icon [instance] 20x20
+                      I14061:76453;5027:42403 Heading [text] 38x20 "Stages" 11/700
+                      I14061:76453;5036:633 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76453;5037:655 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76453;9646:126943 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76453;5279:87744 material-keyboard_arrow_down [instance] 20x20
+                      I14061:76453;10020:56646 Sort Down [frame] 16x16
+                      I14061:76453;10020:78585 Sort Up [frame] 16x16
+                  14061:76454 Content [frame] 175x100
+                    14061:76455 6 [text] 19x48 "6" 30/400
+                14061:76456 Item [frame] 175x160 r16
+                  14061:76457 Head [frame] 175x60
+                    14061:76458 Text-Cell [instance] 175x60
+                      I14061:76458;5383:168929 material-person [instance] 20x20
+                      I14061:76458;15833:197735 material-default-icon [instance] 20x20
+                      I14061:76458;5027:42403 Heading [text] 51x20 "Members" 11/700
+                      I14061:76458;5036:633 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76458;5037:655 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76458;9646:126943 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76458;5279:87744 material-keyboard_arrow_down [instance] 20x20
+                      I14061:76458;10020:56646 Sort Down [frame] 16x16
+                      I14061:76458;10020:78585 Sort Up [frame] 16x16
+                  14061:76459 Content [frame] 175x100
+                    14061:76460 6 [text] 19x48 "6" 30/400
+                14061:76461 Item [frame] 175x160 r16
+                  14061:76462 Head [frame] 175x60
+                    14061:76463 Text-Cell [instance] 175x60
+                      I14061:76463;5383:168929 material-cloud_upload [instance] 20x20
+                      I14061:76463;15833:197735 material-default-icon [instance] 20x20
+                      I14061:76463;5027:42403 Heading [text] 26x20 "Files" 11/700
+                      I14061:76463;5036:633 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76463;5037:655 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76463;9646:126943 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76463;5279:87744 material-keyboard_arrow_down [instance] 20x20
+                      I14061:76463;10020:56646 Sort Down [frame] 16x16
+                      I14061:76463;10020:78585 Sort Up [frame] 16x16
+                  14061:76464 Content [frame] 175x100
+                    14061:76465 12 [text] 33x48 "12" 30/400
+                14061:76466 Item [frame] 175x160 r16
+                  14061:76467 Head [frame] 175x60
+                    14061:76468 Text-Cell [instance] 175x60
+                      I14061:76468;5383:168929 material-flag [instance] 20x20
+                      I14061:76468;15833:197735 material-default-icon [instance] 20x20
+                      I14061:76468;5027:42403 Heading [text] 59x20 "New Tasks" 11/700
+                      I14061:76468;5036:633 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76468;5037:655 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76468;9646:126943 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76468;5279:87744 material-keyboard_arrow_down [instance] 20x20
+                      I14061:76468;10020:56646 Sort Down [frame] 16x16
+                      I14061:76468;10020:78585 Sort Up [frame] 16x16
+                  14061:76469 Content [frame] 175x100
+                    14061:76470 12 [text] 33x48 "12" 30/400
+                14061:76471 Item [frame] 175x160 r16
+                  14061:76472 Head [frame] 175x60
+                    14061:76473 Text-Cell [instance] 175x60
+                      I14061:76473;5383:168929 material-watch_later [instance] 20x20
+                      I14061:76473;15833:197735 material-default-icon [instance] 20x20
+                      I14061:76473;5027:42403 Heading [text] 69x20 "Task In Work" 11/700
+                      I14061:76473;5036:633 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76473;5037:655 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76473;9646:126943 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76473;5279:87744 material-keyboard_arrow_down [instance] 20x20
+                      I14061:76473;10020:56646 Sort Down [frame] 16x16
+                      I14061:76473;10020:78585 Sort Up [frame] 16x16
+                  14061:76474 Content [frame] 175x100
+                    14061:76475 3 [text] 20x48 "3" 30/400
+                14061:76476 Item [frame] 175x160 r16
+                  14061:76477 Head [frame] 175x60
+                    14061:76478 Text-Cell [instance] 175x60
+                      I14061:76478;5383:168929 material-task [instance] 20x20
+                      I14061:76478;15833:197735 material-default-icon [instance] 20x20
+                      I14061:76478;5027:42403 Heading [text] 63x20 "Done Tasks" 11/700
+                      I14061:76478;5036:633 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76478;5037:655 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76478;9646:126943 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76478;5279:87744 material-keyboard_arrow_down [instance] 20x20
+                      I14061:76478;10020:56646 Sort Down [frame] 16x16
+                      I14061:76478;10020:78585 Sort Up [frame] 16x16
+                  14061:76479 Content [frame] 175x100
+                    14061:76480 7 [text] 18x48 "7" 30/400
+                14061:76481 Item [frame] 175x160 r16
+                  14061:76482 Head [frame] 175x60
+                    14061:76483 Text-Cell [instance] 175x60
+                      I14061:76483;5383:168929 material-close [instance] 20x20
+                      I14061:76483;15833:197735 material-default-icon [instance] 20x20
+                      I14061:76483;5027:42403 Heading [text] 60x20 "Faild Tasks" 11/700
+                      I14061:76483;5036:633 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76483;5037:655 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76483;9646:126943 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76483;5279:87744 material-keyboard_arrow_down [instance] 20x20
+                      I14061:76483;10020:56646 Sort Down [frame] 16x16
+                      I14061:76483;10020:78585 Sort Up [frame] 16x16
+                  14061:76484 Content [frame] 175x100
+                    14061:76485 2 [text] 19x48 "2" 30/400
+            14061:76486 Group [frame] 1088x728
+              14061:76487 Group [frame] 716x728
+                14061:76488 Item [frame] 716x212 r16
+                  14061:76489 Head [frame] 716x60
+                    14061:76490 Text-Cell [instance] 656x60
+                      I14061:76490;5383:168929 material-default-icon [instance] 20x20
+                      I14061:76490;15833:197735 material-default-icon [instance] 20x20
+                      I14061:76490;5027:42403 Heading [text] 52x20 "Company" 11/700
+                      I14061:76490;5036:633 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76490;5037:655 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76490;9646:126943 Heading [text] 45x20 "Heading" 11/700
+                      I14061:76490;5279:87744 material-keyboard_arrow_down [instance] 20x20
+                      I14061:76490;10020:56646 Sort Down [frame] 16x16
+                      I14061:76490;10020:78585 Sort Up [frame] 16x16
+                    14061:76491 Icon-Cell [instance] 60x60
+                      I14061:76491;5028:7471 material-more_horiz [instance] 24x24
+                  14061:76492 Content [frame] 716x152
+                    14061:76493 Avatar-Logo [instance] 80x80 r12
+                      I14061:76493;5994:28001 Adobe [instance] 56x56
+                        I14061:76493;5994:28001;5992:23492 Content [group] 56x15
+                    14061:76494 Content [frame] 576x136
+                      14061:76495 Facebook Company ltd [text] 146x24 "Facebook Company ltd" 13/700
+                      14061:76496 Facebook, Inc. is an [text] 576x100 "Facebook, Inc. is an American technology conglomerate based " 11/600
+                14061:76497 Group [frame] 716x504
+                  14061:76498 Stages [frame] 352x504 r16
+                    14061:76499 Head [frame] 352x60
+                      14061:76500 Text-Cell [instance] 292x60
+                        I14061:76500;5383:168929 material-default-icon [instance] 20x20
+                        I14061:76500;15833:197735 material-default-icon [instance] 20x20
+                        I14061:76500;5027:42403 Heading [text] 79x20 "Project Stages" 11/700
+                        I14061:76500;5036:633 Heading [text] 45x20 "Heading" 11/700
+                        I14061:76500;5037:655 Heading [text] 45x20 "Heading" 11/700
+                        I14061:76500;9646:126943 Heading [text] 45x20 "Heading" 11/700
+                        I14061:76500;5279:87744 material-keyboard_arrow_down [instance] 20x20
+                        I14061:76500;10020:56646 Sort Down [frame] 16x16
+                        I14061:76500;10020:78585 Sort Up [frame] 16x16
+                      14061:76501 Icon-Cell [instance] 60x60
+                        I14061:76501;5028:7471 material-more_horiz [instance] 24x24
+                    14061:76502 Content [frame] 352x444
+                      14061:76503 Content [frame] 332x444
+                        14061:76504 Item [frame] 320x80 r12
+                        14061:76511 Item [frame] 320x80 r12
+                        14061:76518 Item [frame] 320x80 r12
+                        14061:76525 Item [frame] 320x80 r12
+                        14061:76532 Item [frame] 320x80 r12
+                      14061:76539 Scroll [frame] 20x444
+                        14061:76540 Scroll [frame] 4x96 r30
+                  14061:76541 Item [frame] 352x504 r16
+                    14061:76542 Head [frame] 352x60
+                      14061:76543 Text-Cell [instance] 292x60
+                        I14061:76543;5383:168929 material-default-icon [instance] 20x20
+                        I14061:76543;15833:197735 material-default-icon [instance] 20x20
+                        I14061:76543;5027:42403 Heading [text] 51x20 "Members" 11/700
+                        I14061:76543;5036:633 Heading [text] 45x20 "Heading" 11/700
+                        I14061:76543;5037:655 Heading [text] 45x20 "Heading" 11/700
+                        I14061:76543;9646:126943 Heading [text] 45x20 "Heading" 11/700
+                        I14061:76543;5279:87744 material-keyboard_arrow_down [instance] 20x20
+                        I14061:76543;10020:56646 Sort Down [frame] 16x16
+                        I14061:76543;10020:78585 Sort Up [frame] 16x16
+                      14061:76544 Icon-Cell [instance] 60x60
+                        I14061:76544;5028:7471 material-more_horiz [instance] 24x24
+                    14061:76545 Content [frame] 352x444
+                      14061:76546 Content [frame] 332x444
+                        14061:76547 Row [frame] 320x48 r40
+                        14061:76550 Row [frame] 320x48 r40
+                        14061:76553 Row [frame] 320x48 r40
+                        14061:76556 Row [frame] 320x48 r40
+                        14061:76559 Row [frame] 320x48 r40
+                        14061:76562 Row [frame] 320x48 r40
+                        14061:76565 Row [frame] 320x48 r40
+                        14061:76568 Row [frame] 320x48 r40
+                      14061:76571 Scroll [frame] 20x444
+                        14061:76572 Scroll [frame] 4x96 r30
+              14061:76573 Last Events [frame] 360x728 r16
+                14061:76574 Head [frame] 360x60
+                  14061:76575 Text-Cell [instance] 300x60
+                    I14061:76575;5383:168929 material-default-icon [instance] 20x20
+                    I14061:76575;15833:197735 material-default-icon [instance] 20x20
+                    I14061:76575;5027:42403 Heading [text] 73x20 "Latest events" 11/700
+                    I14061:76575;5036:633 Heading [text] 45x20 "Heading" 11/700
+                    I14061:76575;5037:655 Heading [text] 45x20 "Heading" 11/700
+                    I14061:76575;9646:126943 Heading [text] 45x20 "Heading" 11/700
+                    I14061:76575;5279:87744 material-keyboard_arrow_down [instance] 20x20
+                    I14061:76575;10020:56646 Sort Down [frame] 16x16
+                    I14061:76575;10020:78585 Sort Up [frame] 16x16
+                  14061:76576 Icon-Cell [instance] 60x60
+                    I14061:76576;5028:7471 material-more_horiz [instance] 24x24
+                14061:76577 Content [frame] 360x668
+                  14061:76578 Content [frame] 340x720
+                    14061:76579 Item [frame] 324x48 r6
+                      14061:76580 Row [frame] 324x48
+                        14061:76581 Badge-Icon-Feature-Cell [instance] 48x48
+                        14061:76582 Text-Line-Cell [instance] 200x48
+                        14061:76583 Badge-Cell [instance] 76x48
+                    14061:76584 Line [frame] 25x12
+                      14061:76585 Line [frame] 1x12 r10
+                    14061:76586 Item [frame] 324x48 r6
+                      14061:76587 Row [frame] 324x48
+                        14061:76588 Badge-Icon-Feature-Cell [instance] 48x48
+                        14061:76589 Text-Line-Cell [instance] 200x48
+                        14061:76590 Badge-Cell [instance] 76x48
+                    14061:76591 Line [frame] 25x12
+                      14061:76592 Line [frame] 1x12 r10
+                    14061:76593 Item [frame] 324x48 r6
+                      14061:76594 Row [frame] 324x48
+                        14061:76595 Badge-Icon-Feature-Cell [instance] 48x48
+                        14061:76596 Text-Line-Cell [instance] 200x48
+                        14061:76597 Badge-Cell [instance] 76x48
+                    14061:76598 Line [frame] 25x12
+                      14061:76599 Line [frame] 1x12 r10
+                    14061:76600 Item [frame] 324x48 r6
+                      14061:76601 Row [frame] 324x48
+                        14061:76602 Badge-Icon-Feature-Cell [instance] 48x48
+                        14061:76603 Text-Line-Cell [instance] 200x48
+                        14061:76604 Badge-Cell [instance] 76x48
+                    14061:76605 Line [frame] 25x12
+                      14061:76606 Line [frame] 1x12 r10
+                    14061:76607 Item [frame] 324x48 r6
+                      14061:76608 Row [frame] 324x48
+                        14061:76609 Badge-Icon-Feature-Cell [instance] 48x48
+                        14061:76610 Text-Line-Cell [instance] 200x48
+                        14061:76611 Badge-Cell [instance] 76x48
+                    14061:76612 Line [frame] 25x12
+                      14061:76613 Line [frame] 1x12 r10
+                    14061:76614 Item [frame] 324x48 r6
+                      14061:76615 Row [frame] 324x48
+                        14061:76616 Badge-Icon-Feature-Cell [instance] 48x48
+                        14061:76617 Text-Line-Cell [instance] 200x48
+                        14061:76618 Badge-Cell [instance] 76x48
+                    14061:76619 Line [frame] 25x12
+                      14061:76620 Line [frame] 1x12 r10
+                    14061:76621 Head [frame] 324x48 r6
+                      14061:76622 Brand-Cell [instance] 48x48
+                        I14061:76622;5029:8975 Wechat [instance] 28x28
+                        I14061:76622;9584:29924 Content [frame] 45x48
+                      14061:76623 Text-Cell [instance] 276x40
+                        I14061:76623;5383:174618 material-default-icon [instance] 20x20
+                        I14061:76623;15833:216327 material-default-icon [instance] 20x20
+                        I14061:76623;5037:686 Heading [text] 137x20 "Develop Chat Application" 11/700
+                        I14061:76623;5037:688 Heading [text] 45x20 "Heading" 11/700
+                        I14061:76623;5037:690 Heading [text] 46x20 "7 Events" 11/700
+                        I14061:76623;9646:167835 Heading [text] 45x20 "Heading" 11/700
+                        I14061:76623;5279:95549 material-default-icon [instance] 20x20
+                        I14061:76623;10020:74502 Sort Down [frame] 16x16
+                        I14061:76623;10020:94005 Sort Up [frame] 16x16
+                    14061:76624 Line [frame] 25x12
+                      14061:76625 Line [frame] 1x12 r10
+                    14061:76626 Item [frame] 324x48 r6
+                      14061:76627 Row [frame] 324x48
+                        14061:76628 Badge-Icon-Feature-Cell [instance] 48x48
+                        14061:76629 Text-Line-Cell [instance] 200x48
+                        14061:76630 Badge-Cell [instance] 76x48
+                    14061:76631 Line [frame] 25x12
+                      14061:76632 Line [frame] 1x12 r10
+                    14061:76633 Item [frame] 324x48 r6
+                      14061:76634 Row [frame] 324x48
+                        14061:76635 Badge-Icon-Feature-Cell [instance] 48x48
+                        14061:76636 Text-Line-Cell [instance] 200x48
+                        14061:76637 Badge-Cell [instance] 76x48
+                    14061:76638 Line [frame] 25x12
+                      14061:76639 Line [frame] 1x12 r10
+                    14061:76640 Item [frame] 324x48 r6
+                      14061:76641 Row [frame] 324x48
+                        14061:76642 Badge-Icon-Feature-Cell [instance] 48x48
+                        14061:76643 Text-Line-Cell [instance] 200x48
+                        14061:76644 Badge-Cell [instance] 76x48
+                    14061:76645 Line [frame] 25x12
+                      14061:76646 Line [frame] 1x12 r10
+                    14061:76647 Item [frame] 324x48 r6
+                      14061:76648 Row [frame] 324x48
+                        14061:76649 Badge-Icon-Feature-Cell [instance] 48x48
+                        14061:76650 Text-Line-Cell [instance] 200x48
+                        14061:76651 Badge-Cell [instance] 76x48
+                    14061:76652 Line [frame] 25x12
+                      14061:76653 Line [frame] 1x12 r10
+                    14061:76654 Item [frame] 324x48 r6
+                      14061:76655 Row [frame] 324x48
+                        14061:76656 Badge-Icon-Feature-Cell [instance] 56x48
+                        14061:76657 Text-Line-Cell [instance] 192x48
+                        14061:76658 Badge-Cell [instance] 76x48
+                  14061:76659 Scroll [frame] 20x668
+                    14061:76660 Scroll [frame] 4x96 r30
+      14061:76661 Footer [instance] 1304x64
+        I14061:76661;6921:244529 Group [frame] 1304x64
+          I14061:76661;6921:244530 Content [frame] 1304x32
+            I14061:76661;6921:244532 © 2078 Global Inc. [text] 100x20 "© 2078 Global Inc." 11/700
+            I14061:76661;6921:244612 Social [slot] 152x32
+              I14061:76661;6921:244613 Outline-Button [instance] 32x32 r32
+                I14061:76661;6921:244613;4284:68095 Icon [instance] 16x16
+              I14061:76661;6921:244614 Outline-Button [instance] 32x32 r32
+                I14061:76661;6921:244614;4284:68095 Icon [instance] 16x16
+              I14061:76661;6921:244615 Outline-Button [instance] 32x32 r32
+                I14061:76661;6921:244615;4284:68095 Icon [instance] 16x16
+              I14061:76661;6921:244616 Outline-Button [instance] 32x32 r32
+                I14061:76661;6921:244616;4284:68095 Icon [instance] 16x16
+            I14061:76661;6921:244533 Outline-Button [instance] 148x32 r32
+              I14061:76661;6921:244533;4284:68641 Icon [instance] 16x16
+              I14061:76661;6921:244533;4284:68642 Text [frame] 108x20
+                I14061:76661;6921:244533;4284:68643 Button [text] 96x20 "English Language" 11/700
+              I14061:76661;6921:244533;13289:43707 Counter [frame] 20x16
+              I14061:76661;6921:244533;4284:68644 Icon [instance] 16x16
+              I14061:76661;6921:244533;4284:68645 Icon [instance] 16x16
+            I14061:76661;6921:244664 Group [frame] 72x32
+              I14061:76661;6921:244665 Outline-Button [instance] 32x32 r32
+                I14061:76661;6921:244665;4284:68095 Icon [instance] 16x16
+              I14061:76661;6921:244666 Outline-Button [instance] 32x32 r32
+                I14061:76661;6921:244666;4284:68095 Icon [instance] 16x16

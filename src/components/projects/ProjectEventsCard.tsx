@@ -20,6 +20,7 @@ import {
   TableCellLogo,
   TableCellTitle,
 } from "@/components/ui/table-cell"
+import { cn } from "@/lib/utils"
 import type { Project, ProjectEvent, ProjectEventKind } from "@/lib/projects/types"
 
 // Figma Badge-Icon-Pilled color per event kind: add_circle green, message blue, clear_all orange, download cyan.
@@ -50,7 +51,17 @@ function groupEvents(events: ProjectEvent[], projects: Project[]): Group[] {
 }
 
 /** Figma Last Events (14061:68638): Latest events head with a more menu and a scrolling list of per-project event groups. */
-async function ProjectEventsCard({ events, projects }: { events: ProjectEvent[]; projects: Project[] }) {
+async function ProjectEventsCard({
+  events,
+  projects,
+  title,
+  className,
+}: {
+  events: ProjectEvent[]
+  projects: Project[]
+  title?: string
+  className?: string
+}) {
   const t = await getTranslations("projects.events")
   const tEmpty = await getTranslations("projects.empty")
   const format = await getFormatter()
@@ -60,10 +71,10 @@ async function ProjectEventsCard({ events, projects }: { events: ProjectEvent[];
     format.dateTime(new Date(at), { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "UTC" })
 
   return (
-    <Card variant="panel" className="lg:h-197">
+    <Card variant="panel" className={cn("lg:h-197", className)}>
       <div className="flex shrink-0 items-center justify-between">
         <TableCell size="60">
-          <TableCellTitle>{t("title")}</TableCellTitle>
+          <TableCellTitle>{title ?? t("title")}</TableCellTitle>
         </TableCell>
         <DropdownMenu>
           <DropdownMenuTrigger
