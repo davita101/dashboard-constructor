@@ -1,9 +1,10 @@
+"use client"
+
 import * as React from "react"
 
 import { CartesianChart, type CartesianKind } from "@/components/charts/cartesian-chart"
 import { RadialChart } from "@/components/charts/radial-chart"
 import { ProductTable } from "@/components/table/product-table"
-import { TaskCard } from "@/components/task/task-card"
 import {
   ChartCard,
   ChartCardAction,
@@ -31,10 +32,13 @@ import {
   ChartMetricStats,
   ChartMetricWideBody,
 } from "@/components/ui/chart-metric"
+import { useWidgetFluid } from "@/components/dashboard/widgets/widget-fluid"
 import { ProgressCircle } from "@/components/ui/progress-circle"
 import { cn } from "@/lib/utils"
 
-type WidgetCategory = "charts" | "metrics" | "tables" | "tasks"
+type WidgetSize = "sm" | "md" | "lg" | "wide" | "full"
+
+type WidgetCategory = "charts" | "metrics" | "tables"
 
 type WidgetDef = {
   id: string
@@ -44,12 +48,8 @@ type WidgetDef = {
   /** Extra words the search matches besides the translated name / description. */
   keywords: string[]
   preview: React.ReactNode
-  /** Natural width in px (Figma), used to fill rows. Defaults to a chart card, 320. */
-  width?: number
-  /** Natural height in px, used to stack small widgets beside a tall one. Defaults to a line chart card, 689. */
-  height?: number
-  /** Takes a whole row on the dashboard (tables, wide strips); never shares one. */
-  full?: boolean
+  /** Grid footprint on the 8-track dashboard (see SPAN in widget-board): sm = 2 x 1 (264 x 164 metric tiles), md = 3 x 2, lg = 3 x 3 (408 x 540, default, all charts), wide = full row x 540, full = the whole row at its own height. */
+  size?: WidgetSize
   /** What the dashboard renders when it differs from the picker preview (e.g. fluid width). */
   board?: React.ReactNode
 }
@@ -83,17 +83,22 @@ function CartesianCardPreview({
   wide?: boolean
   tall?: boolean
 }) {
+  const fluid = useWidgetFluid()
   return (
     <ChartCard>
       <ChartCardHead>
         <ChartCardTitle>Chart</ChartCardTitle>
         <ChartCardAction />
       </ChartCardHead>
-      <ChartCardContent>
+      <ChartCardContent className={cn(fluid && "min-h-0 flex-1")}>
         <ChartCardSwitcher />
         <ChartCardMetrics />
-        <ChartCardPlot inset={wide ? "none" : "md"}>
-          <CartesianChart preset="card" kind={kind} className={cn(tall ? "h-97" : "h-79", wide ? "w-70" : "w-66")} />
+        <ChartCardPlot inset={wide ? "none" : "md"} className={cn(fluid && "min-h-0 flex-1")}>
+          <CartesianChart
+            preset="card"
+            kind={kind}
+            className={fluid ? "h-full min-h-40 w-full" : cn(tall ? "h-97" : "h-79", wide ? "w-70" : "w-66")}
+          />
         </ChartCardPlot>
         {legend !== "none" && <ChartCardLegend items={legend === "labels" ? [...labelLegend] : undefined} />}
       </ChartCardContent>
@@ -103,25 +108,27 @@ function CartesianCardPreview({
 }
 
 function RadialCardPreview({ kind }: { kind: "donut" | "pie" | "progress" | "progress-half" }) {
+  const fluid = useWidgetFluid()
+  const plot = cn(fluid && "min-h-0 flex-1 items-center")
   return (
     <ChartCard>
       <ChartCardHead>
         <ChartCardTitle>Chart</ChartCardTitle>
         <ChartCardAction />
       </ChartCardHead>
-      <ChartCardContent>
+      <ChartCardContent className={cn(fluid && "min-h-0 flex-1")}>
         <ChartCardSwitcher />
         <ChartCardMetrics />
         {kind === "progress-half" ? (
-          <ChartCardPlot className="py-4">
+          <ChartCardPlot className={cn("py-4", plot)}>
             <RadialChart preset="card" kind="progress-half" text className="h-33 w-66" />
           </ChartCardPlot>
         ) : kind === "progress" ? (
-          <ChartCardPlot inset="none" className="py-4">
-            <RadialChart preset="card" kind="progress" text className="size-66" />
+          <ChartCardPlot inset="none" className={cn("py-4", plot)}>
+            <RadialChart preset="card" kind="progress" text className={fluid ? "size-36" : "size-66"} />
           </ChartCardPlot>
         ) : (
-          <ChartCardPlot inset="none" className="py-4">
+          <ChartCardPlot inset="none" className={cn("py-4", plot)}>
             <RadialChart preset="card" kind={kind} count={kind === "donut" ? 4 : 7} className="size-49" />
           </ChartCardPlot>
         )}
@@ -132,44 +139,33 @@ function RadialCardPreview({ kind }: { kind: "donut" | "pie" | "progress" | "pro
   )
 }
 
-function MetricCardPreview({ chart }: { chart: "line" | "area" }) {
+/** Figma dashboard metric cards (264 x 164): head and a 128px content row, footer clipped by the row height. */
+function MetricTile({ chart }: { chart: "line" | "area" | "column" | "progress" }) {
+  const body = {
+    line: { value: "87", up: "+20%", down: "", node: <ChartLine tone="purple" type={1} className="h-27 w-23.25" preserveAspectRatio="none" /> },
+    area: { value: "72,550", up: "+6,11%", down: "", node: <ChartLineArea tone="blue" type={1} className="h-24 w-23.25" preserveAspectRatio="none" /> },
+    column: { value: "425", up: "+2.45%", down: "", node: <ChartColumnsMini tone="blue" type={4} /> },
+    progress: { value: "72,550", up: "", down: "21,33%", node: <ProgressCircle size="56" value={64} color="blue" aria-label="64%" /> },
+  }[chart]
   return (
-    <ChartMetricCard size="sm">
+    <ChartMetricCard size="tile" className="lg:max-w-none">
       <ChartMetricHead />
-      <ChartMetricBody>
-        <ChartMetricStats />
-        <ChartMetricChart>
-          {chart === "line" ? (
-            <ChartLine tone="blue" type={1} className="h-27 w-23.25" preserveAspectRatio="none" />
-          ) : (
-            <ChartLineArea tone="blue" type={1} className="h-30 w-23.25" preserveAspectRatio="none" />
-          )}
-        </ChartMetricChart>
+      <ChartMetricBody layout="tile">
+        <ChartMetricStats value={body.value} heading="" up={body.up} down={body.down} className="h-auto" />
+        <ChartMetricChart>{body.node}</ChartMetricChart>
       </ChartMetricBody>
-      <ChartMetricFooter />
     </ChartMetricCard>
   )
 }
 
-/** Metric-Column-Chart-Card and Metric-Progress-Chart-Card: compact card, chart on the right. */
-function MetricCompactPreview({ chart }: { chart: "column" | "progress" }) {
-  return (
-    <ChartMetricCard size="sm">
-      <ChartMetricHead />
-      <ChartMetricBody>
-        <ChartMetricStats />
-        <ChartMetricChart>
-          {chart === "column" ? (
-            <ChartColumnsMini tone="blue" type={4} />
-          ) : (
-            <ProgressCircle size="56" value={50} color="green" aria-label="50%" />
-          )}
-        </ChartMetricChart>
-      </ChartMetricBody>
-      <ChartMetricFooter />
-    </ChartMetricCard>
-  )
-}
+const metricTile = (chart: "line" | "area" | "column" | "progress") => ({
+  preview: (
+    <div className="w-66">
+      <MetricTile chart={chart} />
+    </div>
+  ),
+  board: <MetricTile chart={chart} />,
+})
 
 /** Metric-Line-2-Chart-Card: amount, two lines with a tooltip, actions. */
 function MetricLine2Preview() {
@@ -222,43 +218,38 @@ function MetricWidePreview() {
 
 const widgetCatalog: WidgetDef[] = [
   { id: "line-chart", category: "charts", icon: ICON("trending_up"), keywords: ["line", "trend", "graph"], preview: <CartesianCardPreview kind="line" /> },
-  { id: "line-area-chart", category: "charts", icon: ICON("trending_up"), keywords: ["area", "line", "trend"], preview: <CartesianCardPreview kind="line-area" /> },
+  { id: "line-area-chart", category: "charts", icon: ICON("trending_up"), keywords: ["area", "line", "trend"], preview: <CartesianCardPreview kind="line-area" />, size: "wide" },
   { id: "line-step-chart", category: "charts", icon: ICON("alt-route"), keywords: ["step", "line"], preview: <CartesianCardPreview kind="line-step" legend="labels" /> },
   { id: "column-chart", category: "charts", icon: ICON("apps"), keywords: ["column", "bar", "vertical"], preview: <CartesianCardPreview kind="column-2" /> },
-  { id: "bar-chart", category: "charts", icon: ICON("sort"), keywords: ["bar", "horizontal"], preview: <CartesianCardPreview kind="bar" legend="none" wide={true} tall={true} />, height: 729 },
-  { id: "stacked-bar-chart", category: "charts", icon: ICON("list"), keywords: ["stacked", "bar"], preview: <CartesianCardPreview kind="bar-stacked" legend="none" wide={true} tall={true} />, height: 729 },
-  { id: "candle-chart", category: "charts", icon: ICON("balance"), keywords: ["candle", "stock", "finance"], preview: <CartesianCardPreview kind="candle" legend="none" wide={true} tall={true} />, height: 729 },
-  { id: "donut-chart", category: "charts", icon: ICON("refresh"), keywords: ["donut", "ring", "share"], preview: <RadialCardPreview kind="donut" />, height: 569 },
-  { id: "pie-chart", category: "charts", icon: ICON("monetization-on"), keywords: ["pie", "share"], preview: <RadialCardPreview kind="pie" />, height: 569 },
-  { id: "progress-chart", category: "charts", icon: ICON("done-all"), keywords: ["progress", "rings", "goal"], preview: <RadialCardPreview kind="progress" />, height: 693 },
-  { id: "progress-half-chart", category: "charts", icon: ICON("done-all"), keywords: ["progress", "half", "gauge", "goal"], preview: <RadialCardPreview kind="progress-half" />, height: 505 },
-  { id: "metric-line", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "kpi", "line", "number"], preview: <MetricCardPreview chart="line" />, width: 230, height: 260 },
-  { id: "metric-area", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "kpi", "area", "number"], preview: <MetricCardPreview chart="area" />, width: 230, height: 260 },
+  { id: "bar-chart", category: "charts", icon: ICON("sort"), keywords: ["bar", "horizontal"], preview: <CartesianCardPreview kind="bar" legend="none" wide={true} tall={true} /> },
+  { id: "stacked-bar-chart", category: "charts", icon: ICON("list"), keywords: ["stacked", "bar"], preview: <CartesianCardPreview kind="bar-stacked" legend="none" wide={true} tall={true} /> },
+  { id: "candle-chart", category: "charts", icon: ICON("balance"), keywords: ["candle", "stock", "finance"], preview: <CartesianCardPreview kind="candle" legend="none" wide={true} tall={true} /> },
+  { id: "donut-chart", category: "charts", icon: ICON("refresh"), keywords: ["donut", "ring", "share"], preview: <RadialCardPreview kind="donut" /> },
+  { id: "pie-chart", category: "charts", icon: ICON("monetization-on"), keywords: ["pie", "share"], preview: <RadialCardPreview kind="pie" /> },
+  { id: "progress-chart", category: "charts", icon: ICON("done-all"), keywords: ["progress", "rings", "goal"], preview: <RadialCardPreview kind="progress" /> },
+  { id: "progress-half-chart", category: "charts", icon: ICON("done-all"), keywords: ["progress", "half", "gauge", "goal"], preview: <RadialCardPreview kind="progress-half" /> },
+  { id: "metric-line", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "kpi", "line", "number"], ...metricTile("line"), size: "sm" },
+  { id: "metric-area", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "kpi", "area", "number"], ...metricTile("area"), size: "sm" },
   { id: "line-gradient-chart", category: "charts", icon: ICON("trending_up"), keywords: ["gradient", "line", "trend"], preview: <CartesianCardPreview kind="line-gradient" /> },
   { id: "column-type-1-chart", category: "charts", icon: ICON("apps"), keywords: ["column", "bar", "vertical"], preview: <CartesianCardPreview kind="column-1" legend="labels" /> },
   { id: "column-type-3-chart", category: "charts", icon: ICON("apps"), keywords: ["column", "bar", "vertical"], preview: <CartesianCardPreview kind="column-3" /> },
   { id: "column-type-5-chart", category: "charts", icon: ICON("apps"), keywords: ["column", "bar", "vertical"], preview: <CartesianCardPreview kind="column-5" /> },
   { id: "column-type-6-chart", category: "charts", icon: ICON("apps"), keywords: ["column", "bar", "vertical"], preview: <CartesianCardPreview kind="column-6" /> },
-  { id: "metric-column", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "kpi", "column", "number"], preview: <MetricCompactPreview chart="column" />, width: 230, height: 260 },
-  { id: "metric-progress", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "kpi", "progress", "number"], preview: <MetricCompactPreview chart="progress" />, width: 230, height: 260 },
-  { id: "metric-line-2", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "revenue", "line", "two"], preview: <MetricLine2Preview />, width: 320, height: 309 },
-  { id: "metric-chart", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "chart", "amounts", "list"], preview: <MetricLargePreview kind="chart" />, width: 320, height: 684 },
-  { id: "metric-map", category: "metrics", icon: ICON("language"), keywords: ["metric", "map", "countries", "geo"], preview: <MetricLargePreview kind="map" />, width: 320, height: 751 },
-  { id: "metric-card", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "kpi", "wide", "strip"], preview: <MetricWidePreview />, full: true, height: 168 },
-  { id: "table", category: "tables", icon: ICON("list"), keywords: ["table", "grid", "products", "rows", "data", "orders"], preview: <div className="w-210"><ProductTable /></div>, full: true, board: <ProductTable />, height: 250 },
-  { id: "task-card", category: "tasks", icon: ICON("event"), keywords: ["task", "todo", "kanban", "card"], preview: <TaskCard />, width: 264, height: 304 },
+  { id: "metric-column", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "kpi", "column", "number"], ...metricTile("column"), size: "sm" },
+  { id: "metric-progress", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "kpi", "progress", "number"], ...metricTile("progress"), size: "sm" },
+  { id: "metric-line-2", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "revenue", "line", "two"], preview: <MetricLine2Preview /> },
+  { id: "metric-chart", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "chart", "amounts", "list"], preview: <MetricLargePreview kind="chart" /> },
+  { id: "metric-map", category: "metrics", icon: ICON("language"), keywords: ["metric", "map", "countries", "geo"], preview: <MetricLargePreview kind="map" /> },
+  { id: "metric-card", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "kpi", "wide", "strip"], preview: <MetricWidePreview />, size: "full" },
+  { id: "table", category: "tables", icon: ICON("list"), keywords: ["table", "grid", "products", "rows", "data", "orders"], preview: <div className="w-210"><ProductTable /></div>, size: "full", board: <ProductTable /> },
 ]
 
 const widgetsById = new Map(widgetCatalog.map((w) => [w.id, w]))
 const getWidget = (id: string) => widgetsById.get(id)
-const widgetWidth = (id: string) => getWidget(id)?.width ?? 320
-const widgetHeight = (id: string) => getWidget(id)?.height ?? 689
-const isFullWidget = (id: string) => getWidget(id)?.full === true
+const widgetSize = (id: string): WidgetSize => getWidget(id)?.size ?? "lg"
+const isFullWidget = (id: string) => widgetSize(id) === "full"
 
-/** Width / height / full-row facts the layout needs to place widgets. */
-const widgetSizing = { isFull: isFullWidget, widthOf: widgetWidth, heightOf: widgetHeight }
+const widgetCategories: WidgetCategory[] = ["charts", "metrics", "tables"]
 
-const widgetCategories: WidgetCategory[] = ["charts", "metrics", "tables", "tasks"]
-
-export { getWidget, isFullWidget, widgetHeight, widgetSizing, widgetWidth, widgetCatalog, widgetCategories }
-export type { WidgetCategory, WidgetDef }
+export { getWidget, isFullWidget, widgetSize, widgetCatalog, widgetCategories }
+export type { WidgetCategory, WidgetDef, WidgetSize }

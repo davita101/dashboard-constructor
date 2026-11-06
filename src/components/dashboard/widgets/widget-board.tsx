@@ -1,40 +1,31 @@
 "use client"
 
 import {
-  closestCenter,
   DndContext,
   DragOverlay,
   KeyboardSensor,
-  PointerSensor,
+  MeasuringStrategy,
+  MouseSensor,
+  TouchSensor,
+  closestCenter,
   pointerWithin,
-  useDroppable,
   useSensor,
   useSensors,
+  type ClientRect,
   type CollisionDetection,
+  type DragMoveEvent,
   type DragEndEvent,
-  type DragOverEvent,
   type DragStartEvent,
+  type KeyboardCoordinateGetter,
 } from "@dnd-kit/core"
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable"
+import { arrayMove, SortableContext, useSortable, type SortingStrategy } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { useTranslations } from "next-intl"
 import * as React from "react"
 
-import { getWidget, isFullWidget, widgetSizing } from "@/components/dashboard/widgets/catalog"
-import {
-  duplicateWidget,
-  hasFull,
-  newColumn,
-  newRowId,
-  pruneRows,
-  reflowRows,
-  removeWidget,
-  useHydrated,
-  type WidgetColumn,
-  type WidgetItem,
-  type WidgetLayout,
-  type WidgetRow,
-} from "@/components/dashboard/widgets/widget-layout"
+import { getWidget, widgetSize, type WidgetSize } from "@/components/dashboard/widgets/catalog"
+import { duplicateWidget, removeWidget, useHydrated, type WidgetItem } from "@/components/dashboard/widgets/widget-layout"
+import { WidgetFluid } from "@/components/dashboard/widgets/widget-fluid"
 import { useWidgetPicker } from "@/components/dashboard/widgets/widget-picker"
 import { Alert, AlertTitle } from "@/components/ui/alert"
 import { Button, ButtonIcon } from "@/components/ui/button"
@@ -43,54 +34,81 @@ import { cn } from "@/lib/utils"
 
 type ItemKey = Parameters<ReturnType<typeof useTranslations<"widgets">>>[0]
 
-// Droppable ids: widgets use their own id; the rest are prefixed.
-const COL = "col:" // a column's free space: append to its stack
-const ROW = "row:" // a row's free space: append a new column
-const NEW_COL = "ncol:" // `ncol:<row>:<index>`: a thin strip between columns, starts a new column there
-const NEW_ROW = "new:" // `new:<index>`: a strip between rows, starts a new row there
+/**
+ * Figma "Dashboard: Home". The board is the 1128 column split into 8 tracks of 120 with 24 gaps, rows of at least 164:
+ * metric tiles 2 x 1 (264 x 164), charts 3 x 3 (408 x 540), wide charts the whole row x 3; dense flow stacks
+ * tiles beside the charts (Main 1600 "current section"). Tables and strips take the whole row at their own height.
+ * Container queries: from 576 (768 frames: 696 board, 632 beside our icon rail) 2 tracks, tiles one each, charts both; 360 frames are 1 track, 12 gap.
+ */
+// contain-size: fixed footprints never stretch their rows (a chart's content could push 540 to 569); only `full` sizes its row.
+const SPAN: Record<WidgetSize, string> = {
+  sm: "contain-size @xl:col-span-1 @5xl:col-span-2",
+  md: "contain-size row-span-2 @xl:col-span-2 @5xl:col-span-3",
+  lg: "contain-size row-span-3 @xl:col-span-2 @5xl:col-span-3",
+  wide: "contain-size row-span-3 @xl:col-span-2 @5xl:col-span-8",
+  full: "@xl:col-span-2 @5xl:col-span-8",
+}
 
-type Spot = { r: number; c: number; i: number }
+/**
+ * Widgets differ in size, so the stock sortable strategies (which slide and scale items into each other's rects)
+ * distort them. Instead the order itself changes while dragging and the grid reflows; items glide to their new
+ * cell through `animateLayoutChanges`, so the strategy adds no transform.
+ */
+const reflowStrategy: SortingStrategy = () => null
 
-/** Finds a widget (or a column / row container) in the layout. `c` is -1 for a row, `i` is the stack end for a column. */
-function locate(layout: WidgetLayout, id: string): Spot | null {
-  for (let r = 0; r < layout.length; r++) {
-    if (id === ROW + layout[r].id) return { r, c: -1, i: 0 }
-    for (let c = 0; c < layout[r].columns.length; c++) {
-      const column = layout[r].columns[c]
-      if (id === COL + column.id) return { r, c, i: column.items.length }
-      const i = column.items.findIndex((item) => item.id === id)
-      if (i !== -1) return { r, c, i }
-    }
+/** Pointer travel (px) needed between two swaps. */
+const SWAP_TRAVEL = 16
+
+const ARROWS = ["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp"]
+
+/**
+ * Arrow keys step to the nearest widget in that direction (by centers, sideways distance weighs double) and center
+ * the dragged widget on it. dnd-kit's sortable getter compares edges and corners, which picks the wrong neighbor
+ * when a tile sits beside a chart three times its height.
+ */
+const gridKeyboardCoordinates: KeyboardCoordinateGetter = (event, { context: { active, over, collisionRect, droppableRects }, currentCoordinates }) => {
+  if (!ARROWS.includes(event.code) || !active || !collisionRect) return undefined
+  event.preventDefault()
+  const from = droppableRects.get(over?.id ?? active.id)
+  if (!from) return undefined
+  const center = (r: ClientRect) => ({ x: r.left + r.width / 2, y: r.top + r.height / 2 })
+  const c = center(from)
+  const axis = event.code === "ArrowRight" || event.code === "ArrowLeft" ? "x" : "y"
+  const sign = event.code === "ArrowRight" || event.code === "ArrowDown" ? 1 : -1
+  let best: { rect: ClientRect; score: number } | null = null
+  for (const [, rect] of droppableRects) {
+    if (rect === from) continue
+    const t = center(rect)
+    const along = (axis === "x" ? t.x - c.x : t.y - c.y) * sign
+    if (along <= 1) continue
+    const score = along + 2 * Math.abs(axis === "x" ? t.y - c.y : t.x - c.x)
+    if (!best || score < best.score) best = { rect, score }
   }
-  return null
+  if (!best) return undefined
+  const target = center(best.rect)
+  const now = center(collisionRect)
+  return { x: currentCoordinates.x + target.x - now.x, y: currentCoordinates.y + target.y - now.y }
 }
 
-/** Prefer the widget under the pointer over the column / row that holds it, fall back to the nearest target. */
-const collisionDetection: CollisionDetection = (args) => {
-  const hits = pointerWithin(args)
-  const specific = hits.filter((h) => !String(h.id).startsWith(ROW) && !String(h.id).startsWith(COL))
-  if (specific.length) return specific
-  return hits.length ? hits : closestCenter(args)
-}
-
-/** Full-width widgets live alone in their row; nothing else may join a row that has one. */
-function rowAccepts(row: WidgetRow, item: WidgetItem) {
-  if (isFullWidget(item.type)) return row.columns.every((c) => c.items.every((i) => i.id === item.id))
-  return !hasFull(row, widgetSizing)
-}
-
-const without = (layout: WidgetLayout, itemId: string): WidgetLayout =>
-  layout.map((row) => ({ ...row, columns: row.columns.map((c) => ({ ...c, items: c.items.filter((i) => i.id !== itemId) })) }))
+// The pointer picks the target (big and small cells have far-apart centers); keyboard drags have no pointer.
+const collision: CollisionDetection = (args) => (args.pointerCoordinates ? pointerWithin(args) : closestCenter(args))
 
 function WidgetBoard() {
   const t = useTranslations("widgets")
-  const { layout, setLayout, customizing, open } = useWidgetPicker()
+  const { layout: saved, setLayout, customizing, open } = useWidgetPicker()
+  // Saved layouts may still hold widgets that were removed from the catalog.
+  const valid = saved.filter((i) => getWidget(i.type))
   const hydrated = useHydrated()
-  // While dragging we edit a draft; it becomes the saved layout on drop.
-  const [draft, setDraft] = React.useState<WidgetLayout | null>(null)
   const [activeId, setActiveId] = React.useState<string | null>(null)
+  // The order while a drag is in progress: saved only on drop, thrown away on cancel.
+  const [draft, setDraft] = React.useState<WidgetItem[] | null>(null)
+  // The last widget the pointer swapped with: a swap moves that widget, possibly back under the pointer, which must not swap it again.
+  const lastOver = React.useRef<string | null>(null)
+  // Drag offset at the last swap.
+  const swapAt = React.useRef({ x: 0, y: 0 })
+  const layout = draft ?? valid
   // The layout before the last delete: "Undo" restores it. Clears itself after a few seconds.
-  const [undo, setUndo] = React.useState<{ layout: WidgetLayout; label: string } | null>(null)
+  const [undo, setUndo] = React.useState<{ layout: WidgetItem[]; label: string } | null>(null)
 
   React.useEffect(() => {
     if (!undo) return
@@ -99,16 +117,24 @@ function WidgetBoard() {
   }, [undo])
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
+    // Touch: press and hold, so a swipe over a widget still scrolls the page.
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 6 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: gridKeyboardCoordinates })
   )
+
+  // Widget ids before the latest change: anything not in there was just added, so it animates in (first render and drag moves don't).
+  const ids = layout.map((i) => i.id).sort()
+  const idsKey = ids.join()
+  const [seen, setSeen] = React.useState<{ key: string; before: Set<string> } | null>(null)
+  if (hydrated && seen?.key !== idsKey) setSeen({ key: idsKey, before: seen ? new Set(seen.key.split(",")) : new Set(ids) })
+  const known = seen?.before ?? null
 
   if (!hydrated) return null
 
-  const rows = draft ?? layout
-  const active = activeId ? rows.flatMap((r) => r.columns.flatMap((c) => c.items)).find((i) => i.id === activeId) : undefined
+  const active = activeId ? layout.find((i) => i.id === activeId) : undefined
 
-  if (rows.length === 0)
+  if (layout.length === 0)
     return (
       <Empty className="py-32">
         <EmptyHeader>
@@ -127,83 +153,58 @@ function WidgetBoard() {
       </Empty>
     )
 
-  const clear = () => {
-    setDraft(null)
-    setActiveId(null)
-  }
-
   const onDragStart = ({ active }: DragStartEvent) => {
     setActiveId(String(active.id))
-    setDraft(layout)
+    setDraft(valid)
+    lastOver.current = null
+    swapAt.current = { x: 0, y: 0 }
   }
 
-  // Dragging over another stack moves the widget there live, so everything makes room as you go.
-  const onDragOver = ({ active, over }: DragOverEvent) => {
-    if (!over || !draft) return
+  const moveBefore = (activeId: string, overId: string) =>
+    setDraft((prev) => {
+      if (!prev) return prev
+      const from = prev.findIndex((i) => i.id === activeId)
+      const to = prev.findIndex((i) => i.id === overId)
+      return from === -1 || to === -1 ? prev : arrayMove(prev, from, to)
+    })
+
+  const isKeyboard = (e: DragMoveEvent | DragEndEvent) => e.activatorEvent instanceof KeyboardEvent
+
+  // Mouse / touch: the order changes live. Runs on pointer moves only, never on the reflow itself. A swap shifts other
+  // widgets under a still pointer, and those must not swap in turn: so not the widget just swapped with again, and
+  // only after the pointer travelled SWAP_TRAVEL since the last swap.
+  // Keyboard drags don't reorder live (the arrow keys step between widgets that would keep moving); they move on drop.
+  const onDragMove = (e: DragMoveEvent) => {
+    const { active, over, delta } = e
+    // Over a gap: keep the guard, the reflow often leaves the pointer between cells for a moment.
+    if (isKeyboard(e) || !over) return
     const overId = String(over.id)
-    if (overId.startsWith(NEW_ROW) || overId.startsWith(NEW_COL)) return
-    const from = locate(draft, String(active.id))
-    const to = locate(draft, overId)
-    if (!from || !to || to.c === -1) return
-    if (from.r === to.r && from.c === to.c) return
-    const item = draft[from.r].columns[from.c].items[from.i]
-    if (!rowAccepts(draft[to.r], item)) return
-    const base = without(draft, item.id)
-    setDraft(
-      base.map((row, r) =>
-        r !== to.r
-          ? row
-          : {
-              ...row,
-              columns: row.columns.map((column, c) => {
-                if (c !== to.c) return column
-                const items = [...column.items]
-                items.splice(Math.min(to.i, items.length), 0, item)
-                return { ...column, items }
-              }),
-            }
-      )
-    )
+    if (overId === lastOver.current) return
+    if (Math.hypot(delta.x - swapAt.current.x, delta.y - swapAt.current.y) < SWAP_TRAVEL) return
+    lastOver.current = overId
+    if (overId === active.id) return
+    swapAt.current = delta
+    moveBefore(String(active.id), overId)
   }
 
-  const onDragEnd = ({ active, over }: DragEndEvent) => {
-    let next = draft ?? layout
-    const from = locate(next, String(active.id))
-    if (over && from) {
-      const overId = String(over.id)
-      const item = next[from.r].columns[from.c].items[from.i]
-      if (overId.startsWith(NEW_ROW)) {
-        const base = without(next, item.id)
-        base.splice(Number(overId.slice(NEW_ROW.length)), 0, { id: newRowId(), columns: [newColumn(item)] })
-        next = base
-      } else if (overId.startsWith(NEW_COL)) {
-        const [r, c] = overId.slice(NEW_COL.length).split(":").map(Number)
-        if (rowAccepts(next[r], item)) {
-          const base = without(next, item.id)
-          const columns = [...base[r].columns]
-          columns.splice(c, 0, newColumn(item))
-          next = base.map((row, i) => (i === r ? { ...row, columns } : row))
-        }
-      } else if (overId.startsWith(ROW)) {
-        const to = locate(next, overId)
-        if (to && rowAccepts(next[to.r], item)) {
-          const base = without(next, item.id)
-          next = base.map((row, i) => (i === to.r ? { ...row, columns: [...row.columns, newColumn(item)] } : row))
-        }
-      } else {
-        const to = locate(next, overId)
-        if (to && to.r === from.r && to.c === from.c && to.i !== from.i) {
-          next = next.map((row, r) =>
-            r !== from.r ? row : { ...row, columns: row.columns.map((col, c) => (c !== from.c ? col : { ...col, items: arrayMove(col.items, from.i, to.i) })) }
-          )
-        }
-      }
+  const onDragEnd = (e: DragEndEvent) => {
+    const { active, over } = e
+    let next = draft
+    if (isKeyboard(e) && over && over.id !== active.id) {
+      const from = valid.findIndex((i) => i.id === active.id)
+      const to = valid.findIndex((i) => i.id === over.id)
+      if (from !== -1 && to !== -1) next = arrayMove(valid, from, to)
     }
-    setLayout(reflowRows(pruneRows(next), widgetSizing))
-    clear()
+    endDrag(next)
   }
 
-  const dragging = activeId !== null
+  /** Saves `next` when the order changed (null: cancelled), then leaves drag mode. */
+  const endDrag = (next: WidgetItem[] | null) => {
+    if (next && next.some((item, i) => item.id !== valid[i]?.id)) setLayout(next)
+    setActiveId(null)
+    setDraft(null)
+    lastOver.current = null
+  }
 
   const remove = (item: WidgetItem) => {
     setUndo({ layout, label: t(`items.${item.type}.name` as ItemKey) })
@@ -221,42 +222,30 @@ function WidgetBoard() {
       <DndContext
         id="widget-board"
         sensors={sensors}
-        collisionDetection={collisionDetection}
+        collisionDetection={collision}
+        // The grid reflows during the drag, so targets are re-measured instead of kept from drag start.
+        measuring={{ droppable: { strategy: MeasuringStrategy.Always } }}
         onDragStart={onDragStart}
-        onDragOver={onDragOver}
+        onDragMove={onDragMove}
         onDragEnd={onDragEnd}
-        onDragCancel={clear}
+        onDragCancel={() => endDrag(null)}
       >
-        <div className={cn("flex flex-col", !customizing && "gap-6")}>
-          {customizing && <NewRowZone index={0} dragging={dragging} label={t("newRow")} />}
-          {rows.map((row, r) => {
-            const full = hasFull(row, widgetSizing)
-            return (
-              <React.Fragment key={row.id}>
-                <BoardRow id={row.id} customizing={customizing}>
-                  {customizing && !full && <NewColumnZone row={r} index={0} dragging={dragging} />}
-                  {row.columns.map((column, c) => (
-                    <React.Fragment key={column.id}>
-                      <BoardColumn column={column} customizing={customizing}>
-                        {column.items.map((item) => (
-                          <BoardWidget
-                            key={item.id}
-                            item={item}
-                            customizing={customizing}
-                            onRemove={() => remove(item)}
-                            onDuplicate={() => setLayout((prev) => duplicateWidget(prev, item.id, widgetSizing))}
-                          />
-                        ))}
-                      </BoardColumn>
-                      {customizing && !full && <NewColumnZone row={r} index={c + 1} dragging={dragging} />}
-                    </React.Fragment>
-                  ))}
-                </BoardRow>
-                {customizing && <NewRowZone index={r + 1} dragging={dragging} label={t("newRow")} />}
-              </React.Fragment>
-            )
-          })}
-        </div>
+        <SortableContext items={layout.map((i) => i.id)} strategy={reflowStrategy}>
+          <div data-slot="widget-grid" className="@container">
+            <div className="grid auto-rows-[minmax(164px,auto)] grid-flow-dense grid-cols-1 gap-3 @xl:grid-cols-2 @xl:gap-6 @5xl:grid-cols-8">
+            {layout.map((item) => (
+              <BoardWidget
+                key={item.id}
+                item={item}
+                customizing={customizing}
+                isNew={known !== null && !known.has(item.id)}
+                onRemove={() => remove(item)}
+                onDuplicate={() => setLayout((prev) => duplicateWidget(prev, item.id))}
+              />
+            ))}
+            </div>
+          </div>
+        </SortableContext>
         <DragOverlay>{active ? <WidgetFrame item={active} customizing overlay /> : null}</DragOverlay>
       </DndContext>
       {undo && (
@@ -279,54 +268,54 @@ function WidgetBoard() {
   )
 }
 
-function BoardRow({ id, customizing, children }: { id: string; customizing: boolean; children: React.ReactNode }) {
-  const { setNodeRef, isOver } = useDroppable({ id: ROW + id })
-  return (
-    <div
-      ref={setNodeRef}
-      data-slot="widget-row"
-      className={cn(
-        "flex flex-wrap items-start transition-colors",
-        // While customizing, the thin drop strips between columns take the place of the gap.
-        !customizing && "gap-6",
-        customizing && "-m-2 min-h-16 rounded-r20 p-2 outline -outline-offset-1 outline-dashed outline-base-150",
-        customizing && isOver && "bg-primary-alpha-5 outline-primary-alpha-30"
-      )}
-    >
-      {children}
-    </div>
-  )
-}
+const EXIT_MS = 200
 
-/** A vertical stack of widgets: a tall chart in one column, two small cards stacked in the next. */
-function BoardColumn({ column, customizing, children }: { column: WidgetColumn; customizing: boolean; children: React.ReactNode }) {
-  const { setNodeRef, isOver } = useDroppable({ id: COL + column.id })
-  const full = column.items.some((i) => isFullWidget(i.type))
+function BoardWidget({
+  item,
+  customizing,
+  isNew,
+  onRemove,
+  onDuplicate,
+}: {
+  item: WidgetItem
+  customizing: boolean
+  isNew: boolean
+  onRemove: () => void
+  onDuplicate: () => void
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: item.id,
+    disabled: !customizing,
+    // Every widget that changes cell glides there (not only the dropped one).
+    animateLayoutChanges: () => true,
+  })
+  const [leaving, setLeaving] = React.useState(false)
+  // Play the exit animation first, then really remove the widget.
+  const leave = () => {
+    if (leaving) return
+    setLeaving(true)
+    window.setTimeout(onRemove, EXIT_MS)
+  }
   return (
-    <SortableContext items={column.items.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+    <div ref={setNodeRef} style={{ transform: CSS.Translate.toString(transform), transition }} className={cn("min-w-0", SPAN[widgetSize(item.type)])}>
+      {/* Animation lives on an inner wrapper so it never fights the sortable transform above. */}
       <div
-        ref={setNodeRef}
-        data-slot="widget-column"
-        className={cn("flex min-w-0 flex-col gap-6 rounded-r20 transition-colors", full && "w-full", customizing && isOver && "bg-primary-alpha-5")}
+        className={cn(
+          "h-full",
+          isNew && "animate-in duration-300 fade-in-0 zoom-in-95 slide-in-from-bottom-2",
+          leaving && "pointer-events-none animate-out fill-mode-forwards duration-200 fade-out-0 zoom-out-95"
+        )}
       >
-        {children}
+        <WidgetFrame
+          item={item}
+          customizing={customizing}
+          handleProps={{ ...attributes, ...listeners }}
+          dragListeners={listeners}
+          placeholder={isDragging}
+          onRemove={leave}
+          onDuplicate={onDuplicate}
+        />
       </div>
-    </SortableContext>
-  )
-}
-
-function BoardWidget({ item, customizing, onRemove, onDuplicate }: { item: WidgetItem; customizing: boolean; onRemove: () => void; onDuplicate: () => void }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id, disabled: !customizing })
-  return (
-    <div ref={setNodeRef} style={{ transform: CSS.Transform.toString(transform), transition }} className={cn("min-w-0", isFullWidget(item.type) && "w-full")}>
-      <WidgetFrame
-        item={item}
-        customizing={customizing}
-        handleProps={{ ...attributes, ...listeners }}
-        placeholder={isDragging}
-        onRemove={onRemove}
-        onDuplicate={onDuplicate}
-      />
     </div>
   )
 }
@@ -337,6 +326,7 @@ function WidgetFrame({
   overlay,
   placeholder,
   handleProps,
+  dragListeners,
   onRemove,
   onDuplicate,
 }: {
@@ -345,7 +335,10 @@ function WidgetFrame({
   overlay?: boolean
   /** The slot the dragged widget leaves behind: same size, content hidden, tinted so the drop spot reads clearly. */
   placeholder?: boolean
+  /** The move button: sortable attributes (role, focus, aria) and listeners. */
   handleProps?: React.HTMLAttributes<HTMLElement>
+  /** Mouse and touch listeners only, for dragging from anywhere on the widget. */
+  dragListeners?: React.DOMAttributes<HTMLElement>
   onRemove?: () => void
   onDuplicate?: () => void
 }) {
@@ -356,14 +349,14 @@ function WidgetFrame({
   return (
     <div
       className={cn(
-        "group/widget relative",
-        isFullWidget(item.type) && "w-full",
+        "group/widget relative h-full",
+        // The overlay is outside the grid, so it needs the cell's size itself.
         overlay && "scale-[1.02] cursor-grabbing rounded-r20 opacity-95 shadow-[0_24px_48px_0_var(--shadow-base)] ring-2 ring-primary-alpha-30"
       )}
     >
       {/* Inert while customizing, so dragging never triggers the widget's own controls. */}
-      <div inert={customizing || undefined} className={cn(customizing && "select-none", placeholder && "invisible")}>
-        {def.board ?? def.preview}
+      <div inert={customizing || undefined} className={cn("h-full *:size-full", customizing && "select-none", placeholder && "invisible")}>
+        <WidgetFluid value>{def.board ?? def.preview}</WidgetFluid>
       </div>
       {placeholder && <div aria-hidden className="absolute inset-0 rounded-r20 bg-primary-alpha-5 outline -outline-offset-1 outline-dashed outline-primary-alpha-30" />}
       {customizing && !placeholder && (
@@ -371,7 +364,7 @@ function WidgetFrame({
           {/* Pointer drag from anywhere on the widget; the handle button below is the keyboard / screen-reader control. */}
           <div
             aria-hidden
-            onPointerDown={handleProps?.onPointerDown as React.PointerEventHandler<HTMLDivElement> | undefined}
+            {...dragListeners}
             className={cn(
               "absolute inset-0 rounded-r20 outline -outline-offset-1 outline-dashed outline-base-300 transition-colors",
               !overlay && "cursor-grab hover:bg-base-alpha-5 hover:outline-primary-alpha-30"
@@ -409,42 +402,6 @@ function WidgetFrame({
         </>
       )}
     </div>
-  )
-}
-
-/** A thin drop strip between rows (and above / below all of them): dropping here starts a new row. */
-function NewRowZone({ index, dragging, label }: { index: number; dragging: boolean; label: string }) {
-  const { setNodeRef, isOver } = useDroppable({ id: NEW_ROW + index })
-  return (
-    <div
-      ref={setNodeRef}
-      aria-hidden
-      className={cn(
-        "flex h-6 items-center justify-center rounded-r8 text-9 leading-16 font-semibold text-base-500 transition-opacity",
-        dragging ? "opacity-100" : "opacity-0",
-        dragging && "outline -outline-offset-1 outline-dashed outline-base-200",
-        isOver && "bg-primary-alpha-10 text-primary-600 outline-primary-alpha-30"
-      )}
-    >
-      {dragging && label}
-    </div>
-  )
-}
-
-/** A thin vertical strip between columns: dropping here puts the widget in a new column at that spot. */
-function NewColumnZone({ row, index, dragging }: { row: number; index: number; dragging: boolean }) {
-  const { setNodeRef, isOver } = useDroppable({ id: `${NEW_COL}${row}:${index}` })
-  return (
-    <div
-      ref={setNodeRef}
-      aria-hidden
-      className={cn(
-        "min-h-16 w-6 shrink-0 self-stretch rounded-r8 transition-opacity",
-        dragging ? "opacity-100" : "opacity-0",
-        dragging && "outline -outline-offset-1 outline-dashed outline-base-200",
-        isOver && "bg-primary-alpha-10 outline-primary-alpha-30"
-      )}
-    />
   )
 }
 

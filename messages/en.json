@@ -59,7 +59,6 @@
       "all": "All",
       "charts": "Charts",
       "metrics": "Metrics",
-      "tasks": "Tasks",
       "tables": "Tables"
     },
     "items": {
@@ -110,10 +109,6 @@
       "metric-area": {
         "name": "Metric with area",
         "description": "Key number and a filled trend"
-      },
-      "task-card": {
-        "name": "Task card",
-        "description": "Track work with labels and owners"
       },
       "progress-half-chart": {
         "name": "Progress gauge",
