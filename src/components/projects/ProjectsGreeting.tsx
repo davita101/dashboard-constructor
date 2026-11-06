@@ -3,6 +3,7 @@
 import { useUser } from "@clerk/nextjs"
 import { useTranslations } from "next-intl"
 import Image from "next/image"
+import Link from "next/link"
 
 import { useDashboardSize } from "@/components/dashboard/use-dashboard-size"
 import { Badge } from "@/components/ui/badge"
@@ -28,7 +29,7 @@ function ProjectsGreeting() {
             {name ? t("greeting", { name }) : t("greetingAnonymous")}
           </NavigateHeadTitle>
         </NavigateHeadGroup>
-        <Button variant="dark" shape="pill" size="32">
+        <Button variant="dark" shape="pill" size="32" nativeButton={false} render={<Link href="/dashboard/projects/new" />}>
           <ButtonIcon src="/icons/material-add-circle.svg" />
           {t("addProject")}
         </Button>

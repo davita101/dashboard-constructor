@@ -1,4 +1,5 @@
 import { useFormatter, useTranslations } from "next-intl"
+import Link from "next/link"
 
 import { Avatar, AvatarFallback, AvatarGroup, AvatarImage } from "@/components/ui/avatar"
 import { Button, ButtonIcon } from "@/components/ui/button"
@@ -34,12 +35,20 @@ function ProjectSummaryCard({ project }: { project: Project }) {
   ]
 
   return (
-    <Card variant="item">
+    // The title link stretches over the card; the add-member button sits above it.
+    <Card variant="item" className="relative">
       <div className="flex items-center justify-between">
-        <TableCell size="40" className="min-w-0 flex-1">
+        <TableCell size="40" className="static min-w-0 flex-1">
           <TableCellLogo src={project.logo} />
           <TableCellContent className="min-w-0">
-            <TableCellTitle className="truncate">{project.name}</TableCellTitle>
+            <TableCellTitle className="truncate">
+              <Link
+                href={`/dashboard/projects/${project.slug}`}
+                className="rounded-r12 outline-none after:absolute after:inset-0 after:z-1 after:rounded-r12 focus-visible:after:ring-2 focus-visible:after:ring-primary-500 focus-visible:after:ring-inset"
+              >
+                {project.name}
+              </Link>
+            </TableCellTitle>
           </TableCellContent>
         </TableCell>
         <TableCell size="40" className="shrink-0">
@@ -51,7 +60,7 @@ function ProjectSummaryCard({ project }: { project: Project }) {
               </Avatar>
             ))}
           </AvatarGroup>
-          <Button variant="outline" size="icon-24" shape="rounded" aria-label={t("addMember", { name: project.name })}>
+          <Button variant="outline" size="icon-24" shape="rounded" className="relative z-10" aria-label={t("addMember", { name: project.name })}>
             <ButtonIcon src="/icons/material-add.svg" />
           </Button>
         </TableCell>

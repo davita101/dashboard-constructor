@@ -226,7 +226,7 @@ type Finance = { income: number; incomeTrend: number; profit: number; profitTren
 - [x] 13. `QuickAddCard` (6 actions)
 - [x] 14. `RadialChart` rings kind + `FinancialStatsCard`
 - [x] 15. Sidebar project tree (expand/collapse, active project)
-- [ ] 16. Links + actions: Add New Project, Quick Add, project click, "…" menus
+- [ ] 16. Links + actions: Add New Project, Quick Add Project, project click done; other Quick Add items + "…" menus wait on Q4/Q5
 - [x] 17. Loading + empty states
 - [ ] 18. i18n strings + number/date formatting
 - [ ] 19. Visual pass vs Figma (spacing, type, colors, dark mode) — sidebar done (one Sidebar-01 248 on all pages per user, project tree with guide lines, one scroll for groups + footer; `restore` icon + square logos missing, see known-gaps); FinancialStats rings fixed size (finance prop unused)
@@ -251,7 +251,9 @@ Handoff: `design/handoff/project-editor-1600/` (tree.txt with node ids, img/proj
 - [x] Wire B + C in, tsc + build green, browser check at 1600 vs img/project-1600.png (layout matches; 7 tile/stage icons missing, see known-gaps `ProjectPage`)
 - [x] Commit `3c3866d`
 - [x] Fix pass (`design/handoff/project-editor-1600/review.md`): centered tiles, stage item separators, all events + inline group head
-- [ ] Breadcrumb shows "Projects", Figma shows "Dashboard"; project page has no 360 frame read yet (stacks below `lg`)
-- [ ] Then step 16: Add New Project / Quick Add Project / project click → `/dashboard/projects/[slug]` (sidebar project rows + sub-items already link there)
+- [x] Breadcrumb: Projects › project name (`DashboardPage crumbs`)
+- [x] Tabs follow `?tab=` (client `ProjectTabs`, sidebar sub-item active); non-Dashboard tabs show an empty state
+- [ ] Project page 360 frame not read yet (stacks below `lg`)
+- [x] Step 16 (partial): Add New Project + Quick Add Project → `/dashboard/projects/new` (project page with a blank project); project cards link to their page. Quick Add Stages/Task/Member/Message/File and the "…" menus wait on Q4/Q5
 
 Token budget (user request): one agent at a time, Haiku for small steps, Sonnet for components, short briefs with exact node ids, one small screenshot per check.

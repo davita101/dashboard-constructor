@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl"
 
-import { BreadcrumbTrail } from "@/components/breadcrumb/BreadcrumbTrail"
+import { BreadcrumbTrail, type BreadcrumbTrailItem } from "@/components/breadcrumb/BreadcrumbTrail"
 import { useWidgetPicker } from "@/components/dashboard/widgets/widget-picker"
 import type { DashboardSize } from "@/components/dashboard/use-dashboard-size"
 import { Button, ButtonIcon } from "@/components/ui/button"
@@ -13,7 +13,7 @@ import { NavigateHead, NavigateHeadBody, NavigateHeadGroup, NavigateHeadTitle } 
 const ICON = "/icons/material-default-icon.svg"
 
 /** Figma Head-Dashboard-01: breadcrumb on the left, three ghost actions on the right. */
-function DashboardHeadTop({ size, title }: { size: DashboardSize; title: string }) {
+function DashboardHeadTop({ size, title, crumbs }: { size: DashboardSize; title: string; crumbs?: BreadcrumbTrailItem[] }) {
   const mobile = size === "mobile"
   const actions: [string, string][] = [
     ["Help Chat", "/icons/material-help.svg"],
@@ -24,7 +24,7 @@ function DashboardHeadTop({ size, title }: { size: DashboardSize; title: string 
   return (
     <NavigateHead size={mobile ? "mobile" : "desktop"}>
       <NavigateHeadBody>
-        <BreadcrumbTrail size="sm" items={[{ label: title, icon: "/icons/material-home.svg" }]} />
+        <BreadcrumbTrail size="sm" items={crumbs ?? [{ label: title, icon: "/icons/material-home.svg" }]} />
         <NavigateHeadGroup gap={2} wrap={mobile}>
           {actions.map(([label, icon]) => (
             <Button key={label} variant="ghost" shape="rounded" size="32">

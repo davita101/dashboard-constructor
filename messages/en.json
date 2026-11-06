@@ -264,7 +264,8 @@
     },
     "head": {
       "logo": "Project logo",
-      "save": "Save Project"
+      "save": "Save Project",
+      "untitled": "Project Name"
     },
     "tabs": {
       "label": "Project sections",
@@ -276,7 +277,8 @@
       "members": "Members",
       "customer": "Customer",
       "files": "Files",
-      "activity": "Activity"
+      "activity": "Activity",
+      "empty": "This section is not built yet."
     },
     "stats": {
       "implementation": "Project implementation",

@@ -7,15 +7,25 @@ import { ProjectStagesCard } from "@/components/projects/ProjectStagesCard"
 import { ProjectStatTile } from "@/components/projects/ProjectStatTile"
 import { Card } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ProjectTabs } from "@/components/projects/ProjectTabs"
+import { projectTabKeys, type ProjectTabKey } from "@/lib/projects/tabs"
+import { Empty, EmptyDescription, EmptyHeader, EmptyIcon, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import type { Project, ProjectDetail, ProjectEvent } from "@/lib/projects/types"
-
-const tabKeys = ["dashboard", "stages", "tasks", "messages", "chat", "members", "customer", "files", "activity"] as const
 
 const icon = (name: string) => `/icons/material-${name}.svg`
 
 /** Figma main card (1128x1176, r20): pill tabs head, divider, stat tiles and the lower group. */
-async function ProjectDashboardCard({ detail, events, projects }: { detail: ProjectDetail; events: ProjectEvent[]; projects: Project[] }) {
+async function ProjectDashboardCard({
+  detail,
+  events,
+  projects,
+  tab = "dashboard",
+}: {
+  detail: ProjectDetail
+  events: ProjectEvent[]
+  projects: Project[]
+  tab?: ProjectTabKey
+}) {
   const [t, tTabs, tEvents, format] = await Promise.all([
     getTranslations("projectPage.stats"),
     getTranslations("projectPage.tabs"),
@@ -27,16 +37,24 @@ async function ProjectDashboardCard({ detail, events, projects }: { detail: Proj
 
   return (
     <Card variant="panel" className="gap-0">
-      <Tabs defaultValue="dashboard" className="h-16 shrink-0 justify-center px-5">
-        <TabsList variant="pill" size="32" aria-label={tTabs("label")} className="max-w-full overflow-x-auto">
-          {tabKeys.map((key) => (
-            <TabsTrigger key={key} value={key}>
-              {tTabs(key)}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
+      <ProjectTabs
+        value={tab}
+        label={tTabs("label")}
+        labels={Object.fromEntries(projectTabKeys.map((key) => [key, tTabs(key)])) as Record<ProjectTabKey, string>}
+      />
       <Separator />
+      {tab !== "dashboard" ? (
+        // Only the Dashboard section is drawn in Figma; the other tabs get an empty state until their frames are built.
+        <Empty className="min-h-120 justify-center p-5">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <EmptyIcon src="/icons/material-default-icon.svg" />
+            </EmptyMedia>
+            <EmptyTitle>{tTabs(tab)}</EmptyTitle>
+            <EmptyDescription>{tTabs("empty")}</EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      ) : (
       <div className="flex flex-col gap-3 p-5">
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-[--spacing(85)_1fr]">
           <div className="flex flex-col gap-3">
@@ -65,6 +83,7 @@ async function ProjectDashboardCard({ detail, events, projects }: { detail: Proj
           <ProjectEventsCard title={tEvents("title")} events={events} projects={projects} groupHead="inline" className="lg:h-182" />
         </div>
       </div>
+      )}
     </Card>
   )
 }

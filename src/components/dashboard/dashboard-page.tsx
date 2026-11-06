@@ -1,5 +1,6 @@
 "use client"
 
+import type { BreadcrumbTrailItem } from "@/components/breadcrumb/BreadcrumbTrail"
 import { DashboardHeadMain, DashboardHeadTop } from "@/components/dashboard/dashboard-head"
 import { useDashboardSize } from "@/components/dashboard/use-dashboard-size"
 import { Card } from "@/components/ui/card"
@@ -12,6 +13,7 @@ import { Separator } from "@/components/ui/separator"
 /**
  * `widgets` turns on the Customize and Add Widget actions (pages that render a WidgetBoard).
  * `head` replaces Head-Dashboard-02 (e.g. Projects' Head-Dashboard-11 greeting).
+ * `crumbs` replaces the one-item breadcrumb (`title` with the home icon), e.g. Projects › project name.
  * `topBar="full"`: Head-Dashboard-01 spans the content width in a 56 bar (20 inset) above a divider, as in Figma Projects (1600).
  */
 function DashboardPage({
@@ -21,6 +23,7 @@ function DashboardPage({
   head,
   topBar = "column",
   panel = true,
+  crumbs,
 }: {
   title: string
   children?: React.ReactNode
@@ -29,6 +32,7 @@ function DashboardPage({
   topBar?: "column" | "full"
   /** false: content sits on the page background instead of the white panel. */
   panel?: boolean
+  crumbs?: BreadcrumbTrailItem[]
 }) {
   const size = useDashboardSize() ?? "desktop"
   const full = topBar === "full"
@@ -37,7 +41,7 @@ function DashboardPage({
   const column = (
     <div className="mx-auto flex w-full max-w-282 flex-col gap-6 md:gap-8 md:px-9 md:py-8 lg:px-0 lg:py-12">
       <div className="flex flex-col gap-6 px-5 pt-5 md:gap-8 md:p-0">
-        {!full && <DashboardHeadTop size={size} title={title} />}
+        {!full && <DashboardHeadTop size={size} title={title} crumbs={crumbs} />}
         {mainHead}
       </div>
       {widgets || !panel ? (
@@ -57,7 +61,7 @@ function DashboardPage({
     <>
       <div className="flex flex-col">
         <div className="px-5 py-3">
-          <DashboardHeadTop size={size} title={title} />
+          <DashboardHeadTop size={size} title={title} crumbs={crumbs} />
         </div>
         <Separator className="bg-background-100" />
       </div>

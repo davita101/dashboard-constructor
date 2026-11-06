@@ -132,6 +132,20 @@ function detailFor(project: Project): ProjectDetail {
   }
 }
 
+/** Blank project for the "Add New Project" editor (/dashboard/projects/new). */
+export async function getNewProjectDetail(): Promise<ProjectDetail> {
+  const now = new Date().toISOString()
+  return {
+    project: { id: "new", slug: "new", name: "", logo: "/icons/material-default-icon.svg", members: [], progress: 0, stages: 0, tasks: 0, income: 0, deadline: now, updatedAt: now },
+    company: { name: "", logo: "/icons/material-default-icon.svg", description: "" },
+    implementation: 0,
+    counts: { messages: 0, stages: 0, members: 0, files: 0 },
+    tasks: { new: 0, inWork: 0, done: 0, failed: 0 },
+    stages: [],
+    team: [],
+  }
+}
+
 export async function getProjectDetail(slug: string): Promise<ProjectDetail | undefined> {
   const project = projects.find((p) => p.slug === slug)
   return project ? { ...detailFor(project), project: { ...project, deadline: "2078-12-22" } } : undefined

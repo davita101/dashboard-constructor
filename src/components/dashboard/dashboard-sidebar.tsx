@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl"
 import Image from "next/image"
 import Link from "next/link"
 import * as React from "react"
-import { usePathname } from "next/navigation"
+import { usePathname, useSearchParams } from "next/navigation"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -48,7 +48,7 @@ export type SidebarProject = Pick<Project, "id" | "slug" | "name" | "logo">
 
 const PROJECTS_OPEN_KEY = "dashboard-sidebar-projects-open"
 
-// Figma Sidebar-Dashboards-04: sub-items of the open project. They map to the project page tabs; only Dashboard has content so far.
+// Figma Sidebar-Dashboards-04: sub-items of the open project, mapped to the project page tabs (`?tab=`).
 const projectSubItems = [
   { key: "dashboard", icon: "dashboard", path: "" },
   { key: "stages", icon: "list", path: "?tab=stages" },
@@ -58,6 +58,30 @@ const projectSubItems = [
 ] as const
 
 const PROJECTS_HREF = "/dashboard/projects"
+
+/** Sub-items of the open project; the one matching the page's `?tab=` gets the dark guide and text. */
+function ProjectSubItems({ projectHref, tab, onNavigate }: { projectHref: string; tab: string; onNavigate?: () => void }) {
+  const t = useTranslations("sidebarProjects")
+  return projectSubItems.map((sub) => {
+    const active = sub.key === tab
+    return (
+      <SidebarTreeRow key={sub.key}>
+        <SidebarTreeGuide level="2" />
+        <SidebarTreeGuide level="3" active={active} />
+        <SidebarItem tone={active ? "text" : "none"} render={<Link href={`${projectHref}${sub.path}`} onClick={onNavigate} />}>
+          <SidebarItemIndent level="3" marker="none" />
+          <SidebarIcon name={sub.icon} className={active ? "text-base-800" : "text-base-500"} />
+          <SidebarItemLabel>{t(sub.key)}</SidebarItemLabel>
+        </SidebarItem>
+      </SidebarTreeRow>
+    )
+  })
+}
+
+function ProjectSubItemsFromUrl({ projectHref, onNavigate }: { projectHref: string; onNavigate?: () => void }) {
+  const tab = useSearchParams().get("tab") ?? "dashboard"
+  return <ProjectSubItems projectHref={projectHref} tab={tab} onNavigate={onNavigate} />
+}
 
 type NavKey = Parameters<ReturnType<typeof useTranslations<"nav">>>[0]
 
@@ -182,22 +206,12 @@ function DashboardSidebar({
                                     <SidebarItemLabel>{project.name}</SidebarItemLabel>
                                   </SidebarItem>
                                 </SidebarTreeRow>
-                                {current &&
-                                  projectSubItems.map((sub) => {
-                                    // Tab state lives in the page; the sidebar marks the project dashboard.
-                                    const subActive = sub.key === "dashboard"
-                                    return (
-                                      <SidebarTreeRow key={sub.key}>
-                                        <SidebarTreeGuide level="2" />
-                                        <SidebarTreeGuide level="3" active={subActive} />
-                                        <SidebarItem tone={subActive ? "text" : "none"} render={<Link href={`${projectHref}${sub.path}`} onClick={onNavigate} />}>
-                                          <SidebarItemIndent level="3" marker="none" />
-                                          <SidebarIcon name={sub.icon} className={subActive ? "text-base-800" : "text-base-500"} />
-                                          <SidebarItemLabel>{tProjects(sub.key)}</SidebarItemLabel>
-                                        </SidebarItem>
-                                      </SidebarTreeRow>
-                                    )
-                                  })}
+                                {current && (
+                                  // useSearchParams needs a Suspense boundary; the fallback marks Dashboard.
+                                  <React.Suspense fallback={<ProjectSubItems projectHref={projectHref} tab="dashboard" onNavigate={onNavigate} />}>
+                                    <ProjectSubItemsFromUrl projectHref={projectHref} onNavigate={onNavigate} />
+                                  </React.Suspense>
+                                )}
                               </React.Fragment>
                             )
                           })}

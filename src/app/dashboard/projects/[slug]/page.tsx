@@ -1,9 +1,6 @@
 import { notFound } from "next/navigation"
-import { getTranslations } from "next-intl/server"
 
-import { DashboardPage } from "@/components/dashboard/dashboard-page"
-import { ProjectDashboardCard } from "@/components/projects/ProjectDashboardCard"
-import { ProjectPageHead } from "@/components/projects/ProjectPageHead"
+import { ProjectPageView } from "@/components/projects/ProjectPageView"
 import { getProjectDetail, getProjectEvents, getProjects } from "@/lib/projects/data"
 
 export async function generateStaticParams() {
@@ -11,21 +8,16 @@ export async function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }))
 }
 
-// Figma "Projects (1600)" 14061:76419: per-project dashboard. Below lg everything stacks in one column (no 360 frame yet).
-export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params
-  const detail = await getProjectDetail(slug)
+export default async function ProjectPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>
+  searchParams: Promise<{ tab?: string }>
+}) {
+  const [{ slug }, { tab }] = await Promise.all([params, searchParams])
+  const [detail, events, projects] = await Promise.all([getProjectDetail(slug), getProjectEvents(), getProjects()])
   if (!detail) notFound()
-  const [t, events, projects] = await Promise.all([getTranslations("nav"), getProjectEvents(), getProjects()])
 
-  return (
-    <DashboardPage
-      title={t("projects")}
-      topBar="full"
-      panel={false}
-      head={<ProjectPageHead name={detail.project.name} logo={detail.project.logo} />}
-    >
-      <ProjectDashboardCard detail={detail} events={events} projects={projects} />
-    </DashboardPage>
-  )
+  return <ProjectPageView detail={detail} events={events} projects={projects} tab={tab} />
 }
