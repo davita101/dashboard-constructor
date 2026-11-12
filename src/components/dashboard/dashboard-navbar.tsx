@@ -1,12 +1,11 @@
 "use client"
 
-import { useUser } from "@clerk/nextjs"
+import { UserButton } from "@clerk/nextjs"
 import { useTranslations } from "next-intl"
 import Link from "next/link"
 
 import { useWidgetPicker } from "@/components/dashboard/widgets/widget-picker"
 import type { DashboardSize } from "@/components/dashboard/use-dashboard-size"
-import { Avatar, AvatarBadge, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button, ButtonIcon } from "@/components/ui/button"
 import {
   Navbar,
@@ -32,7 +31,6 @@ function DashboardNavbar({
   size: DashboardSize
   sidebarToggle: React.ReactNode
 }) {
-  const { user } = useUser()
   const t = useTranslations("navbar")
   const tSide = useTranslations("sidebar")
   const { open } = useWidgetPicker()
@@ -77,11 +75,8 @@ function DashboardNavbar({
         ) : (
           <NavbarIconButton icon="/icons/material-star.svg" label={t("upgrade")} variant="dark" data-soon />
         )}
-        <Avatar size="32">
-          <AvatarImage src={user?.imageUrl ?? "/images/avatars/avatar-1.png"} alt="" />
-          <AvatarFallback>{user?.firstName?.slice(0, 1) ?? "M"}</AvatarFallback>
-          <AvatarBadge />
-        </Avatar>
+        {/* Clerk's default account menu (Manage account, Sign out), sized to the Figma 32px avatar slot. */}
+        <UserButton appearance={{ elements: { avatarBox: "size-8!" } }} />
         {!mobile && <NavbarIconButton icon="/icons/material-close.svg" label={t("close")} data-soon />}
       </NavbarActions>
     </Navbar>

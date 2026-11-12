@@ -488,7 +488,7 @@ function SidebarChatTime({ className, ...props }: React.ComponentProps<"span">) 
 
 /** Figma User-Component: Type Default (48, or the 40px footer) or Compact, State Default / Ghost / Open. */
 const sidebarUserVariants = cva(
-  "group/user flex items-center overflow-hidden font-default text-left whitespace-nowrap outline -outline-offset-1 focus-visible:ring-2 focus-visible:ring-primary-500",
+  "group/user relative flex items-center overflow-hidden font-default text-left whitespace-nowrap outline -outline-offset-1 focus-visible:ring-2 focus-visible:ring-primary-500 has-focus-visible:ring-2 has-focus-visible:ring-primary-500",
   {
     variants: {
       size: {
@@ -506,21 +506,26 @@ const sidebarUserVariants = cva(
   }
 )
 
+/** A button by default; pass `render={<div />}` when the row hosts its own trigger (e.g. an account menu overlay). */
 function SidebarUser({
   className,
   size = "40",
   state = "default",
+  render,
   ...props
-}: React.ComponentProps<"button"> & VariantProps<typeof sidebarUserVariants>) {
-  return (
-    <button
-      type="button"
-      data-slot="sidebar-user"
-      data-state={state}
-      className={cn(sidebarUserVariants({ size, state }), className)}
-      {...props}
-    />
-  )
+}: useRender.ComponentProps<"button"> & VariantProps<typeof sidebarUserVariants>) {
+  return useRender({
+    defaultTagName: "button",
+    props: mergeProps<"button">(
+      {
+        ...(render ? {} : { type: "button" as const }),
+        className: cn(sidebarUserVariants({ size, state }), className),
+      },
+      props
+    ),
+    render,
+    state: { slot: "sidebar-user", state },
+  })
 }
 
 function SidebarUserText({ className, ...props }: React.ComponentProps<"span">) {
