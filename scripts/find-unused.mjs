@@ -75,7 +75,16 @@ const unusedComponents = candidatesDirs.flatMap((d) => walk(d)).filter((p) => is
 
 // ---- icons ----
 const scanFiles = [...reachable, ...walk(path.join(ROOT, "messages")).filter((p) => p.endsWith(".json"))]
-const corpus = scanFiles.map((f) => fs.readFileSync(f, "utf8")).join("\n")
+// Inline path constants per file (`const BRAND = "/icons/brands"` … `${BRAND}/adobe.svg`) so they read as literal paths.
+const corpus = scanFiles
+  .map((f) => {
+    let text = fs.readFileSync(f, "utf8")
+    for (const [, name, value] of text.matchAll(/\b(?:const|let|var)\s+(\w+)\s*=\s*["'`](\/icons\/[^"'`$]*)["'`]/g)) {
+      text = text.replaceAll("${" + name + "}", value)
+    }
+    return text
+  })
+  .join("\n")
 
 const literalPaths = new Set([...corpus.matchAll(/\/icons\/([A-Za-z0-9_\-./]+?\.(?:svg|png|webp|jpe?g|gif|avif))/g)].map((m) => m[1]))
 const stringLits = new Set([...corpus.matchAll(/["'`]([A-Za-z0-9_\-./]+)["'`]/g)].map((m) => m[1]))
