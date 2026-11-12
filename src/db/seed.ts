@@ -144,10 +144,11 @@ async function main() {
           clientId: company.id,
           ownerId,
           income: mp.income,
-          cost: Math.round(mp.income * 0.674),
+          cost: mp.cost,
           deadline: mp.deadline,
-          // One second apart: ordering by created_at keeps the Figma sidebar order.
-          createdAt: new Date(Date.UTC(2078, 7, 1, 12, 0, index)),
+          // Spread over the last ~2 months, oldest first: ordering by created_at keeps the Figma sidebar order,
+          // and the finance trend (last 30 days vs the 30 before) has data on both sides.
+          createdAt: new Date(Date.now() - (mockProjects.length - index) * 4 * 86_400_000),
           updatedAt: new Date(mp.updatedAt),
         })
         .returning({ id: projects.id })

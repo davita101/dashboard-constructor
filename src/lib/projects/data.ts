@@ -43,7 +43,7 @@ export async function getProjectSlugs(): Promise<string[]> {
 export async function getNewProjectDetail(): Promise<ProjectDetail> {
   const now = new Date().toISOString()
   return {
-    project: { id: "new", slug: "new", name: "", logo: "/icons/material-default-icon.svg", members: [], progress: 0, stages: 0, tasks: 0, income: 0, deadline: now, updatedAt: now },
+    project: { id: "new", slug: "new", name: "", logo: "/icons/material-default-icon.svg", members: [], progress: 0, stages: 0, tasks: 0, income: 0, cost: 0, deadline: now, updatedAt: now },
     company: { name: "", logo: "/icons/material-default-icon.svg", description: "" },
     implementation: 0,
     counts: { messages: 0, stages: 0, members: 0, files: 0 },

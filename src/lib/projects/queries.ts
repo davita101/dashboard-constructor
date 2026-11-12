@@ -40,6 +40,7 @@ const projectColumns = {
   name: projects.name,
   logo: projects.logo,
   income: projects.income,
+  cost: projects.cost,
   deadline: projects.deadline,
   updatedAt: projects.updatedAt,
   progress: projectStats.progress,
@@ -60,6 +61,7 @@ function toProject(row: ProjectRow, members: Member[]): Project {
     stages: row.stages ?? 0,
     tasks: row.tasks ?? 0,
     income: row.income ?? 0,
+    cost: row.cost ?? 0,
     deadline: row.deadline ?? "",
     updatedAt: row.updatedAt!.toISOString(),
   }
@@ -124,20 +126,38 @@ export async function queryProjectTotals(userId: string): Promise<ProjectTotals>
   return row
 }
 
-/** Trends need history (a finance ledger, later phase): 0 until then. */
+/** Signed percent change from `prev` to `cur`, rounded. Nothing before → +100% if something now, else 0. */
+const trend = (cur: number, prev: number) => (prev === 0 ? (cur > 0 ? 100 : 0) : Math.round(((cur - prev) / Math.abs(prev)) * 100))
+
+/**
+ * Totals over all the user's projects. Trends compare the projects started (created_at) in the last 30 days
+ * with the 30 days before: income and profit booked by new work, month over month.
+ */
 export async function queryProjectFinance(userId: string): Promise<ProjectFinance> {
   "use cache"
   cacheLife("hours")
   cacheTag(userProjectsTag(userId))
 
+  const inWindow = (from: number, to: number) =>
+    sql`${projects.createdAt} >= now() - make_interval(days => ${from}) and ${projects.createdAt} < now() - make_interval(days => ${to})`
   const [row] = await db
     .select({
       income: sql<number>`coalesce(sum(${projects.income}), 0)::float8`,
       cost: sql<number>`coalesce(sum(${projects.cost}), 0)::float8`,
+      incomeCur: sql<number>`coalesce(sum(${projects.income}) filter (where ${inWindow(30, 0)}), 0)::float8`,
+      incomePrev: sql<number>`coalesce(sum(${projects.income}) filter (where ${inWindow(60, 30)}), 0)::float8`,
+      profitCur: sql<number>`coalesce(sum(${projects.income} - ${projects.cost}) filter (where ${inWindow(30, 0)}), 0)::float8`,
+      profitPrev: sql<number>`coalesce(sum(${projects.income} - ${projects.cost}) filter (where ${inWindow(60, 30)}), 0)::float8`,
     })
     .from(projects)
     .where(inArray(projects.id, memberProjectIds(userId)))
-  return { income: row.income, cost: row.cost, profit: row.income - row.cost, incomeTrend: 0, profitTrend: 0 }
+  return {
+    income: row.income,
+    cost: row.cost,
+    profit: row.income - row.cost,
+    incomeTrend: trend(row.incomeCur, row.incomePrev),
+    profitTrend: trend(row.profitCur, row.profitPrev),
+  }
 }
 
 export async function queryProjectDetail(userId: string, slug: string): Promise<ProjectDetail | undefined> {

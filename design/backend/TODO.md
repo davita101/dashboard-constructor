@@ -30,7 +30,8 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
 - [x] First migration `src/db/migrations/0000_core_schema.sql` applied to Supabase
 - [x] Seed `pnpm db:seed` (`src/db/seed.ts`) from `src/lib/projects/data.ts`; idempotent, only touches `seed_` users / seed slugs / seed client
 - [x] RLS on every table, SELECT-only policies: member of project via `auth.jwt()->>'sub'` (needs the Clerk third-party provider from Phase 0). No write policies: writes go through the server. Drizzle bypasses RLS → scope queries in code
-- [ ] Clerk dashboard: add webhook endpoint `<origin>/api/webhooks/clerk` (user.created/updated/deleted), put its signing secret in `CLERK_WEBHOOK_SIGNING_SECRET` (needs a public URL: deployed site or a tunnel for local)
+- [x] Clerk dashboard: webhook endpoint `https://dashboard-constructor.vercel.app/api/webhooks/clerk` (user.created/updated/deleted), signing secret in Vercel `CLERK_WEBHOOK_SIGNING_SECRET` (production + preview); test event delivered OK. Old `http://localhost:3000` endpoint still listed in Clerk (unreachable, can be deleted)
+- [x] Vercel project `dashboard-constructor` (https://dashboard-constructor.vercel.app; old ecormce-webstie.vercel.app 307-redirects) (CLI-linked, env from `.env.local`), production deployed from `feat/backend-projects-read`
 
 ## Phase 2 — Wire existing pages (`feat/backend-projects-read`)
 - [x] `src/lib/projects/data.ts` bodies → user-scoped Drizzle queries (`src/lib/projects/queries.ts`), signatures kept; mocks moved to `src/db/mock-data.ts` (seed only)

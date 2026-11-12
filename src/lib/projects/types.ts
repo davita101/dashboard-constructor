@@ -19,6 +19,8 @@ export type Project = {
   tasks: number
   /** Whole currency units (USD). */
   income: number
+  /** Whole currency units (USD); "Costs" tab order. */
+  cost: number
   /** ISO date. */
   deadline: string
   /** ISO date-time, drives the "Last Projects" order. */

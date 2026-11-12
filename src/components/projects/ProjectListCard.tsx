@@ -28,7 +28,7 @@ const tabs: ListTab[] = ["last", "deadline", "costs"]
 const sorters: Record<ListTab, (a: Project, b: Project) => number> = {
   last: (a, b) => b.updatedAt.localeCompare(a.updatedAt),
   deadline: (a, b) => a.deadline.localeCompare(b.deadline),
-  costs: (a, b) => b.income - a.income,
+  costs: (a, b) => b.cost - a.cost,
 }
 
 /** Figma Column 14061:68564 (456x788 r20): pill tabs + more menu head, scrolling list of project cards. */

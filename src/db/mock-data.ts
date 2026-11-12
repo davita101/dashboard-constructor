@@ -36,6 +36,7 @@ const project = (
   stages: 5,
   tasks: 21,
   income: 5000,
+  cost: 0,
   deadline: "2078-09-25",
   updatedAt: "2078-09-01T12:00:00Z",
   ...extra,
@@ -59,7 +60,9 @@ export const mockProjects: Project[] = [
 ].map((p, i, all) => {
   // Same names repeat in the Figma sidebar: keep slugs unique.
   const dup = all.slice(0, i).some((q) => q.slug === p.slug)
-  return dup ? { ...p, slug: `${p.slug}-${p.id}` } : p
+  // Figma has no cost per project: ~67% of income (finance card ratio 9440 / 14000).
+  const cost = p.cost || Math.round(p.income * 0.674)
+  return dup ? { ...p, cost, slug: `${p.slug}-${p.id}` } : { ...p, cost }
 })
 
 // Figma Latest events: two project groups.
