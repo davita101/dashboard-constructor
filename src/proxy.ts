@@ -10,7 +10,6 @@ const isPublicRoute = createRouteMatcher([
   "/check-email(.*)",
   "/two-factor(.*)",
   "/set-new-password(.*)",
-  "/design-system(.*)",
 ]);
 
 // Pages a signed-in user has no use for. set-new-password / password-reset / sso-callback are left out on purpose:
