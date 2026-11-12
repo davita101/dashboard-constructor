@@ -46,7 +46,7 @@ async function FinanceMetricCard({ title, amount, trend, tone }: FinanceMetricCa
           />
           <DropdownMenuContent align="end">
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem data-soon>
                 <DropdownMenuItemLeft>
                   <DropdownMenuItemTitle>{t("viewAll")}</DropdownMenuItemTitle>
                 </DropdownMenuItemLeft>

@@ -1,6 +1,7 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import { shadcn } from "@clerk/ui/themes";
 import { RememberMeGuard } from "@/components/auth/remember-me";
+import { ComingSoon } from "@/components/layout/ComingSoon";
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
@@ -49,7 +50,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <ClerkProvider appearance={{ theme: shadcn }}>
           <RememberMeGuard />
           <Suspense>
-            <IntlProvider>{children}</IntlProvider>
+            <IntlProvider>
+              {children}
+              <ComingSoon />
+            </IntlProvider>
           </Suspense>
         </ClerkProvider>
       </body>

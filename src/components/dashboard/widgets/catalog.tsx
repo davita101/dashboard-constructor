@@ -88,7 +88,7 @@ function CartesianCardPreview({
     <ChartCard>
       <ChartCardHead>
         <ChartCardTitle>Chart</ChartCardTitle>
-        <ChartCardAction />
+        <ChartCardAction data-soon />
       </ChartCardHead>
       <ChartCardContent className={cn(fluid && "min-h-0 flex-1")}>
         <ChartCardSwitcher />
@@ -114,7 +114,7 @@ function RadialCardPreview({ kind }: { kind: "donut" | "pie" | "progress" | "pro
     <ChartCard>
       <ChartCardHead>
         <ChartCardTitle>Chart</ChartCardTitle>
-        <ChartCardAction />
+        <ChartCardAction data-soon />
       </ChartCardHead>
       <ChartCardContent className={cn(fluid && "min-h-0 flex-1")}>
         <ChartCardSwitcher />

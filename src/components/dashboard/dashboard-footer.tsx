@@ -18,10 +18,10 @@ import {
 function Social() {
   return (
     <NavigateFooterGroup>
-      <NavigateFooterIconButton icon="/icons/social/facebook-gray.svg" aria-label="Facebook" />
-      <NavigateFooterIconButton icon="/icons/brands/x-twitter.png" aria-label="X" />
-      <NavigateFooterIconButton icon="/icons/material-instagram.svg" aria-label="Instagram" />
-      <NavigateFooterIconButton icon="/icons/social/pinterest-gray.svg" aria-label="Pinterest" />
+      <NavigateFooterIconButton icon="/icons/social/facebook-gray.svg" aria-label="Facebook" data-soon />
+      <NavigateFooterIconButton icon="/icons/brands/x-twitter.png" aria-label="X" data-soon />
+      <NavigateFooterIconButton icon="/icons/material-instagram.svg" aria-label="Instagram" data-soon />
+      <NavigateFooterIconButton icon="/icons/social/pinterest-gray.svg" aria-label="Pinterest" data-soon />
     </NavigateFooterGroup>
   )
 }
@@ -40,8 +40,16 @@ function Actions() {
   const t = useTranslations("footer")
   return (
     <NavigateFooterGroup>
-      <NavigateFooterIconButton icon="/icons/material-chat-bubble.svg" aria-label={t("chat")} />
-      <NavigateFooterIconButton icon="/icons/material-arrow-upward.svg" aria-label={t("backToTop")} />
+      <NavigateFooterIconButton icon="/icons/material-chat-bubble.svg" aria-label={t("chat")} data-soon />
+      <NavigateFooterIconButton
+        icon="/icons/material-arrow-upward.svg"
+        aria-label={t("backToTop")}
+        onClick={(e) => {
+          // Desktop/tablet content scrolls in the shell's ScrollArea; mobile scrolls the window.
+          const viewport = e.currentTarget.closest('[data-slot="scroll-area-viewport"]')
+          ;(viewport ?? window).scrollTo({ top: 0, behavior: "smooth" })
+        }}
+      />
     </NavigateFooterGroup>
   )
 }

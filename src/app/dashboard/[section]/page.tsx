@@ -1,18 +1,10 @@
 import { notFound } from "next/navigation"
 
-import { DashboardPage } from "@/components/dashboard/dashboard-page"
-import { dashboardNav } from "@/components/dashboard/nav"
+// Always a 404, so there's no shell to validate for instant navigation.
+export const instant = false
 
-// Every sidebar section lives at /dashboard/<slug>. Each one gets its own folder here once it has real content.
-const OWN_FOLDER = new Set(["projects"])
-
-export function generateStaticParams() {
-  return dashboardNav.filter((n) => n.slug && !OWN_FOLDER.has(n.slug)).map((n) => ({ section: n.slug }))
-}
-
-export default async function DashboardSectionPage({ params }: { params: Promise<{ section: string }> }) {
-  const { section } = await params
-  const item = dashboardNav.find((n) => n.slug === section)
-  if (!item) notFound()
-  return <DashboardPage title={item.label} />
+// Sidebar sections without their own folder (notes, files, chats, mail, users, …) aren't built yet: show the 404.
+// A section gets its own folder here (like projects/) once it has real content.
+export default function DashboardSectionPage() {
+  notFound()
 }

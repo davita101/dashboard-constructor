@@ -15,18 +15,19 @@ const ICON = "/icons/material-default-icon.svg"
 /** Figma Head-Dashboard-01: breadcrumb on the left, three ghost actions on the right. */
 function DashboardHeadTop({ size, title, crumbs }: { size: DashboardSize; title: string; crumbs?: BreadcrumbTrailItem[] }) {
   const mobile = size === "mobile"
-  const actions: [string, string][] = [
+  // No handler = not built yet: `data-soon` shows the "Coming soon" toast (components/layout/ComingSoon).
+  const actions: [string, string, (() => void)?][] = [
     ["Help Chat", "/icons/material-help.svg"],
     ["Docs", "/icons/material-insert-drive-file.svg"],
-    ["Print", "/icons/material/material-print.svg"],
+    ["Print", "/icons/material/material-print.svg", () => window.print()],
   ]
   return (
     <NavigateHead size={mobile ? "mobile" : "desktop"}>
       <NavigateHeadBody>
         <BreadcrumbTrail size="sm" items={crumbs ?? [{ label: title, icon: "/icons/material-home.svg" }]} />
         <NavigateHeadGroup gap={2} wrap={mobile}>
-          {actions.map(([label, icon]) => (
-            <Button key={label} variant="ghost" shape="rounded" size="32">
+          {actions.map(([label, icon, onClick]) => (
+            <Button key={label} variant="ghost" shape="rounded" size="32" onClick={onClick} data-soon={onClick ? undefined : ""}>
               <ButtonIcon src={icon} />
               {label}
             </Button>
@@ -46,7 +47,7 @@ function DashboardHeadMain({ size, title, widgets = false }: { size: DashboardSi
     <NavigateHead size={mobile ? "mobile" : "desktop"} divider>
       <NavigateHeadBody>
         <NavigateHeadGroup gap={3}>
-          <Button variant="outline" shape="pill" size="icon-32" aria-label="Section">
+          <Button variant="outline" shape="pill" size="icon-32" aria-label="Section" data-soon>
             <ButtonIcon src={ICON} />
           </Button>
           <NavigateHeadTitle size="14">{title}</NavigateHeadTitle>

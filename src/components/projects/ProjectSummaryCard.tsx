@@ -59,7 +59,7 @@ function ProjectSummaryCard({ project }: { project: Project }) {
               </Avatar>
             ))}
           </AvatarGroup>
-          <Button variant="outline" size="icon-24" shape="rounded" className="relative z-10" aria-label={t("addMember", { name: project.name })}>
+          <Button variant="outline" size="icon-24" shape="rounded" data-soon className="relative z-10" aria-label={t("addMember", { name: project.name })}>
             <ButtonIcon src="/icons/material-add.svg" />
           </Button>
         </TableCell>

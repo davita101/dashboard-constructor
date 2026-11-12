@@ -27,7 +27,7 @@ async function QuickAddCard() {
             variant="plain"
             size="tile-20"
             shape="rounded"
-            {...("href" in action ? { nativeButton: false, render: <Link href={action.href} /> } : {})}
+            {...("href" in action ? { nativeButton: false, render: <Link href={action.href} /> } : { "data-soon": "" })}
           >
             <ButtonIcon src={action.icon} />
             {t(action.key)}

@@ -327,6 +327,7 @@ function ChartMetricActions({ className, size = "md", divider = true, ...props }
       <div className={cn(chartMetricActionsVariants({ size }), className)} {...props}>
         <button
           type="button"
+          data-soon
           className="flex items-center gap-4 rounded-r4 text-11 leading-20 font-bold text-base-700 outline-none focus-visible:ring-2 focus-visible:ring-primary-500 group-data-[appearance=image]/metric:text-white-alpha-50"
         >
           View More
@@ -334,6 +335,7 @@ function ChartMetricActions({ className, size = "md", divider = true, ...props }
         </button>
         <button
           type="button"
+          data-soon
           className="flex items-center gap-2 rounded-r4 text-11 leading-20 font-bold text-base-700 outline-none focus-visible:ring-2 focus-visible:ring-primary-500 group-data-[appearance=image]/metric:text-background-0"
         >
           <span aria-hidden className={cn("size-4 mask-[url(/icons/material-file-download.svg)]", maskIcon)} />

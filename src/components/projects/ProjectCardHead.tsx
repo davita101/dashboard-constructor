@@ -35,7 +35,7 @@ async function ProjectCardHead({ title, icon, menu = true }: { title: string; ic
           />
           <DropdownMenuContent align="end">
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem data-soon>
                 <DropdownMenuItemLeft>
                   <DropdownMenuItemTitle>{t("viewAll")}</DropdownMenuItemTitle>
                 </DropdownMenuItemLeft>

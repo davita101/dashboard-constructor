@@ -42,7 +42,7 @@ async function FinancialStatsCard({ finance }: FinancialStatsCardProps) {
           />
           <DropdownMenuContent align="end">
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem data-soon>
                 <DropdownMenuItemLeft>
                   <DropdownMenuItemTitle>{t("viewAll")}</DropdownMenuItemTitle>
                 </DropdownMenuItemLeft>

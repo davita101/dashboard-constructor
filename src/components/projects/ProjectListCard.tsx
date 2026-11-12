@@ -60,7 +60,7 @@ function ProjectListCard({ projects }: { projects: Project[] }) {
             />
             <DropdownMenuContent align="end">
               <DropdownMenuGroup>
-                <DropdownMenuItem>
+                <DropdownMenuItem data-soon>
                   <DropdownMenuItemLeft>
                     <DropdownMenuItemTitle>{t("viewAll")}</DropdownMenuItemTitle>
                   </DropdownMenuItemLeft>

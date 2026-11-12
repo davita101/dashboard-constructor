@@ -98,3 +98,4 @@ One line per component: what could not be matched to Figma. Update when fixed.
 
 - Projects page: 3 columns keep the Figma 264/456/360 ratio (fr) at xl; between lg and xl Quick Add+finance | list in 2 columns with Latest events full width below. DashboardPage column keeps 36px sides on every desktop (max 1200 = 1128 + 2 × 36), so 1600 is unchanged.
 - ScrollArea: thumb is the fixed Figma 4x96 pill (own positioning, Base UI only provides Root + Viewport); on tracks shorter than 192 it shrinks to half the track. Dashboard content (desktop/tablet) scrolls in a ScrollArea, not the window; mobile keeps window scroll with the styled native bar (globals.css). Footer back-to-top button still has no action.
+- ComingSoon: Base UI toast (ui/toast.tsx) drawn as the Alert-Default black pill; Figma has no motion/position spec for transient toasts, so it slides up bottom-center (same spot as the widget undo toast).

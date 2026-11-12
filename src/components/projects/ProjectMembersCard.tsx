@@ -45,7 +45,7 @@ async function ProjectMembersCard({ team }: { team: TeamMember[] }) {
           />
           <DropdownMenuContent align="end">
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem data-soon>
                 <DropdownMenuItemLeft>
                   <DropdownMenuItemTitle>{t("viewAll")}</DropdownMenuItemTitle>
                 </DropdownMenuItemLeft>
@@ -70,10 +70,10 @@ async function ProjectMembersCard({ team }: { team: TeamMember[] }) {
                   </div>
                 </MemberRowInfo>
                 <MemberRowActions>
-                  <Button variant="outline" size="icon-24" aria-label={t("message", { name: member.name })}>
+                  <Button variant="outline" size="icon-24" data-soon aria-label={t("message", { name: member.name })}>
                     <ButtonIcon src="/icons/material-chat-bubble.svg" />
                   </Button>
-                  <Button variant="outline" size="icon-24" aria-label={t("call", { name: member.name })}>
+                  <Button variant="outline" size="icon-24" data-soon aria-label={t("call", { name: member.name })}>
                     <ButtonIcon src="/icons/material-local-phone.svg" />
                   </Button>
                 </MemberRowActions>

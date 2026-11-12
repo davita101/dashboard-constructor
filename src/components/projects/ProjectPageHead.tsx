@@ -17,7 +17,7 @@ async function ProjectPageHead({ name, logo }: { name: string; logo: string }) {
           </Avatar>
           <NavigateHeadTitle size="14">{name}</NavigateHeadTitle>
         </NavigateHeadGroup>
-        <Button variant="dark" shape="pill" size="32">
+        <Button variant="dark" shape="pill" size="32" data-soon>
           <ButtonIcon src="/icons/material-file-download.svg" />
           {t("save")}
         </Button>

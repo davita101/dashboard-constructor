@@ -64,25 +64,25 @@ function DashboardNavbar({
       <NavbarActions>
         {!mobile && (
           <>
-            <NavbarIconButton icon="/icons/material-notifications.svg" label={t("notifications")} variant="ghost" />
-            <NavbarIconButton icon="/icons/material-help.svg" label={t("help")} variant="ghost" />
-            <NavbarIconButton icon="/icons/material-settings.svg" label={t("settings")} variant="ghost" />
+            <NavbarIconButton icon="/icons/material-notifications.svg" label={t("notifications")} variant="ghost" data-soon />
+            <NavbarIconButton icon="/icons/material-help.svg" label={t("help")} variant="ghost" data-soon />
+            <NavbarIconButton icon="/icons/material-settings.svg" label={t("settings")} variant="ghost" data-soon />
           </>
         )}
         {desktop ? (
-          <Button variant="dark" size="32" shape="pill">
+          <Button variant="dark" size="32" shape="pill" data-soon>
             <ButtonIcon src="/icons/material-star.svg" className="size-4" />
             {t("upgrade")}
           </Button>
         ) : (
-          <NavbarIconButton icon="/icons/material-star.svg" label={t("upgrade")} variant="dark" />
+          <NavbarIconButton icon="/icons/material-star.svg" label={t("upgrade")} variant="dark" data-soon />
         )}
         <Avatar size="32">
           <AvatarImage src={user?.imageUrl ?? "/images/avatars/avatar-1.png"} alt="" />
           <AvatarFallback>{user?.firstName?.slice(0, 1) ?? "M"}</AvatarFallback>
           <AvatarBadge />
         </Avatar>
-        {!mobile && <NavbarIconButton icon="/icons/material-close.svg" label={t("close")} />}
+        {!mobile && <NavbarIconButton icon="/icons/material-close.svg" label={t("close")} data-soon />}
       </NavbarActions>
     </Navbar>
   )

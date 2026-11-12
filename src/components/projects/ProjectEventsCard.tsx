@@ -87,7 +87,7 @@ async function ProjectEventsCard({
           />
           <DropdownMenuContent align="end">
             <DropdownMenuGroup>
-              <DropdownMenuItem>{t("viewAll")}</DropdownMenuItem>
+              <DropdownMenuItem data-soon>{t("viewAll")}</DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>

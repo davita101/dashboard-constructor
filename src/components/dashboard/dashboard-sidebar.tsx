@@ -235,7 +235,7 @@ function DashboardSidebar({
           </SidebarContent>
           <SidebarFooter>
             <SidebarMenu>
-              <SidebarItem {...hint(t("settings"))}>
+              <SidebarItem {...hint(t("settings"))} data-soon>
                 <SidebarIcon name="settings" className="text-base-500" />
                 <SidebarItemLabel>{t("settings")}</SidebarItemLabel>
                 <SidebarItemEnd>
@@ -260,7 +260,7 @@ function DashboardSidebar({
                 <Switch aria-label={t("nightMode")} checked={dark} onCheckedChange={setDark} onClick={(e) => e.stopPropagation()} tabIndex={collapsed ? -1 : undefined} />
                 <SidebarItemLabel>{t("nightMode")}</SidebarItemLabel>
               </SidebarItemRow>
-              <SidebarItem {...hint(t("learn"))}>
+              <SidebarItem {...hint(t("learn"))} data-soon>
                 <SidebarIcon name="school" className="text-base-500" />
                 <SidebarItemLabel>{t("learn")}</SidebarItemLabel>
               </SidebarItem>

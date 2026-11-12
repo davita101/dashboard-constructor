@@ -306,5 +306,14 @@
     "events": {
       "title": "Latest events"
     }
+  },
+  "comingSoon": {
+    "title": "Coming soon. We are working on it."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "This page does not exist yet or was moved. Go back or head to the dashboard.",
+    "back": "Back Screen",
+    "home": "Go to Dashboard"
   }
 }

@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  experimental: {
+    optimizePackageImports: ["recharts", "date-fns", "lucide-react", "@base-ui/react"],
+  },
   turbopack: {
     rules: {
       "*.css": {
