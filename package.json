@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "tokens": "node scripts/build-tokens.mjs",
+    "unused": "node scripts/find-unused.mjs",
     "figma:fetch": "node scripts/figma-fetch.mjs",
     "figma:pages": "node scripts/figma-pages.mjs",
     "ui:index": "node scripts/ui-index.mjs",
