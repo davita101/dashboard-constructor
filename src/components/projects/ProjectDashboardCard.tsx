@@ -34,6 +34,8 @@ async function ProjectDashboardCard({
   ])
   const { project, counts, tasks } = detail
   const [y, m, d] = project.deadline.slice(0, 10).split("-")
+  // The blank editor (/dashboard/projects/new) has no project to add stages or members to yet.
+  const projectId = project.id === "new" ? undefined : project.id
 
   return (
     <Card variant="panel" className="gap-0">
@@ -59,7 +61,7 @@ async function ProjectDashboardCard({
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-[--spacing(85)_1fr]">
           <div className="flex flex-col gap-3">
             <ProjectStatTile wide title={t("implementation")} value={format.number(detail.implementation / 100, { style: "percent" })} />
-            <ProjectStatTile wide title={t("deadline")} value={`${d}.${m}.${y}`} />
+            <ProjectStatTile wide title={t("deadline")} value={project.deadline ? `${d}.${m}.${y}` : "–"} />
           </div>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <ProjectStatTile title={t("messages")} icon={icon("message")} value={format.number(counts.messages)} />
@@ -76,8 +78,8 @@ async function ProjectDashboardCard({
           <div className="flex flex-col gap-3">
             <CompanyCard company={detail.company} />
             <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-              <ProjectStagesCard stages={detail.stages} />
-              <ProjectMembersCard team={detail.team} />
+              <ProjectStagesCard stages={detail.stages} projectId={projectId} />
+              <ProjectMembersCard team={detail.team} projectId={projectId} />
             </div>
           </div>
           <ProjectEventsCard title={tEvents("title")} events={events} projects={projects} groupHead="inline" className="lg:h-182" />

@@ -42,15 +42,20 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
 - [x] Seed adds every Clerk user (CLERK_SECRET_KEY) as member of the seed projects
 - [x] Verified in browser (projects list, KPIs, events, project dashboard, 404) + `pnpm build`
 - [ ] Finance trends (incomeTrend/profitTrend) are 0: need history (ledger/snapshots)
-- [ ] Note: re-seeding changes project ids; cached reads stay stale until `cacheLife` expires (dev: hard reload). Phase 3 writes must `updateTag(userProjectsTag(...))` for every affected member
+- [x] Note: re-seeding changes project ids; cached reads stay stale until `cacheLife` expires (dev: hard reload). Phase 3 writes `updateTag(userProjectsTag(...))` for every affected member
 
 ## Phase 3 — Mutations (`feat/backend-projects-write`)
-- [ ] Server Actions + Zod: create project (`/dashboard/projects/new`), update, delete
-- [ ] Members: invite/remove/change role
-- [ ] Stages: create/reorder/edit
-- [ ] Tasks: create/move (dnd-kit order → position)/assign/status
-- [ ] Each write appends a `project_events` row
-- [ ] QuickAddCard actions wired
+- [x] Zod input schemas (`src/lib/projects/schemas.ts`), user-scoped transactional writes (`src/lib/projects/mutations.ts`, membership check = access control), Server Actions (`src/lib/projects/actions.ts`: auth → parse → write → `updateTag` for every member before/after + `project:<id>` + `project-slugs`)
+- [x] Projects: create (slug from name, unique, never `new`; creator = owner + first member), update (rename moves the slug and redirects; shared client is copied, unused client pruned), delete (cascade, redirect)
+- [x] Members: add by email (only people with a `users` row), change role (job title), remove (also drops their task assignments; can't remove the last member; leaving redirects)
+- [x] Stages: create (appended), edit, delete (renumber), reorder (full id list, one CASE update)
+- [x] Tasks: create (bottom of column, assignees must be members, stage must be in project), edit, delete, move (dnd-kit `{status, index}` → renumber both columns), status, assignees. UI only for create: the Tasks tab/board has no Figma frame yet
+- [x] Creates append a `project_events` row (project → owner "member", member, stage, task). Edits/deletes/reorders don't: the feed kinds all read "Added …"; needs new kinds + Figma rows
+- [x] UI: Quick Add Stages/Task/Member dialogs (project picker), Save Project = create/edit/delete form, Stages card menu "Add stage" + click a stage to edit/move/delete, Members card menu "Manage members"
+- [x] Permissions: every member may edit everything (no permission model in schema). Decide owner/admin rules before inviting real teams
+- [x] Verified: mutation smoke test against Supabase (auth, slugs, reorder, move, events, cleanup) + browser (task create, project edit/create/delete, stage reorder, member errors)
+- [ ] Seed timestamps are in 2078, so new events/updates sort below seed rows in "Latest events" / "Last Projects" until re-seeded with past dates
+- [ ] Wire the remaining stubs: ProjectSummaryCard "+" (add member to that project), task board actions once the Tasks tab is designed
 
 ## Phase 4 — Files (`feat/backend-files`)
 - [ ] Supabase Storage bucket `project-files` + policies

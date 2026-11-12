@@ -2,10 +2,14 @@ import { getTranslations } from "next-intl/server"
 
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { Button, ButtonIcon } from "@/components/ui/button"
+import { ProjectFormDialog, type ProjectFormValues } from "@/components/projects/ProjectFormDialog"
 import { NavigateHead, NavigateHeadBody, NavigateHeadGroup, NavigateHeadTitle } from "@/components/ui/navigate-head"
 
-/** Figma Head-Dashboard-17 (1128x84): logo tile + project name | "Save Project" dark pill, bottom divider. */
-async function ProjectPageHead({ name, logo }: { name: string; logo: string }) {
+/**
+ * Figma Head-Dashboard-17 (1128x84): logo tile + project name | "Save Project" dark pill, bottom divider.
+ * "Save Project" opens the project form: create on /new (no `values`), edit otherwise.
+ */
+async function ProjectPageHead({ name, logo, values }: { name: string; logo: string; values?: ProjectFormValues }) {
   const t = await getTranslations("projectPage.head")
 
   return (
@@ -17,10 +21,15 @@ async function ProjectPageHead({ name, logo }: { name: string; logo: string }) {
           </Avatar>
           <NavigateHeadTitle size="14">{name}</NavigateHeadTitle>
         </NavigateHeadGroup>
-        <Button variant="dark" shape="pill" size="32" data-soon>
-          <ButtonIcon src="/icons/material-file-download.svg" />
-          {t("save")}
-        </Button>
+        <ProjectFormDialog
+          values={values}
+          trigger={
+            <Button variant="dark" shape="pill" size="32">
+              <ButtonIcon src="/icons/material-file-download.svg" />
+              {t("save")}
+            </Button>
+          }
+        />
       </NavigateHeadBody>
     </NavigateHead>
   )

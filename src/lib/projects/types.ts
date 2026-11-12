@@ -82,3 +82,11 @@ export type ProjectFinance = {
   profitTrend: number
   cost: number
 }
+
+/** Pickers for the create dialogs (Quick Add): the user's projects with their stages and members. */
+export type ProjectOption = {
+  id: string
+  name: string
+  stages: { id: string; name: string }[]
+  members: Member[]
+}
