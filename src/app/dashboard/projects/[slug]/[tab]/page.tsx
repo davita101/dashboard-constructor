@@ -3,14 +3,15 @@ import { Suspense } from "react"
 
 import { ProjectPageView } from "@/components/projects/ProjectPageView"
 import { Skeleton } from "@/components/ui/skeleton"
-import { getProjectDetail, getProjectEvents, getProjects } from "@/lib/projects/data"
+import { getProjectDetail, getProjectEvents, getProjects, getProjectSlugs } from "@/lib/projects/data"
 import { isProjectTab, projectTabKeys } from "@/lib/projects/tabs"
 
 type Params = Promise<{ slug: string; tab: string }>
 
+// Route shells only (data is per user, read at request time). Cache Components needs at least one param.
 export async function generateStaticParams() {
-  const projects = await getProjects()
-  return projects.flatMap((p) => projectTabKeys.map((tab) => ({ slug: p.slug, tab })))
+  const slugs = await getProjectSlugs()
+  return (slugs.length ? slugs : ["_"]).flatMap((slug) => projectTabKeys.map((tab) => ({ slug, tab })))
 }
 
 // params are read inside Suspense: with partialPrefetching the App Shell is shared by every project link, so it

@@ -33,12 +33,15 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
 - [ ] Clerk dashboard: add webhook endpoint `<origin>/api/webhooks/clerk` (user.created/updated/deleted), put its signing secret in `CLERK_WEBHOOK_SIGNING_SECRET` (needs a public URL: deployed site or a tunnel for local)
 
 ## Phase 2 — Wire existing pages (`feat/backend-projects-read`)
-- [ ] Replace bodies in `src/lib/projects/data.ts` with Drizzle queries, keep signatures
-- [ ] getProjects / getProjectDetail / getProjectEvents / getProjectTotals / getProjectFinance
-- [ ] Scope all queries to current Clerk user (`auth()`)
-- [ ] Caching: `cacheTag` per project + revalidate on writes
-- [ ] Remove unused `getProject` or use it
-- [ ] Verify pages in browser + `pnpm build`
+- [x] `src/lib/projects/data.ts` bodies → user-scoped Drizzle queries (`src/lib/projects/queries.ts`), signatures kept; mocks moved to `src/db/mock-data.ts` (seed only)
+- [x] getProjects / getProjectDetail / getProjectEvents / getProjectTotals / getProjectFinance
+- [x] Scope all queries to current Clerk user: `getViewerId()` (`src/lib/auth/viewer.ts`, `auth.protect()` + creates the `users` row if the webhook hasn't)
+- [x] Caching: `"use cache"` per query, keyed by user id; tags `user-projects:<userId>` + `project:<id>` (`src/lib/projects/tags.ts`). Dashboard layout streams the shell in Suspense (auth = runtime data)
+- [x] Removed unused `getProject`; `generateStaticParams` uses unscoped `getProjectSlugs()` (route shells only)
+- [x] Seed adds every Clerk user (CLERK_SECRET_KEY) as member of the seed projects
+- [x] Verified in browser (projects list, KPIs, events, project dashboard, 404) + `pnpm build`
+- [ ] Finance trends (incomeTrend/profitTrend) are 0: need history (ledger/snapshots)
+- [ ] Note: re-seeding changes project ids; cached reads stay stale until `cacheLife` expires (dev: hard reload). Phase 3 writes must `updateTag(userProjectsTag(...))` for every affected member
 
 ## Phase 3 — Mutations (`feat/backend-projects-write`)
 - [ ] Server Actions + Zod: create project (`/dashboard/projects/new`), update, delete

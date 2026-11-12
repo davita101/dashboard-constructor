@@ -1,13 +1,15 @@
-// Loads the mock data from src/lib/projects/data.ts into the database: `pnpm db:seed`.
+// Loads the Figma mock data (./mock-data.ts) into the database: `pnpm db:seed`.
 // Idempotent and scoped: it only deletes what it created before (seed_ users, seed project slugs, the seed client),
 // so real users synced by the Clerk webhook and their projects survive a re-run.
 // Counts and progress are not copied: they come out of the generated tasks/stages/files (project_stats view).
+// Every real Clerk user (CLERK_SECRET_KEY) is upserted and added to the seed projects, so signed-in pages show data
+// without waiting for the webhook.
 
 import { and, eq, inArray, like, notExists } from "drizzle-orm"
 import { drizzle } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
 
-import { getProjectDetail, getProjectEvents, getProjects } from "@/lib/projects/data"
+import { mockCompany, mockEvents, mockProjects, mockStages, mockTeam } from "./mock-data"
 import * as schema from "./schema"
 
 try {
@@ -66,11 +68,34 @@ function statusPlan(total: number, progress: number): (typeof schema.taskStatus.
   ]
 }
 
+/** Real Clerk users (Backend API), shaped like the webhook writes them. Empty without CLERK_SECRET_KEY. */
+async function fetchClerkUsers() {
+  const key = process.env.CLERK_SECRET_KEY
+  if (!key) {
+    console.warn("CLERK_SECRET_KEY not set: no real users added to the seed projects")
+    return []
+  }
+  const res = await fetch("https://api.clerk.com/v1/users?limit=100", { headers: { Authorization: `Bearer ${key}` } })
+  if (!res.ok) throw new Error(`Clerk users: ${res.status} ${await res.text()}`)
+  const list = (await res.json()) as {
+    id: string
+    first_name: string | null
+    last_name: string | null
+    username: string | null
+    image_url: string | null
+    primary_email_address_id: string | null
+    email_addresses: { id: string; email_address: string }[]
+  }[]
+  return list.map((u) => {
+    const email = u.email_addresses.find((e) => e.id === u.primary_email_address_id)?.email_address ?? null
+    const name = [u.first_name, u.last_name].filter(Boolean).join(" ") || u.username || email || u.id
+    return { id: u.id, name, email, avatar: u.image_url || null }
+  })
+}
+
 async function main() {
-  const mockProjects = await getProjects()
-  const mockEvents = await getProjectEvents()
-  const sample = await getProjectDetail(mockProjects[0].slug)
-  if (!sample) throw new Error("mock detail missing")
+  const sample = { company: mockCompany, stages: mockStages, team: mockTeam }
+  const clerkUsers = await fetchClerkUsers()
 
   // People: card members first (they lead the avatar group), then the rest of the project team.
   const people = new Map<string, { name: string; avatar: string; role: string }>()
@@ -95,6 +120,12 @@ async function main() {
     await tx.insert(users).values(
       [...people.values()].map((p) => ({ id: seedUserId(p.name), name: p.name, avatar: p.avatar })),
     )
+    for (const u of clerkUsers) {
+      await tx
+        .insert(users)
+        .values(u)
+        .onConflictDoUpdate({ target: users.id, set: { name: u.name, email: u.email, avatar: u.avatar } })
+    }
     const [company] = await tx
       .insert(clients)
       .values({ name: sample.company.name, logo: sample.company.logo, description: sample.company.description })
@@ -103,7 +134,7 @@ async function main() {
     const projectIdByMock = new Map<string, string>()
     let fileSeq = 0
 
-    for (const mp of mockProjects) {
+    for (const [index, mp] of mockProjects.entries()) {
       const [row] = await tx
         .insert(projects)
         .values({
@@ -115,7 +146,8 @@ async function main() {
           income: mp.income,
           cost: Math.round(mp.income * 0.674),
           deadline: mp.deadline,
-          createdAt: new Date("2078-08-01T12:00:00Z"),
+          // One second apart: ordering by created_at keeps the Figma sidebar order.
+          createdAt: new Date(Date.UTC(2078, 7, 1, 12, 0, index)),
           updatedAt: new Date(mp.updatedAt),
         })
         .returning({ id: projects.id })
@@ -131,6 +163,10 @@ async function main() {
           joinedAt: new Date(Date.UTC(2078, 7, 1, 12, 0, i)),
         })),
       )
+      if (clerkUsers.length)
+        await tx.insert(projectMembers).values(
+          clerkUsers.map((u) => ({ projectId: row.id, userId: u.id, role: "Project Manager", joinedAt: new Date(Date.UTC(2078, 7, 1, 13)) })),
+        )
 
       const stageRows = await tx
         .insert(projectStages)
@@ -221,7 +257,7 @@ async function main() {
 
   const stats = await db.select().from(schema.projectStats)
   const [{ count }] = await client`select count(*)::int as count from projects`
-  console.log(`seeded ${people.size} users, ${count} projects, ${mockEvents.length} events`)
+  console.log(`seeded ${people.size} users (+${clerkUsers.length} Clerk), ${count} projects, ${mockEvents.length} events`)
   console.table(stats.slice(0, 5))
 }
 
