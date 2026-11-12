@@ -1,6 +1,6 @@
 "use client"
 
-import { useClerk, useUser } from "@clerk/nextjs"
+import { UserButton, useUser } from "@clerk/nextjs"
 import { useTranslations } from "next-intl"
 import Image from "next/image"
 import Link from "next/link"
@@ -94,6 +94,12 @@ function GroupHead({ label }: { label: string }) {
  * `collapsed` animates it down to the 64 icon rail; the DOM is identical in both states (labels just fade),
  * so there is no re-layout jump. The toggle is an edge handle (`SidebarToggle`), not an icon in the head.
  */
+const userMenuOverlay = {
+  rootBox: "absolute! inset-0 size-full!",
+  userButtonBox: "size-full!",
+  userButtonTrigger: "size-full! rounded-[inherit]! opacity-0 focus:shadow-none!",
+}
+
 function DashboardSidebar({
   className,
   onNavigate,
@@ -112,7 +118,6 @@ function DashboardSidebar({
 }) {
   const pathname = usePathname()
   const { user } = useUser()
-  const { signOut } = useClerk()
   const { language } = useLanguage()
   const t = useTranslations("sidebar")
   const [dark, setDark] = useNightMode()
@@ -265,7 +270,7 @@ function DashboardSidebar({
                 <SidebarItemLabel>{t("learn")}</SidebarItemLabel>
               </SidebarItem>
             </SidebarMenu>
-            <SidebarUser aria-label={t("signOut")} onClick={() => signOut({ redirectUrl: "/sign-in" })}>
+            <SidebarUser render={<div />}>
               <Avatar size="32">
                 <AvatarImage src={user?.imageUrl ?? "/images/avatars/avatar-1.png"} alt="" />
                 <AvatarFallback>{name.slice(0, 1)}</AvatarFallback>
@@ -279,6 +284,9 @@ function DashboardSidebar({
                 size="16"
                 className="text-base-500 transition-opacity duration-200 group-data-[collapsed]/sidebar:opacity-0"
               />
+              {/* Clerk's own account menu (Manage account, Sign out). Its trigger is stretched invisibly over the whole
+                  row, so the Figma row stays the visual and a click anywhere opens the menu. */}
+              <UserButton appearance={{ elements: userMenuOverlay }} />
             </SidebarUser>
           </SidebarFooter>
         </div>
