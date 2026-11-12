@@ -1,0 +1,783 @@
+{
+  "generatedAt": "2026-11-12T18:20:20.944Z",
+  "entities": [
+    {
+      "name": "ProductRow",
+      "table": "product_rows",
+      "file": "src/components/table/product-table.tsx",
+      "line": 12,
+      "comment": "Figma \"(table)\" frame (14055:68891): select column, Product (image + name), then five text columns. Column widths are the Figma ones (50 / flex / 130 / 140 / 140 / 100 / 120).",
+      "extends": [],
+      "fields": [
+        {
+          "name": "id",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "uuid primary key"
+        },
+        {
+          "name": "name",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "text"
+        },
+        {
+          "name": "image",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "text",
+          "note": "url / storage path"
+        },
+        {
+          "name": "orders",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "integer",
+          "note": "formatted string in UI → store number, format on render"
+        },
+        {
+          "name": "views",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "integer",
+          "note": "formatted string in UI → store number, format on render"
+        },
+        {
+          "name": "income",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "numeric(12,2)",
+          "note": "formatted string in UI → store number, format on render"
+        },
+        {
+          "name": "conversion",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "numeric(5,2)",
+          "note": "formatted string in UI → store number, format on render; maybe COMPUTED"
+        },
+        {
+          "name": "total",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "numeric(12,2)",
+          "note": "formatted string in UI → store number, format on render"
+        }
+      ]
+    },
+    {
+      "name": "Member",
+      "table": "members",
+      "file": "src/lib/projects/types.ts",
+      "line": 3,
+      "comment": "Projects section data shapes (Figma \"Dashboard: Projects\"). Served by ./data.ts today; an API can replace it 1:1.",
+      "extends": [],
+      "fields": [
+        {
+          "name": "id",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "uuid primary key"
+        },
+        {
+          "name": "name",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "text"
+        },
+        {
+          "name": "avatar",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "text",
+          "note": "url / storage path"
+        }
+      ]
+    },
+    {
+      "name": "Project",
+      "table": "projects",
+      "file": "src/lib/projects/types.ts",
+      "line": 9,
+      "comment": "",
+      "extends": [],
+      "fields": [
+        {
+          "name": "id",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "uuid primary key"
+        },
+        {
+          "name": "slug",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "text unique"
+        },
+        {
+          "name": "name",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "text"
+        },
+        {
+          "name": "logo",
+          "ts": "string",
+          "optional": false,
+          "comment": "Brand logo shown in Brand-Cell and the sidebar tree.",
+          "sql": "text",
+          "note": "url / storage path"
+        },
+        {
+          "name": "members",
+          "ts": "Member[]",
+          "optional": false,
+          "comment": "",
+          "sql": null,
+          "relation": {
+            "kind": "many",
+            "target": "Member"
+          }
+        },
+        {
+          "name": "progress",
+          "ts": "number",
+          "optional": false,
+          "comment": "0–100",
+          "sql": "numeric(5,2)",
+          "note": "percent"
+        },
+        {
+          "name": "stages",
+          "ts": "number",
+          "optional": false,
+          "comment": "",
+          "sql": "integer",
+          "note": "count: likely COMPUTED from child rows"
+        },
+        {
+          "name": "tasks",
+          "ts": "number",
+          "optional": false,
+          "comment": "",
+          "sql": "integer",
+          "note": "count: likely COMPUTED from child rows"
+        },
+        {
+          "name": "income",
+          "ts": "number",
+          "optional": false,
+          "comment": "Whole currency units (USD).",
+          "sql": "numeric(12,2)"
+        },
+        {
+          "name": "deadline",
+          "ts": "string",
+          "optional": false,
+          "comment": "ISO date.",
+          "sql": "date"
+        },
+        {
+          "name": "updatedAt",
+          "ts": "string",
+          "optional": false,
+          "comment": "ISO date-time, drives the \"Last Projects\" order.",
+          "sql": "timestamptz"
+        }
+      ]
+    },
+    {
+      "name": "ProjectEvent",
+      "table": "project_events",
+      "file": "src/lib/projects/types.ts",
+      "line": 30,
+      "comment": "",
+      "extends": [],
+      "fields": [
+        {
+          "name": "id",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "uuid primary key"
+        },
+        {
+          "name": "projectId",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "uuid",
+          "relation": {
+            "kind": "fk",
+            "target": "Project"
+          }
+        },
+        {
+          "name": "kind",
+          "ts": "ProjectEventKind",
+          "optional": false,
+          "comment": "",
+          "sql": "enum project_event_kind",
+          "note": "member | comment | stage | file | task"
+        },
+        {
+          "name": "title",
+          "ts": "string",
+          "optional": false,
+          "comment": "First line: who or what (e.g. \"John Smith\", \"Image-template.pdf\").",
+          "sql": "text"
+        },
+        {
+          "name": "at",
+          "ts": "string",
+          "optional": false,
+          "comment": "ISO date-time; the row shows its time.",
+          "sql": "timestamptz"
+        }
+      ]
+    },
+    {
+      "name": "ProjectStage",
+      "table": "project_stages",
+      "file": "src/lib/projects/types.ts",
+      "line": 49,
+      "comment": "--- Project page (Figma Projects (1600) 14061:76419: per-project dashboard) ---",
+      "extends": [],
+      "fields": [
+        {
+          "name": "id",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "uuid primary key"
+        },
+        {
+          "name": "index",
+          "ts": "number",
+          "optional": false,
+          "comment": "1-based position, shown in the number badge.",
+          "sql": "integer",
+          "note": "position"
+        },
+        {
+          "name": "name",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "text"
+        },
+        {
+          "name": "tasks",
+          "ts": "number",
+          "optional": false,
+          "comment": "",
+          "sql": "integer",
+          "note": "count: likely COMPUTED from child rows"
+        },
+        {
+          "name": "members",
+          "ts": "number",
+          "optional": false,
+          "comment": "",
+          "sql": "integer",
+          "note": "count: likely COMPUTED from child rows"
+        },
+        {
+          "name": "files",
+          "ts": "number",
+          "optional": false,
+          "comment": "",
+          "sql": "integer",
+          "note": "count: likely COMPUTED from child rows"
+        },
+        {
+          "name": "start",
+          "ts": "string",
+          "optional": false,
+          "comment": "ISO dates.",
+          "sql": "date"
+        },
+        {
+          "name": "end",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "date"
+        }
+      ]
+    },
+    {
+      "name": "TeamMember",
+      "table": "team_members",
+      "file": "src/lib/projects/types.ts",
+      "line": 62,
+      "comment": "",
+      "extends": [
+        "Member"
+      ],
+      "fields": [
+        {
+          "name": "id",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "uuid primary key"
+        },
+        {
+          "name": "name",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "text"
+        },
+        {
+          "name": "avatar",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "text",
+          "note": "url / storage path"
+        },
+        {
+          "name": "role",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "text"
+        }
+      ]
+    }
+  ],
+  "valueTypes": [
+    {
+      "name": "ProjectEventKind",
+      "kind": "enum",
+      "file": "src/lib/projects/types.ts",
+      "line": 28,
+      "values": [
+        "member",
+        "comment",
+        "stage",
+        "file",
+        "task"
+      ],
+      "usedBy": [
+        "ProjectEvent"
+      ]
+    },
+    {
+      "name": "ProjectTotals",
+      "kind": "object",
+      "file": "src/lib/projects/types.ts",
+      "line": 40,
+      "fields": [
+        {
+          "name": "projects",
+          "ts": "number",
+          "comment": ""
+        },
+        {
+          "name": "tasks",
+          "ts": "number",
+          "comment": ""
+        },
+        {
+          "name": "members",
+          "ts": "number",
+          "comment": ""
+        },
+        {
+          "name": "files",
+          "ts": "number",
+          "comment": ""
+        }
+      ],
+      "usedBy": []
+    },
+    {
+      "name": "ProjectDetail",
+      "kind": "object",
+      "file": "src/lib/projects/types.ts",
+      "line": 64,
+      "fields": [
+        {
+          "name": "project",
+          "ts": "Project",
+          "comment": ""
+        },
+        {
+          "name": "company",
+          "ts": "{ name: string; logo: string; description: string }",
+          "comment": ""
+        },
+        {
+          "name": "implementation",
+          "ts": "number",
+          "comment": "0–100, \"Project implementation\" tile."
+        },
+        {
+          "name": "counts",
+          "ts": "{ messages: number; stages: number; members: number; files: number }",
+          "comment": ""
+        },
+        {
+          "name": "tasks",
+          "ts": "{ new: number; inWork: number; done: number; failed: number }",
+          "comment": ""
+        },
+        {
+          "name": "stages",
+          "ts": "ProjectStage[]",
+          "comment": ""
+        },
+        {
+          "name": "team",
+          "ts": "TeamMember[]",
+          "comment": ""
+        }
+      ],
+      "usedBy": []
+    },
+    {
+      "name": "ProjectFinance",
+      "kind": "object",
+      "file": "src/lib/projects/types.ts",
+      "line": 75,
+      "fields": [
+        {
+          "name": "income",
+          "ts": "number",
+          "comment": ""
+        },
+        {
+          "name": "incomeTrend",
+          "ts": "number",
+          "comment": "Percent change, signed."
+        },
+        {
+          "name": "profit",
+          "ts": "number",
+          "comment": ""
+        },
+        {
+          "name": "profitTrend",
+          "ts": "number",
+          "comment": ""
+        },
+        {
+          "name": "cost",
+          "ts": "number",
+          "comment": ""
+        }
+      ],
+      "usedBy": [
+        "FinancialStatsCardProps"
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "from": "Project",
+      "field": "members",
+      "to": "Member",
+      "kind": "many",
+      "suggestion": "Project ↔ Member: many-to-many → join table project_members (or 1-n FK on Member if exclusive)"
+    },
+    {
+      "from": "ProjectEvent",
+      "field": "projectId",
+      "to": "Project",
+      "kind": "fk",
+      "suggestion": "ProjectEvent.projectId → Project.id (FK)"
+    }
+  ],
+  "getters": [
+    {
+      "name": "getNewProjectDetail",
+      "file": "src/lib/projects/data.ts",
+      "line": 139,
+      "params": "",
+      "returns": "Promise<ProjectDetail>",
+      "usedBy": [
+        "src/app/dashboard/projects/new/page.tsx"
+      ]
+    },
+    {
+      "name": "getProjectDetail",
+      "file": "src/lib/projects/data.ts",
+      "line": 152,
+      "params": "slug: string",
+      "returns": "Promise<ProjectDetail | undefined>",
+      "usedBy": [
+        "src/app/dashboard/projects/[slug]/[tab]/page.tsx"
+      ]
+    },
+    {
+      "name": "getProjects",
+      "file": "src/lib/projects/data.ts",
+      "line": 157,
+      "params": "",
+      "returns": "Promise<Project[]>",
+      "usedBy": [
+        "src/app/dashboard/layout.tsx",
+        "src/app/dashboard/projects/new/page.tsx",
+        "src/app/dashboard/projects/page.tsx",
+        "src/app/dashboard/projects/[slug]/[tab]/page.tsx"
+      ]
+    },
+    {
+      "name": "getProject",
+      "file": "src/lib/projects/data.ts",
+      "line": 161,
+      "params": "slug: string",
+      "returns": "Promise<Project | undefined>",
+      "usedBy": []
+    },
+    {
+      "name": "getProjectEvents",
+      "file": "src/lib/projects/data.ts",
+      "line": 165,
+      "params": "",
+      "returns": "Promise<ProjectEvent[]>",
+      "usedBy": [
+        "src/app/dashboard/projects/page.tsx",
+        "src/app/dashboard/projects/[slug]/[tab]/page.tsx"
+      ]
+    },
+    {
+      "name": "getProjectTotals",
+      "file": "src/lib/projects/data.ts",
+      "line": 169,
+      "params": "",
+      "returns": "Promise<ProjectTotals>",
+      "usedBy": [
+        "src/app/dashboard/projects/page.tsx"
+      ]
+    },
+    {
+      "name": "getProjectFinance",
+      "file": "src/lib/projects/data.ts",
+      "line": 173,
+      "params": "",
+      "returns": "Promise<ProjectFinance>",
+      "usedBy": [
+        "src/app/dashboard/projects/page.tsx"
+      ]
+    }
+  ],
+  "hardcoded": [
+    {
+      "name": "defaultRows",
+      "file": "src/components/table/product-table.tsx",
+      "line": 26,
+      "type": "ProductRow[]",
+      "rows": 5,
+      "keys": [
+        "id",
+        "name",
+        "image",
+        "orders",
+        "views",
+        "income",
+        "conversion",
+        "total"
+      ],
+      "likelyData": true
+    },
+    {
+      "name": "projectSubItems",
+      "file": "src/components/dashboard/dashboard-sidebar.tsx",
+      "line": 52,
+      "type": "",
+      "rows": 5,
+      "keys": [
+        "key",
+        "icon",
+        "path"
+      ],
+      "likelyData": false
+    },
+    {
+      "name": "items",
+      "file": "src/components/projects/ProjectStats.tsx",
+      "line": 8,
+      "type": "{ key: keyof ProjectTotals; color: BadgeColor; icon: string }[]",
+      "rows": 4,
+      "keys": [
+        "key",
+        "color",
+        "icon"
+      ],
+      "likelyData": false
+    },
+    {
+      "name": "facts",
+      "file": "src/components/projects/ProjectSummaryCard.tsx",
+      "line": 29,
+      "type": "",
+      "rows": 4,
+      "keys": [
+        "icon",
+        "text"
+      ],
+      "likelyData": false
+    },
+    {
+      "name": "actions",
+      "file": "src/components/projects/QuickAddCard.tsx",
+      "line": 8,
+      "type": "",
+      "rows": 6,
+      "keys": [
+        "key",
+        "icon",
+        "href"
+      ],
+      "likelyData": false
+    },
+    {
+      "name": "columns",
+      "file": "src/components/table/product-table.tsx",
+      "line": 34,
+      "type": "",
+      "rows": 5,
+      "keys": [
+        "key",
+        "label",
+        "width"
+      ],
+      "likelyData": false
+    },
+    {
+      "name": "labels",
+      "file": "src/components/task/task-card.tsx",
+      "line": 6,
+      "type": "",
+      "rows": 4,
+      "keys": [
+        "color",
+        "text"
+      ],
+      "likelyData": false
+    }
+  ],
+  "sections": [
+    {
+      "slug": "",
+      "label": "Dashboard",
+      "built": true
+    },
+    {
+      "slug": "projects",
+      "label": "Projects",
+      "built": true
+    },
+    {
+      "slug": "notes",
+      "label": "Notes",
+      "built": false
+    },
+    {
+      "slug": "files",
+      "label": "Files",
+      "built": false
+    },
+    {
+      "slug": "chats",
+      "label": "Chats",
+      "built": false
+    },
+    {
+      "slug": "mail",
+      "label": "Mail",
+      "built": false
+    },
+    {
+      "slug": "users",
+      "label": "Users",
+      "built": false
+    },
+    {
+      "slug": "calendar",
+      "label": "Calendar",
+      "built": false
+    },
+    {
+      "slug": "knowledge-base",
+      "label": "Knowledge Base",
+      "built": false
+    },
+    {
+      "slug": "clients",
+      "label": "Clients",
+      "built": false
+    },
+    {
+      "slug": "messenger",
+      "label": "Messenger",
+      "built": false
+    }
+  ],
+  "projectTabs": [
+    {
+      "tab": "dashboard",
+      "rendered": true
+    },
+    {
+      "tab": "stages",
+      "rendered": false
+    },
+    {
+      "tab": "tasks",
+      "rendered": false
+    },
+    {
+      "tab": "messages",
+      "rendered": false
+    },
+    {
+      "tab": "chat",
+      "rendered": false
+    },
+    {
+      "tab": "members",
+      "rendered": false
+    },
+    {
+      "tab": "customer",
+      "rendered": false
+    },
+    {
+      "tab": "files",
+      "rendered": false
+    },
+    {
+      "tab": "activity",
+      "rendered": false
+    }
+  ],
+  "clientState": [
+    {
+      "key": "dashboard-theme",
+      "file": "src/components/dashboard/theme-script.ts"
+    },
+    {
+      "key": "dashboard-widget-layout",
+      "file": "src/components/dashboard/widgets/widget-layout.ts"
+    }
+  ]
+}
