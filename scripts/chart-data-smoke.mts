@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 
-import { formatCompact, niceMax, niceTicks, pointsMax, toRows } from "../src/components/charts/chart-data"
+import { categoriesMax, formatCompact, toStackRows, niceMax, niceTicks, pointsMax, toRows } from "../src/components/charts/chart-data"
 
 assert.equal(niceMax(0), 10)
 console.log("PASS niceMax(0) = 10")
@@ -30,3 +30,18 @@ console.log("PASS empty values")
 assert.equal(pointsMax(pts, true), 3)
 assert.equal(pointsMax(pts), 3)
 console.log("PASS pointsMax")
+
+const cats = [
+  { name: "A", values: [1, 2, 3, 4] },
+  { name: "B", values: [5] },
+]
+assert.equal(categoriesMax(cats), 5)
+assert.equal(categoriesMax(cats, true), 10)
+assert.equal(categoriesMax([]), 0)
+console.log("PASS categoriesMax")
+assert.deepEqual(toStackRows(cats, 4), [
+  { name: "A", p0: 1, p1: 2, p2: 3, p3: 4 },
+  { name: "B", p0: 5, p1: 0, p2: 0, p3: 0 },
+])
+assert.deepEqual(toStackRows([], 4), [])
+console.log("PASS toStackRows")

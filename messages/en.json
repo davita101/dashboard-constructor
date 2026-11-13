@@ -189,6 +189,8 @@
       "profit": "Profit",
       "incomeCost": "Income & cost",
       "tasksByStatus": "Tasks by status",
+      "tasksByProject": "Tasks by project",
+      "incomePerMonth": "Income per month",
       "last30": "last 30 days",
       "taskCompletion": "Task completion",
       "completed": "Completed",

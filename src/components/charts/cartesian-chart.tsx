@@ -20,7 +20,17 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart"
-import { formatCompact, niceMax, niceTicks, pointsMax, toRows, type ChartPoint } from "./chart-data"
+import {
+  categoriesMax,
+  formatCompact,
+  niceMax,
+  niceTicks,
+  pointsMax,
+  toRows,
+  toStackRows,
+  type ChartCategory,
+  type ChartPoint,
+} from "./chart-data"
 
 export type CartesianKind =
   | "line"
@@ -185,9 +195,11 @@ type Props = {
   tooltip?: boolean
   theme?: "default" | "white"
   preset?: "default" | "card"
-  /** Real data, one entry per x tick (`values[k]` = series k). Used by line*, column-1..4 and column-6; the Y axis then follows the data. */
+  /** Real data, one entry per x tick (`values[k]` = series k). Used by line*, column-1..6; the Y axis then follows the data. */
   points?: ChartPoint[]
-  /** Series names for the tooltip when `points` is given. */
+  /** Real data for the horizontal `bar` (`values[0]`) and `bar-stacked` (up to 4 series) kinds, one entry per row. */
+  categories?: ChartCategory[]
+  /** Series names for the tooltip when `points` / `categories` is given. */
   seriesLabels?: string[]
   className?: string
 }
@@ -197,10 +209,14 @@ const columnKeys: Record<number, string[]> = {
   2: ["v"],
   3: ["v"],
   4: ["p1", "p2", "p3"],
+  5: ["v"],
   6: ["v2", "v3"],
 }
 
-function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, theme = "default", preset = "default", points, seriesLabels, className }: Props) {
+// Live stacked bars: one colour per series (new, inWork, done, failed), same tones as the status donut.
+const statusColors = ["var(--blue-500)", "var(--green-500)", "var(--orange-500)", "var(--sky-500)"]
+
+function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, theme = "default", preset = "default", points, categories, seriesLabels, className }: Props) {
   const barBg = theme === "white" ? "var(--white-alpha-10)" : "var(--base-100)"
   const uid = React.useId().replace(/:/g, "")
   const isHorizontal =
@@ -211,7 +227,7 @@ function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, 
   const dataKeys = isLineKind
     ? Array.from({ length: Math.min(palette.length, Math.max(0, ...(points ?? []).map((p) => p.values.length))) }, (_, k) => `s${k}`)
     : (columnKeys[colT] ?? [])
-  const live = !!points && (isLineKind || (colT > 0 && colT !== 5))
+  const live = !!points && (isLineKind || colT > 0)
   const liveRows = live && points ? toRows(points, dataKeys) : null
   const top = live && points ? niceMax(pointsMax(points, colT === 4)) : 80000
   const yTicks = live ? niceTicks(top) : ticks
@@ -225,6 +241,9 @@ function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, 
     ),
     ...(live && !isLineKind
       ? Object.fromEntries(dataKeys.map((key, i) => [key, { label: seriesLabels?.[i] ?? "Tooltip" }]))
+      : {}),
+    ...(categories && kind === "bar-stacked"
+      ? Object.fromEntries(statusColors.map((color, k) => [`p${k}`, { label: seriesLabels?.[k] ?? "Tooltip", color }]))
       : {}),
   } satisfies ChartConfig
   const isLine = card && (kind === "line" || kind === "line-step" || kind === "line-gradient" || kind === "line-area")
@@ -346,6 +365,34 @@ function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, 
         <Bar yAxisId={yId} dataKey="high" isAnimationActive={false} shape={<CandleShape />} />
       </BarChart>
     )
+  } else if (kind === "bar" && categories) {
+    const rows = categories.map((c, i) => ({ name: c.name, v: c.values[0] ?? 0, i }))
+    const barTop = niceMax(categoriesMax(categories))
+    const label = { position: "right", fontSize: 10, fontWeight: 700, offset: 8 } as const
+    chart = (
+      <BarChart data={rows} layout="vertical" margin={{ top: 0, right: 8, bottom: 0, left: 0 }} barCategoryGap={14} barGap={2}>
+        <defs>
+          {rows.map((d) => {
+            const hue = horizontalHues[d.i % horizontalHues.length]
+            return (
+              <linearGradient key={d.i} id={`${uid}-h${d.i}`} x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor={`var(--${hue}-700)`} />
+                <stop offset="100%" stopColor={`var(--${hue}-400)`} />
+              </linearGradient>
+            )
+          })}
+        </defs>
+        {grid}
+        <XAxis type="number" domain={[0, barTop]} ticks={niceTicks(barTop, barTop < 4 ? barTop : 4)} tickFormatter={formatCompact} tickLine={false} axisLine={false} />
+        <YAxis yAxisId="l" type="category" dataKey="name" tickLine={false} axisLine={false} width={58} />
+        <YAxis yAxisId="r" type="category" dataKey="name" tickLine={false} axisLine={false} width={58} orientation="right" />
+        <Bar yAxisId="l" dataKey="v" barSize={3} radius={2} isAnimationActive={false} label={label}>
+          {rows.map((d) => (
+            <Cell key={d.i} fill={`url(#${uid}-h${d.i})`} />
+          ))}
+        </Bar>
+      </BarChart>
+    )
   } else if (kind === "bar" || kind === "bar-double") {
     const label = { position: "right", fontSize: 10, fontWeight: 700, offset: 8 } as const
     chart = (
@@ -378,8 +425,11 @@ function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, 
     )
   } else if (kind === "bar-stacked") {
     chart = (
-      <BarChart data={stacked} layout="vertical" margin={margin} stackOffset="expand" barCategoryGap={6}>
+      <BarChart data={categories ? toStackRows(categories, statusColors.length) : stacked} layout="vertical" margin={margin} stackOffset="expand" barCategoryGap={6}>
         {grid}
+        {categories && (
+          <ChartTooltip cursor={false} isAnimationActive={false} content={<ChartTooltipContent />} />
+        )}
         <XAxis type="number" tickFormatter={(v: number) => `${Math.round(v * 100)}%`} tickLine={false} axisLine={false} />
         {(yAxis === "left" || yAxis === "both") && (
           <YAxis yAxisId="l" type="category" dataKey="name" tickLine={false} axisLine={false} width={58} />
@@ -387,8 +437,8 @@ function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, 
         {(yAxis === "right" || yAxis === "both") && (
           <YAxis yAxisId="r" type="category" dataKey="name" tickLine={false} axisLine={false} width={58} orientation="right" />
         )}
-        {stackColors.map((c, k) => (
-          <Bar key={c} yAxisId={yAxis === "right" ? "r" : "l"} dataKey={`p${k}`} stackId="s" fill={`var(--${c}-${k % 2 ? 400 : 500})`} isAnimationActive={false} barSize={14} />
+        {(categories ? statusColors : stackColors).map((c, k) => (
+          <Bar key={c} yAxisId={yAxis === "right" ? "r" : "l"} dataKey={`p${k}`} stackId="s" fill={categories ? c : `var(--${c}-${k % 2 ? 400 : 500})`} isAnimationActive={false} barSize={14} />
         ))}
       </BarChart>
     )
@@ -441,7 +491,7 @@ function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, 
         </>
       )
     chart = (
-      <BarChart data={(t === 5 ? thin : liveRows ? liveRows.map((row) => ({ ...row, bg: top })) : columnData) as Record<string, string | number>[]} margin={margin} barGap={2} barCategoryGap={4}>
+      <BarChart data={(t === 5 && !liveRows ? thin : liveRows ? liveRows.map((row) => ({ ...row, bg: top })) : columnData) as Record<string, string | number>[]} margin={margin} barGap={2} barCategoryGap={4}>
         <defs>
           <Gradient id={`${uid}-c`} from={gradTop} to={gradBottom} />
         </defs>

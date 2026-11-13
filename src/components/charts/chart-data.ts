@@ -33,6 +33,26 @@ export function toRows(points: ChartPoint[], keys: string[]): Record<string, str
   }))
 }
 
+export type ChartCategory = { name: string; values: number[] }
+
+/** Biggest single value (`stacked`: biggest row sum) over all categories. */
+export function categoriesMax(categories: ChartCategory[], stacked = false): number {
+  let max = 0
+  for (const c of categories) {
+    const v = stacked ? c.values.reduce((a, b) => a + b, 0) : Math.max(0, ...c.values)
+    if (v > max) max = v
+  }
+  return max
+}
+
+/** Rows `{ name, [prefix + k]: values[k] ?? 0 }` for `count` series per category. */
+export function toStackRows(categories: ChartCategory[], count: number, prefix = "p"): Record<string, string | number>[] {
+  return categories.map((c) => ({
+    name: c.name,
+    ...Object.fromEntries(Array.from({ length: count }, (_, k) => [`${prefix}${k}`, c.values[k] ?? 0])),
+  }))
+}
+
 /** Highest value on the axis: stacked sums when `stacked`, else the single biggest value. */
 export function pointsMax(points: ChartPoint[], stacked = false): number {
   let max = 0

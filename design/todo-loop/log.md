@@ -17,3 +17,5 @@
 2026-11-13 APPROVED 7a progress-half
 2026-11-13 PLAN ticked 7a; split 7b into 7b-1/7b-2; planned 7b-1 tasksByProject query
 2026-11-13 APPROVED 7b-1 tasksByProject
+2026-11-13 PLAN 7b-2 bar/bar-stacked/column-5 live wiring
+2026-11-13 APPROVED 7b-2 bar/bar-stacked/column-5 live wiring

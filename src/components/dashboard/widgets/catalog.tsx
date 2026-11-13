@@ -73,7 +73,7 @@ const halfLegend = [
   { label: "Visits", tone: "gray" },
 ] as const
 
-const liveCartesianKinds = new Set<CartesianKind>(["line", "line-area", "line-step", "line-gradient", "column-1", "column-2", "column-3", "column-6"])
+const liveCartesianKinds = new Set<CartesianKind>(["line", "line-area", "line-step", "line-gradient", "column-1", "column-2", "column-3", "column-5", "column-6"])
 
 const statusKeys = ["new", "inWork", "done", "failed"] as const
 
@@ -101,18 +101,28 @@ function CartesianCardPreview({
   const fluid = useWidgetFluid()
   const t = useTranslations("widgets.data")
   const data = useWidgetData()
+  const isBar = kind === "bar" || kind === "bar-stacked"
+  const isIncomeOnly = kind === "column-5"
   const live = data && liveCartesianKinds.has(kind) ? data.charts.months : null
-  const legendItems = live
-    ? [
-        { label: t("income"), tone: "purple" as const },
-        { label: t("cost"), tone: "orange" as const },
-      ]
-    : legend === "labels"
-      ? [...labelLegend]
+  const liveBars = data && isBar ? data.charts.tasksByProject : null
+  const isLive = !!live || !!liveBars
+  const legendItems = liveBars
+    ? kind === "bar-stacked"
+      ? statusKeys.map((k, i) => ({ label: t(`status.${k}`), tone: donutTones[i] }))
       : undefined
+    : live
+      ? isIncomeOnly
+        ? [{ label: t("income"), tone: "purple" as const }]
+        : [
+            { label: t("income"), tone: "purple" as const },
+            { label: t("cost"), tone: "orange" as const },
+          ]
+      : legend === "labels"
+        ? [...labelLegend]
+        : undefined
   // Real numbers above a real plot: all-time income / cost / profit with the 30-day trends. The Hour/Day/Week/Month
   // switcher is Figma decoration with no data behind it, so it is hidden on live cards.
-  const finance = live ? data!.finance : null
+  const finance = live && !isIncomeOnly ? data!.finance : null
   const metrics: React.ComponentProps<typeof ChartCardMetrics>["items"] = finance
     ? [
         { tone: "purple", heading: t("income"), value: formatUsd(finance.income), ...trendOf(finance.incomeTrend), additionalText: t("last30") },
@@ -123,22 +133,38 @@ function CartesianCardPreview({
   return (
     <ChartCard>
       <ChartCardHead>
-        <ChartCardTitle>{live ? t("incomeCost") : "Chart"}</ChartCardTitle>
+        <ChartCardTitle>
+          {liveBars ? t("tasksByProject") : live ? (isIncomeOnly ? t("incomePerMonth") : t("incomeCost")) : "Chart"}
+        </ChartCardTitle>
         <ChartCardAction data-soon />
       </ChartCardHead>
       <ChartCardContent className={cn(fluid && "min-h-0 flex-1")}>
-        {live ? null : <ChartCardSwitcher />}
-        <ChartCardMetrics items={metrics} />
+        {isLive ? null : <ChartCardSwitcher />}
+        {liveBars || (isIncomeOnly && live) ? null : <ChartCardMetrics items={metrics} />}
         <ChartCardPlot inset={wide ? "none" : "md"} className={cn(fluid && "min-h-0 flex-1")}>
           <CartesianChart
             preset="card"
             kind={kind}
-            points={live?.map((m) => ({ label: m.label, values: [m.income, m.cost] }))}
-            seriesLabels={live ? [t("income"), t("cost")] : undefined}
+            points={live?.map((m) => ({ label: m.label, values: isIncomeOnly ? [m.income] : [m.income, m.cost] }))}
+            categories={liveBars?.map((p) => ({
+              name: p.name,
+              values: kind === "bar" ? [p.total] : statusKeys.map((k) => p[k]),
+            }))}
+            seriesLabels={
+              liveBars
+                ? kind === "bar"
+                  ? [t("tasks")]
+                  : statusKeys.map((k) => t(`status.${k}`))
+                : live
+                  ? isIncomeOnly
+                    ? [t("income")]
+                    : [t("income"), t("cost")]
+                  : undefined
+            }
             className={fluid ? "h-full min-h-40 w-full" : cn(tall ? "h-97" : "h-79", wide ? "w-70" : "w-66")}
           />
         </ChartCardPlot>
-        {legend !== "none" && <ChartCardLegend items={legendItems} />}
+        {(legend !== "none" || legendItems) && <ChartCardLegend items={legendItems} />}
       </ChartCardContent>
       <ChartCardFooter />
     </ChartCard>
