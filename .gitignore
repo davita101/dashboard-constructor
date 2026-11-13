@@ -59,3 +59,6 @@ next-env.d.ts
 
 # Claude Code skill links: the skills CLI links them from .agents/skills (canonical copy + skills-lock.json)
 /.claude/skills/
+
+# temporary local scripts
+.shots-tmp*
