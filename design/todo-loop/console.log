@@ -1,0 +1,25 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20261113131301
+Username: GRDZELO\grdze
+RunAs User: GRDZELO\grdze
+Configuration Name: 
+Machine: GRDZELO (Microsoft Windows NT 10.0.26300.0)
+Host Application: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoExit -ExecutionPolicy Bypass -Command Start-Transcript -Path design/todo-loop/console.log -Append; & ./scripts/todo-loop.ps1 -Max 50
+Process ID: 10664
+PSVersion: 5.1.26100.9818
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9818
+BuildVersion: 10.0.26100.9818
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Transcript started, output file is design/todo-loop/console.log
+=== Item 1 ===
+[13:13] plan1 (todo-director) -> design/agent-logs/20261113-131301-todo-plan1.log
+  TASK READY
+[13:26] build1-1 (todo-builder) -> design/agent-logs/20261113-132633-todo-build1-1.log
+  BUILT
+[13:32] review1-1 (todo-director) -> design/agent-logs/20261113-133253-todo-review1-1.log

@@ -1,5 +1,6 @@
 import { relations } from "drizzle-orm"
 
+import { conversationMembers, conversations, messages } from "./chat"
 import { clients } from "./clients"
 import { projectEvents } from "./events"
 import { files } from "./files"
@@ -74,4 +75,21 @@ export const filesRelations = relations(files, ({ one }) => ({
   stage: one(projectStages, { fields: [files.stageId], references: [projectStages.id] }),
   task: one(tasks, { fields: [files.taskId], references: [tasks.id] }),
   uploader: one(users, { fields: [files.uploaderId], references: [users.id] }),
+}))
+
+export const conversationsRelations = relations(conversations, ({ one, many }) => ({
+  project: one(projects, { fields: [conversations.projectId], references: [projects.id] }),
+  creator: one(users, { fields: [conversations.createdBy], references: [users.id] }),
+  members: many(conversationMembers),
+  messages: many(messages),
+}))
+
+export const conversationMembersRelations = relations(conversationMembers, ({ one }) => ({
+  conversation: one(conversations, { fields: [conversationMembers.conversationId], references: [conversations.id] }),
+  user: one(users, { fields: [conversationMembers.userId], references: [users.id] }),
+}))
+
+export const messagesRelations = relations(messages, ({ one }) => ({
+  conversation: one(conversations, { fields: [messages.conversationId], references: [conversations.id] }),
+  author: one(users, { fields: [messages.authorId], references: [users.id] }),
 }))
