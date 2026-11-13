@@ -51,7 +51,7 @@ function SetNewPasswordForm({ redirectUrl = "/password-reset" }: { redirectUrl?:
         <AuthHead className="px-9">
           <AuthIcon src="/icons/material-lock.svg" />
           <AuthTitle>Set New Password</AuthTitle>
-          <AuthDescription>Your New Password Must be Different to perviousle used passwords.</AuthDescription>
+          <AuthDescription>Your new password must be different from previously used passwords.</AuthDescription>
         </AuthHead>
         <AuthContent>
           <AuthFields gap="5">
