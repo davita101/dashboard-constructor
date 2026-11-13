@@ -15,3 +15,5 @@
 2026-11-13 APPROVED every-phase checks (pending hash)
 2026-11-13 PLAN ff development to widgets tip; branch feat/backend-polish; split Phase 7 item1 into 7a-7d; planned 7a progress-half
 2026-11-13 APPROVED 7a progress-half
+2026-11-13 PLAN ticked 7a; split 7b into 7b-1/7b-2; planned 7b-1 tasksByProject query
+2026-11-13 APPROVED 7b-1 tasksByProject

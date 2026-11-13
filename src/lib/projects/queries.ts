@@ -165,6 +165,7 @@ export async function queryProjectFinance(userId: string): Promise<ProjectFinanc
 }
 
 const CHART_MONTHS = 9
+const TASKS_BY_PROJECT_LIMIT = 6
 const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
 /** Uncached SQL behind queryDashboardCharts (exported so the smoke script can run it outside Next). */
@@ -184,16 +185,33 @@ export async function loadDashboardCharts(userId: string): Promise<DashboardChar
     group by m.month
     order by m.month
   `)
-  const [stats] = await db
-    .select({
-      new: sql<number>`coalesce(sum(${projectStats.tasksNew}), 0)::int`,
-      inWork: sql<number>`coalesce(sum(${projectStats.tasksInWork}), 0)::int`,
-      done: sql<number>`coalesce(sum(${projectStats.tasksDone}), 0)::int`,
-      failed: sql<number>`coalesce(sum(${projectStats.tasksFailed}), 0)::int`,
-    })
-    .from(projectStats)
-    .where(inArray(projectStats.projectId, mine))
+  const [[stats], byProject] = await Promise.all([
+    db
+      .select({
+        new: sql<number>`coalesce(sum(${projectStats.tasksNew}), 0)::int`,
+        inWork: sql<number>`coalesce(sum(${projectStats.tasksInWork}), 0)::int`,
+        done: sql<number>`coalesce(sum(${projectStats.tasksDone}), 0)::int`,
+        failed: sql<number>`coalesce(sum(${projectStats.tasksFailed}), 0)::int`,
+      })
+      .from(projectStats)
+      .where(inArray(projectStats.projectId, mine)),
+    db
+      .select({
+        name: projects.name,
+        new: sql<number>`${projectStats.tasksNew}::int`,
+        inWork: sql<number>`${projectStats.tasksInWork}::int`,
+        done: sql<number>`${projectStats.tasksDone}::int`,
+        failed: sql<number>`${projectStats.tasksFailed}::int`,
+        total: sql<number>`${projectStats.tasks}::int`,
+      })
+      .from(projectStats)
+      .innerJoin(projects, eq(projects.id, projectStats.projectId))
+      .where(and(inArray(projectStats.projectId, mine), sql`${projectStats.tasks} > 0`))
+      .orderBy(desc(projectStats.tasks), asc(projects.name))
+      .limit(TASKS_BY_PROJECT_LIMIT),
+  ])
   return {
+    tasksByProject: byProject,
     months: Array.from(monthRows).map((r) => ({
       month: r.month,
       label: MONTH_LABELS[Number(r.month.slice(5, 7)) - 1],
