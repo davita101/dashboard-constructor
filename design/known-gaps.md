@@ -2,7 +2,8 @@
 
 One line per component: what could not be matched to Figma. Update when fixed.
 
-- Avatars: Figma "Progress" ring and the "Badge-Square-Pilled" counter overlay are not implemented (TalkToFigma gives no arc/stroke-weight data; `Badge size="square-12"` now exists to build the overlay). Story ring assumes a 2px stroke.
+- Avatars: Story ring assumes a 2px stroke.
+- Avatar: counter overlay position top-right assumed (`-top-1 -right-1`); progress ring stroke 2px assumed, arc ends square (rounded caps not verified).
 - Badge: token names were recovered by matching Figma hex values to Light-mode tokens (TalkToFigma gives no variable names), so a shade could be a same-hex neighbour. Icons and the dot use the text color (Figma icons are one shade off: `-50` on solid, `-600` on soft). Shadows assume `Shadows/<color>/1` on solid styles only.
 - `VerifyIcon` uses Material's `verified` path (`public/icons/material-verified.svg`) because TalkToFigma can't export the vector; badge colors assume the palette's 500 shade. Verify both against Figma when the official MCP or `FIGMA_TOKEN` is available.
 - TalkToFigma doesn't report layer visibility or stroke weights: check exports to see which layers are on by default.
@@ -55,7 +56,7 @@ One line per component: what could not be matched to Figma. Update when fixed.
 - Color Picker: area/hue/alpha gradient stops and the eyedropper action are visual only (no token for Figma hexes, hsl approximations); Rounded variant select/input bits beyond the first pass read from the PNG only.
 - Date Picker: Figma hides icon assets and counters inside Month/Year pills and presets (shown as defaults/hidden), so only chevrons from public/icons are used; Active First/Last tiles are square per spec, hover/default inner tile is a CSS pseudo-element.
 - Action Panel: Input-Pilled hidden Top/Bottom label rows and inner tag/button slots not shown in Figma export images, so only the plain pill Input is built; Action-List-Card-Panel leading media hidden in Figma image, so omitted.
-- ContentCard: Figma icons material-star, material-music-note, material-search, material-videocam added to public/icons as standard Material paths (plugin cannot export SVG); Shopify and Adobe Aero logo assets and the Figma gradient photos are missing, so the preview uses logo-adobe, brand-product-hunt and activity photos; Avatar Progress ring and Badge-Square-Pilled counter on User-Card are not shown (hidden in the Figma image).
+- ContentCard: Figma icons material-star, material-music-note, material-search, material-videocam added to public/icons as standard Material paths (plugin cannot export SVG); Shopify and Adobe Aero logo assets and the Figma gradient photos are missing, so the preview uses logo-adobe, brand-product-hunt and activity photos; Avatar Progress ring and counter on User-Card are not shown in the preview (hidden in the Figma image; now available as `Avatar progress` / `AvatarCounter`).
 - Card Content: User-Card Type=Company Shopify logo asset missing; uses logo-adobe.png placeholder.
 - Profile: Miro logo, Miro/user banner photos (green/orange) and the Facebook glyph not exported; preview uses logo-adobe.png, banner-1.png and the colored facebook.png (grayscale). Counter/trailing icons inside Dark/Ghost buttons are hidden in Figma renders and omitted. Avatar verify color assumed primary.
 - Message: reaction emoji (Red-Heart, Eyes, etc.) are Figma image fills with no exported asset, so platform emoji glyphs stand in; Source Code Pro is not loaded, code uses font-mono; Tag avatar/dot/icon slots (hidden in Figma) render label only.

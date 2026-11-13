@@ -132,7 +132,7 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
       - [x] 9e-3b `FileUpload` compact size (cva), current-logo preview + "Remove logo" checkbox/button in `LogoField`, pass `values.logo` / `values.clientLogo` from ProjectPageView — built: FileUpload `size` cva (default unchanged, compact), LogoField shows current logo + "Remove logo" checkbox (applied on Save), DEFAULT_LOGO moved to types.ts so placeholder is not "current"
   - [ ] 9f Missing variants and slots: Avatar ring + counter overlay, size/shape context, Tabs pill slots, Calendar year view, Date-Range/Select in Modal, Dropdown slots, WidgetBoard layout (split by component)
     - [x] 9f-1 Tabs pill icon + counter slots (`TabsIcon`, `TabsCounter` in `ui/tabs.tsx`): Icon/Badge-pill composed, trigger size rules size the icon, counter default `square-16` + `gray` (assumed)
-    - [ ] 9f-2 Avatar progress ring + counter overlay (+ ContentCard)
+    - [x] 9f-2 Avatar progress ring + counter overlay: `Avatar progress` (0-100 conic ring, wins over story) + `AvatarCounter` slot (Badge red, square-16/12); no ContentCard in src/, nothing to adopt
     - [ ] 9f-3 Size/shape context for Field / InputGroup / ButtonGroup / InputGroupSwatch
     - [ ] 9f-4 Dropdown lead/trail slots
     - [ ] 9f-5 WidgetBoard layout fixes

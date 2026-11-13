@@ -1,41 +1,40 @@
 # Task
-Add icon and counter slots to the Tabs pill items (`ui/tabs.tsx`), plus a demo use.
+Avatar: add Figma "Progress" ring (`progress` prop) and `AvatarCounter` overlay slot in `src/components/ui/avatar.tsx`.
 
 ## TODO item
-    - [ ] 9f-1 Tabs pill icon + counter slots (`TabsIcon`, `TabsCounter` in `ui/tabs.tsx`)
+    - [ ] 9f-2 Avatar progress ring + counter overlay (+ ContentCard)
 
 ## Goal
-Figma Tab-Group-Pilled items can have a left/right icon and a Badge-Square-Pilled counter. Today items are text only (known-gaps line "- Tabs:"). Build the slots in shadcn style so domain code just composes them.
+Figma Avatar-Image/Avatar-Text (60px) carry a 66x66 `Progress` frame (track ellipse blue-alpha-20 + arc blue-600, same 66 box as `Story`: 2px stroke, 1px gap) and a `Badge-Square-Pilled` counter (16x16, danger gradient, text "1"). Make both available as shadcn-style parts of `Avatar`, no new wrappers.
 
 ## Files
-- `src/components/ui/tabs.tsx` (change)
-- `src/components/ui/icon.tsx`, `src/components/ui/badge.tsx`, `src/components/ui/button.tsx` (`ButtonIcon`, `ButtonCounter`: pattern to copy, read only)
-- `src/components/projects/ProjectTabs.tsx` or `ProjectListCard.tsx` (only if an existing tab already has an icon/count in Figma data; otherwise do not touch)
-- `design/known-gaps.md` (edit the "- Tabs:" line)
+- `src/components/ui/avatar.tsx` (change)
+- `src/components/ui/badge.tsx` (read: `square-16`/`square-12` sizes, danger/red variant name)
+- `design/handoff/card-content/figma.md` lines ~125-145 (Figma layers)
+- `design/known-gaps.md` (edit lines 5, 58: remove the Progress/counter parts)
+- NO ContentCard exists in `src/` (grep) → nothing to adopt there; note it in the TODO line.
 
 ## Steps
-1. Read `button.tsx` `ButtonIcon` / `ButtonCounter`, `badge.tsx` sizes.
-2. In `tabs.tsx` add `TabsIcon` (mask icon via `Icon` from `@/components/ui/icon`, props `src`, `position` start|end, sets `data-icon="inline-start|end"`, size follows the trigger's `[&_svg]` size rule: use `size-4` default, `size-3` for xs/micro via the trigger cva, e.g. add `[&_[data-slot=icon]:not([class*='size-'])]:size-4` to trigger base and size-3 / size-5 / size-6 in the size variants next to the existing svg rules).
-3. Add `TabsCounter` = `Badge` with `shape="pill"`, default `size="square-16"` and `variant` suited to active/idle (pick one existing Badge variant, e.g. `white-soft`), `data-slot="tabs-counter"`, `mx-0.5`-like gap handled by trigger `gap-1`.
-4. Add `has-data-[icon=inline-start]:pl-*` / `inline-end:pr-*` padding tweaks for the pill sizes `28` and `32` (reduce side padding by 4px on the icon side, as in `default` variant).
-5. Export both from `tabs.tsx`.
-6. Update the known-gaps "- Tabs:" line: remove the "left/right icon and badge slots are not built" sentence, say slots exist.
-7. Do not invent a new page. If a preview is wanted, no `/design-system/tabs` page exists: skip it.
+1. `Avatar` gets optional `progress?: number` (0-100). When set, render ring as an absolutely positioned overlay (`-inset-1.5`, `pointer-events-none`, `aria-hidden`, rounded-[inherit] or full for circle; shape rounded uses `--avatar-r` + 2px) using: track = `outline-primary-alpha-20`-style ring, arc = `conic-gradient(var(--primary-600) calc(var(--avatar-progress)*1%), transparent 0)` masked to a 2px ring via `mask: radial/ (mask-composite exclude)` — or an inline SVG circle with `stroke-dasharray` using token colors via `stroke-primary-600` / `stroke-primary-alpha-20` classes. Prefer SVG for circle; for rounded shape use conic mask. Start at 12 o'clock, clockwise. Clamp 0-100. Expose via `role`-less decorative element; set `data-progress`.
+   Story and progress share the 66px box: if both set, progress wins (Figma shows them as alternatives); document in a comment.
+2. Add `AvatarCounter` (slot, `data-slot="avatar-counter"`): wraps existing `Badge` (shape square, red/danger gradient variant already in badge.tsx; size `square-16`, `square-12` when avatar size <= 32 via `group-data-[size=...]/avatar`), absolutely positioned top-right (`-top-1 -right-1`, `z-10`) — position is assumed (Figma image hides it); record in known-gaps as assumed. Export it.
+3. Update known-gaps lines: remove "Progress ring and counter not implemented" parts; add one short line "- Avatar: counter overlay position top-right assumed; progress ring stroke 2px assumed (arc ends not rounded verified?)".
+4. Smoke usage: temporarily none. No design-system page exists, so verify by a tsc + a tiny render check in node is not needed; just ensure types and build.
 
 ## Acceptance
 - `pnpm exec tsc --noEmit` → 0 errors
-- `pnpm lint` → 0 errors (known `command.tsx` warning ok)
+- `pnpm lint` → 0 errors (command.tsx warning known)
 - `pnpm build` → success
-- `grep -nE "TabsIcon|TabsCounter" src/components/ui/tabs.tsx` shows both exported
-- grep new code: no hex colors, no `space-[xy]-`, no `dark:`
-- Existing tab usages (ProjectTabs, ProjectListCard, widget picker) unchanged visually: their diff is empty or className-free.
+- `grep -nE "#[0-9a-fA-F]{3,8}\b|space-[xy]-|dark:" src/components/ui/avatar.tsx` → no matches
+- `grep -n "progress\|AvatarCounter" src/components/ui/avatar.tsx` shows prop, ring, slot, export
+- Existing Avatar usages unchanged (no new required props).
 
 ## Decisions
-- Slots are composed from existing `Icon` and `Badge` (shadcn rule: no styled spans in domain code).
-- Counter uses Badge `shape="pill"` like Button's `ButtonCounter`; exact Figma badge size for the Tab-Group-Pilled unreadable, assume `square-16`, record in known-gaps.
-- No new UI/page: only the slots.
+- Progress ring is a prop on `Avatar` (variant-like), counter is a slot, per CLAUDE.md shadcn rules.
+- Progress beats story when both set. Ring/counter geometry from Figma layer sizes (66 box, 16 badge); counter corner assumed top-right.
+- ContentCard component does not exist in code: that part of the item is moot.
 
 ## Don't
-- No new Figma-less pages, no hand-written SVGs (use existing `public/icons/`).
-- Don't change other Tabs variants' look.
-- Don't touch the DB or other batches (9f-2..6).
+- Don't create a design-system page or new domain components.
+- Don't hand-write icon SVGs files; inline ring SVG circle is fine (geometry, not an icon).
+- Don't change Avatar's existing variants/sizes.
