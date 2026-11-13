@@ -47,3 +47,5 @@
 2026-11-13 APPROVED 9a known-gaps triage
 2026-11-13 PLAN split 9b into 9b-1 fonts / 9b-2 shadcn vars; planned 9b-1 fonts
 2026-11-13 APPROVED 9b-1 fonts
+2026-11-13 PLAN 9b-2 map shadcn vars to tokens
+2026-11-13 APPROVED 9b-2 shadcn vars
