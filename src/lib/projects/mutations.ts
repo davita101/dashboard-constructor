@@ -580,7 +580,9 @@ export function registerFile(userId: string, input: z.output<typeof registerFile
     await requireMember(tx, userId, input.projectId)
     await assertStageIn(tx, input.projectId, input.stageId)
     // Size and type come from Storage, not from the client.
-    const [object] = await tx.execute<{ size: string | null; mime: string | null }>(
+    const {
+      rows: [object],
+    } = await tx.execute<{ size: string | null; mime: string | null }>(
       sql`select metadata->>'size' as size, metadata->>'mimetype' as mime from storage.objects where bucket_id = ${PROJECT_FILES_BUCKET} and name = ${input.path} limit 1`,
     )
     if (!object) throw new MutationError("not_found", "Upload not found, try again")
