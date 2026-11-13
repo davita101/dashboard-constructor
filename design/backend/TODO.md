@@ -114,7 +114,9 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
 - [x] Quick Add "Message" tile: open a dialog that sends a message to the project chat (Phase 5 actions), built from existing Modal + Input/Textarea parts like the other Quick Add dialogs; record in known-gaps that there is no chat screen to read replies yet — built: `SendMessageDialog` (project picker if >1 project, Textarea) + `sendProjectMessageAction` (ensure project conversation, send, expire); tile live; no chat screen yet (known-gaps).
 - [ ] Triage `design/known-gaps.md`: list the gaps that are code-only (wrong token, missing state, a11y, dead control, console warning) and fix them in batches of related items; leave Figma-dependent ones, note each decision
   - [x] 9a Write `design/known-gaps-triage.md`: classify every line of known-gaps.md (code-only / needs Figma / needs user asset), propose fix batches; no code changes — done: design/known-gaps-triage.md, 105 bullets → 222 rows, 6 batches (9b–9g)
-  - [ ] 9b Theme wiring: shadcn vars + fonts: map shadcn vars to tokens, load Inter/Playfair/Roboto/Merriweather/Ms Madi/Source Code Pro via next/font, font-sans on preview pages
+  - [ ] 9b Theme wiring: shadcn vars + fonts (split 9b-1 / 9b-2)
+    - [x] 9b-1 Fonts: load Inter/Playfair Display/Roboto/Merriweather/Ms Madi/Source Code Pro via next/font onto `--font-family-*` (replace Geist) (no design-system pages exist: skip the font-sans part) — next/font loads all 6 families, `:root` overrides in globals.css, Geist removed, `--font-mono` = Source Code Pro
+    - [ ] 9b-2 Map shadcn vars (`--background`, `--primary`, `--border`, `--radius`…) to Color Mode tokens in globals.css
   - [ ] 9c Icon dark mode: shared token-colored mask Icon component replacing hardcoded #808080 `<img>` icons
   - [ ] 9d Token/variant fixes: Badge/Button/Textarea/Tooltip/Counter/Link/Double Input small Figma value fixes, shadow/blur constants, date formatting
   - [ ] 9e Dead controls and flows: Night Mode switch, back-to-top, QuickAddCard handlers, project tab panels, logo form area, forgot-password/verify (if not in queue #5)

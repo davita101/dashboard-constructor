@@ -45,3 +45,5 @@
 2026-11-13 APPROVED Quick Add Message dialog
 2026-11-13 PLAN split known-gaps triage into 9a (classify doc) / 9b.. (fix batches); planned 9a
 2026-11-13 APPROVED 9a known-gaps triage
+2026-11-13 PLAN split 9b into 9b-1 fonts / 9b-2 shadcn vars; planned 9b-1 fonts
+2026-11-13 APPROVED 9b-1 fonts

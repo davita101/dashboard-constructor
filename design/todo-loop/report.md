@@ -1,20 +1,22 @@
-# Report: 9a known-gaps triage
+# Report: 9b-1 fonts
 
 ## Changed
-- NEW `design/known-gaps-triage.md`: summary table, 222-row gap table (105 bullets, all L-refs covered), 6 batches B1–B6.
-- EDIT `design/backend/TODO.md`: replaced `9b..` with 9b–9g (one per batch B1–B6).
-- No source files touched.
+- `src/app/layout.tsx`: removed Geist_Mono. Added Playfair_Display (variable), Roboto (400/500/700), Merriweather (400/700), Ms_Madi (400), Source_Code_Pro, all latin + swap. Inter unchanged. All six `.variable` classes joined into `fontVariables`, put on `<html>`.
+- `src/app/globals.css`: `:root` overrides for the 5 `--font-family-*` (`var(--font-x), "Name", <fallbacks from primitives.css>`). `--font-mono: var(--font-source-code-pro), ui-monospace, monospace`.
 
 ## Decisions
-- Added a 4th class `none` (informational/decision, no action) for rows that need no fix.
-- Mixed bullets split per gap; ambiguous "hex-matched, no variable names" rows classed `figma`.
-- Queue #5 auth items (/verify) put in B4 with a note to skip if queue #5 covers them.
+- `fontVariables` built from an array and joined, to keep the className short.
+- Source Code Pro uses the default variable weight (no explicit weights).
+- No design-system pages exist, so the font-sans part was skipped (as the task says).
 
 ## Commands
-- class counts via grep: code 57, figma 70, asset 44, none 51 — PASS
-- all 105 bullet line refs `(L<n>)` present in the doc (105 distinct) — PASS
-- `git status --short`: only TODO.md, triage doc, todo-loop files — PASS
-- `pnpm exec tsc --noEmit` — PASS
+- `pnpm exec tsc --noEmit`: PASS
+- `pnpm lint`: PASS (0 errors, 1 existing warning in `src/components/ui/command.tsx`, not mine)
+- `pnpm build`: PASS
+- `grep -rli geist src`: PASS (no matches)
+- `grep -n "font-family-" src/app/globals.css`: PASS (5 families overridden)
+- Built HTML (`.next/server/app`): `<html>` has 6 `*_variable` classes. PASS
+- No hex colors, `space-[xy]-` or `dark:` added.
 
-## Left undone
-- Lint/build not run (no code changes).
+## Not done
+- No browser check of switching `data-font`. I only confirmed the CSS and HTML output.

@@ -6,7 +6,14 @@ import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { Suspense } from "react";
-import { Geist_Mono, Inter } from "next/font/google";
+import {
+  Inter,
+  Merriweather,
+  Ms_Madi,
+  Playfair_Display,
+  Roboto,
+  Source_Code_Pro,
+} from "next/font/google";
 import "./globals.css";
 import { themeInitScript } from "@/components/dashboard/theme-script";
 
@@ -16,10 +23,49 @@ const inter = Inter({
   display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
   subsets: ["latin"],
+  display: "swap",
 });
+
+const roboto = Roboto({
+  variable: "--font-roboto",
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  display: "swap",
+});
+
+const merriweather = Merriweather({
+  variable: "--font-merriweather",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  display: "swap",
+});
+
+const msMadi = Ms_Madi({
+  variable: "--font-ms-madi",
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+});
+
+const sourceCodePro = Source_Code_Pro({
+  variable: "--font-source-code-pro",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const fontVariables = [
+  inter,
+  playfair,
+  roboto,
+  merriweather,
+  msMadi,
+  sourceCodePro,
+]
+  .map((font) => font.variable)
+  .join(" ");
 
 export const metadata: Metadata = {
   title: { default: "Commerce Constructor", template: "%s · Commerce Constructor" },
@@ -41,7 +87,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${fontVariables} h-full antialiased`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />

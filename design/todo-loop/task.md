@@ -1,35 +1,35 @@
 # Task
-Triage `design/known-gaps.md` into a classification doc (no code changes).
+Load the six Figma fonts with next/font and wire them to `--font-family-*`, dropping Geist.
 
 ## TODO item
-  - [ ] 9a Write `design/known-gaps-triage.md`: classify every line of known-gaps.md (code-only / needs Figma / needs user asset), propose fix batches; no code changes
+- [ ] 9b-1 Fonts: load Inter/Playfair Display/Roboto/Merriweather/Ms Madi/Source Code Pro via next/font onto `--font-family-*` (replace Geist) (no design-system pages exist: skip the font-sans part)
 
 ## Goal
-One doc that tells later tasks exactly which gaps can be fixed in code now, grouped in small batches.
+Switching `data-font` / `data-display-font` on `<html>` (font-1..5 = Inter, Playfair Display, Roboto, Merriweather, Ms Madi) actually changes the rendered font; code snippets/message use Source Code Pro via `font-mono`. Geist Mono removed. Default look (Inter) unchanged.
 
 ## Files
-- read: `design/known-gaps.md` (~110 lines), CLAUDE.md
-- write: `design/known-gaps-triage.md`
-- edit: `design/backend/TODO.md` (only add 9b.. sub-items, see Steps)
+- `src/app/layout.tsx` (next/font/google imports, className variables)
+- `src/app/globals.css` (`:root` font-family overrides, `--font-mono`)
+- read: `src/styles/primitives.css` (~1263), `src/styles/themes.css` (~1243), `node_modules/next/dist/docs/` font docs
+- Do NOT hand-edit `src/styles/*` (generated).
 
 ## Steps
-1. Read every line of known-gaps.md. For each gap/component line, classify:
-   - **code-only**: wrong/unmapped token, missing state or variant that Figma shows, a11y, dead control, console warning, unloaded font, shadcn var mapping, hardcoded fill that ignores dark mode, hand-chosen value that can be fixed from tokens.
-   - **needs Figma**: values unreadable via TalkToFigma / page missing / needs re-read.
-   - **needs user asset**: icons/logos/images the user must write or export (never create SVGs).
-2. Doc layout: a short summary table (counts per class), then a table `Component | Gap | Class | Batch | Note`, one row per gap sentence-group (split lines that hold several gaps). Then `## Batches`: 3–6 batches of related code-only items (e.g. "theme wiring: shadcn vars + fonts", "icon dark-mode"), each ≤ ~6 files, ordered by value/risk, with the files likely touched.
-3. In TODO.md replace the `9b..` line with one sub-item per batch: `  - [ ] 9b <batch name>: <one-line scope>`, `9c`, ...
-4. Do not change any source file.
+1. In layout.tsx replace Geist_Mono with Source_Code_Pro; add Playfair_Display, Roboto, Merriweather, Ms_Madi (weight "400" where required; Ms Madi has only 400; Roboto/Merriweather need explicit weights; use `display: "swap"`, subsets latin). Each gets a `variable` (`--font-playfair`, `--font-roboto`, `--font-merriweather`, `--font-ms-madi`, `--font-source-code-pro`). Add all variables to `<html>` className.
+2. In globals.css extend the existing `:root` override block so each `--font-family-<name>` is `var(--font-x), "Name", <existing fallback stack>` (same pattern as Inter; fallbacks copied from primitives.css).
+3. `--font-mono: var(--font-source-code-pro), ui-monospace, monospace` in `@theme inline`.
+4. Only load weights actually needed to keep payload small (Roboto 400/500/700, Merriweather 400/700, Playfair variable, Inter as-is).
 
 ## Acceptance
-- `design/known-gaps-triage.md` exists; every non-blank bullet of known-gaps.md appears in the table (check: count of bullets in known-gaps.md ≤ count of distinct components/gaps covered; spot-check 10 random lines).
-- TODO.md has 9b.. batch sub-items matching the doc's Batches section.
-- `git status` shows only those two files plus design/todo-loop/*.
-- `pnpm exec tsc --noEmit` still passes.
+- `pnpm exec tsc --noEmit` clean; `pnpm lint` 0 errors; `pnpm build` passes.
+- `grep -rn "geist" -i src` returns nothing.
+- `grep -n "font-family-" src/app/globals.css` shows all 5 families overridden.
+- Built CSS/HTML of `/` references the 5 new font variable classes on `<html>` (check `.next` output or dev HTML).
+- No hex colors, `space-[xy]-`, `dark:` added.
 
 ## Decisions
-- Triage is its own task: the original item is too big for one session; fixes follow as batches.
-- Known-gaps text stays unchanged; fixed lines get removed in the batch that fixes them.
+- Split 9b: shadcn var mapping is 9b-2 (visual risk, own task).
+- `font-sans` on design-system page main skipped: no design-system routes exist in src/app.
+- Source Code Pro replaces Geist Mono as `--font-mono` (Figma Message/Code Snippet use it).
 
 ## Don't
-- No code/CSS edits, no new icons/SVGs, no Figma calls, no DB changes.
+- Don't edit generated `src/styles/*`, don't touch shadcn var mapping, don't create design-system pages, don't change the default font (Inter).
