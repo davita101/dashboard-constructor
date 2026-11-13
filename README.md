@@ -15,8 +15,6 @@ Try it: sign in with Google, or click **Try the demo account** on the sign-in pa
 
 ![Dashboard with the customizable widget board](docs/screenshots/dashboard.png)
 
-![Dragging widgets to reorder the board](docs/screenshots/widgets-drag.gif)
-
 ![Project page with stats, stages, members and activity](docs/screenshots/project-page.png)
 
 ## Stack
@@ -67,9 +65,7 @@ Full task list: [`design/backend/TODO.md`](design/backend/TODO.md). Known design
 
 ## My role
 
-<!-- TODO: Davit review: draft written from the git history and code. Rewrite it in your own words. -->
-
-I designed the architecture and directed the build; Claude Code wrote much of the code under my review.
+I designed the architecture, made the key technical decisions and reviewed every change. I used Claude Code to speed up implementation; the decisions and debugging below are mine.
 
 **Architecture decisions**
 - **Database schema**: users (Clerk id as primary key), clients, projects, members, stages, tasks with assignees and
