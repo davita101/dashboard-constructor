@@ -139,9 +139,11 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
 - [x] 9f-5 WidgetBoard layout: mobile 1-track chart-to-chart gap 24 (`@max-xl:mt-3`, tiles keep 12); 528 height, odd-chart gap, 5-tile rows, 768 rail left in known-gaps (no simple code fix)
     - [x] 9f-6 Calendar year view; Date-Range calendar + Select in Modal — closed as moot: Modal was removed in a9183ee (no consumer for range Calendar/Select); EventCalendar only used decoratively in auth showcase slides, year view waits for the Calendar page (Later, blocked: needs Figma)
   - [x] 9g Previews and browser checks — previews moot (design-system pages dropped in a9183ee); Chrome 2026-11-13: RadialChart progress-half (Task completion widget) and FileUpload in ProjectFormDialog render, no console errors (Clerk dev-key warning only); `ui/file-input.tsx` gone, gap dropped; Input OTP not checked (reachable only after Clerk emails a real code, signed out) — check by hand on sign-up/reset
-- [ ] `design/pages-queue.md` statuses are stale (auth pages 3-8 marked todo but routes exist): verify each route renders and fix the statuses
+- [x] `design/pages-queue.md` statuses are stale (auth pages 3-8 marked todo but routes exist): verify each route renders and fix the statuses — done 2026-11-13: 3,4,5,7,8 done (5 = /check-email code step, no /verify), 6 Two-factor still todo (no page, 404)
 - [ ] Integration smoke script for the whole backend (projects CRUD, members, stages, tasks, files register/delete, settings upsert, chat send/read) against Supabase with cleanup; one command, PASS/FAIL lines
 - [ ] Re-check every `(blocked: needs Figma …)` item against the Figma file through TalkToFigma (`curl http://127.0.0.1:3055/figma-channel` must return a channel; if not, mark this item `(blocked: TalkToFigma plugin not running)`); for any page that does exist, unblock its item with the Figma node ids
+
+- [ ] Two-factor Authentication page `/two-factor` (Figma 14056:126400 / 14056:126358): handle Clerk `needs_second_factor` on sign-in with OtpCodeField
 
 ## Later — unbuilt sections (need Figma pages first)
 - [ ] Notes · Mail · Calendar (events) · Knowledge Base (articles) · Clients page · Users page (blocked: needs Figma pages for each)
