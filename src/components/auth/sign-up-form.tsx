@@ -1,6 +1,6 @@
 "use client"
 
-import { useSignUp } from "@clerk/nextjs"
+import { useClerk, useSignUp } from "@clerk/nextjs"
 import NextLink from "next/link"
 import { useRouter } from "next/navigation"
 import * as React from "react"
@@ -34,6 +34,7 @@ const strategies = {
 // Figma Sign-Up-01 (open form on the panel, social buttons), wired to Clerk's custom flow (password + OAuth).
 function SignUpForm({ redirectUrl = "/dashboard" }: { redirectUrl?: string }) {
   const { signUp, errors, fetchStatus } = useSignUp()
+  const clerk = useClerk()
   const router = useRouter()
   const busy = fetchStatus === "fetching"
   const [failed, setFailed] = React.useState<string>()
@@ -64,12 +65,17 @@ function SignUpForm({ redirectUrl = "/dashboard" }: { redirectUrl?: string }) {
   async function onProvider(provider: keyof typeof strategies) {
     setFailed(undefined)
     rememberMe.set(remember)
-    const { error } = await signUp.sso({
-      strategy: strategies[provider],
-      redirectUrl,
-      redirectCallbackUrl: "/sso-callback",
-    })
-    if (error) setFailed(error.message)
+    // Not signUp.sso(): it reuses an attempt already in progress and then resolves without redirecting.
+    // authenticateWithRedirect always starts a new one.
+    try {
+      await clerk.client?.signUp.authenticateWithRedirect({
+        strategy: strategies[provider],
+        redirectUrl: "/sso-callback",
+        redirectUrlComplete: redirectUrl,
+      })
+    } catch (error) {
+      setFailed(error instanceof Error ? error.message : "Could not start sign-up, try again")
+    }
   }
 
   return (
