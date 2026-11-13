@@ -135,7 +135,7 @@ function ChartCardHead({ className, ...props }: React.ComponentProps<"div">) {
 
 function ChartCardTitle({
   className,
-  icon = "/icons/material-bar_chart.svg",
+  icon = "/icons/material/material-bar-chart.svg",
   children,
   ...props
 }: React.ComponentProps<"div"> & { icon?: string }) {
