@@ -4,6 +4,7 @@ import * as React from "react"
 import { useTranslations } from "next-intl"
 
 import { Button } from "@/components/ui/button"
+import { Link } from "@/components/ui/link"
 import {
   Dialog,
   DialogContent,
@@ -166,9 +167,9 @@ function UploadFilesDialog({ trigger, projects }: { trigger: React.ReactElement;
                           <FileUploadItemContent>
                             <FileUploadItemName>
                               {item.fileId ? (
-                                <a href={`/api/files/${item.fileId}`} className="hover:underline">
+                                <Link href={`/api/files/${item.fileId}`} variant="900" size="14">
                                   {item.file.name}
-                                </a>
+                                </Link>
                               ) : (
                                 item.file.name
                               )}

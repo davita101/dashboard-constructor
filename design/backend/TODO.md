@@ -121,8 +121,8 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
     - [x] 9c-1 `ui/icon.tsx` + adopt in chart-metric, chart-parts, breadcrumb, native-select, field; drop stale known-gaps lines — built: shared `Icon` (mask, cva sizes 4/5/6) adopted in 5 files, stale gaps removed
   - [ ] 9d Token/variant fixes: Badge/Button/Textarea/Tooltip/Counter/Link/Double Input small Figma value fixes, shadow/blur constants, date formatting
     - [x] 9d-1 Badge sq-rounded 60 text + icon-rounded 16 radius, Button icon-16 radius, Button Group 60 gap, Textarea default helper text 12/20 — Badge sq-60 text + sq-16 radius, Button icon-16 r6 + new icon-16-round (Alert close); Button Group (no component) and Textarea helper (no hook) skipped
-    - [ ] 9d-2 Tooltip dot shades, Counter Micro icon, Link reuse (Breadcrumb/CheckboxCard), Double Input tokens
-    - [ ] 9d-3 blur/shadow constants, date formatting (ProjectPage), UploadFilesDialog link, Dialog Black Cancel, Sidebar shadows
+    - [x] 9d-2 Tooltip dot shades, Counter Micro icon, Link reuse (Breadcrumb/CheckboxCard), Double Input tokens — moot: Tooltip/Counter/Double Input/CheckboxCard components don't exist in code; BreadcrumbLink keeps its own Figma colors (differs from Link)
+    - [x] 9d-3 UploadFilesDialog uses Link, dates via Intl (lib/projects/dates.ts, en→en-GB dd.MM), Sidebar shadow-lg already gone; blur/shadow constants + Dialog Black Cancel left in gaps (Figma unverified)
   - [ ] 9e Dead controls and flows: Night Mode switch, back-to-top, QuickAddCard handlers, project tab panels, logo form area, forgot-password/verify (if not in queue #5)
   - [ ] 9f Missing variants and slots: Avatar ring + counter overlay, size/shape context, Tabs pill slots, Calendar year view, Date-Range/Select in Modal, Dropdown slots, WidgetBoard layout
   - [ ] 9g Previews and browser checks: project-stats and member-row previews, Input OTP / File Input / RadialChart browser checks

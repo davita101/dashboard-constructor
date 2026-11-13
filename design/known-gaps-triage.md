@@ -182,7 +182,7 @@ Source: `design/known-gaps.md` (L = line number there). Classes: **code** = code
 | Pagination (L73) | Hidden Counter/icon layers not rendered | none | - | |
 | Sidebar (L74) | Facebook/X glyphs PNG brands (blank-looking buttons) | asset | - | |
 | Sidebar (L74) | Left-slot swaps not exposed (compose any child) | none | - | |
-| Sidebar (L74) | Sidebar-08 menu shadow `shadow-lg`; Sidebar-07 active base-alpha-5 | code | B3 | use `--shadow-base` |
+| Sidebar (L74) | Sidebar-08 menu shadow `shadow-lg`; Sidebar-07 active base-alpha-5 | code | B3 done | use `--shadow-base` |
 | Chart (L75) | Series data, geometry, strokes, tooltip placement approximated | figma | - | |
 | Chart Component (L76) | Plugin gives no vector geometry; shapes generated | figma | - | |
 | Chart Component (L76) | Chart-Dot Border=2, Pie/Donut ring width from images | figma | - | |
@@ -220,7 +220,7 @@ Source: `design/known-gaps.md` (L = line number there). Classes: **code** = code
 | ProjectMembersCard (L94) | `ui/member-row.tsx` no preview page | code | B6 | |
 | ProjectPage (L95) | No 360 frame (stacks below lg) | figma | - | |
 | ProjectPage (L95) | Non-Dashboard tabs have no panels | code | B4 | placeholder/empty state or real panels |
-| ProjectPage (L95) | Dates dd.MM(.yyyy) not locale formatted | code | B3 | `Intl`/date-fns via next-intl |
+| ProjectPage (L95) | Dates dd.MM(.yyyy) not locale formatted | code | B3 done | `Intl`/date-fns via next-intl |
 | DashboardSidebar (L96) | One Sidebar-01 truncates long names; Figma 04 lists unused | none | - | user decision |
 | DashboardSidebar (L96) | Android/Banner/Website have no brand logo (default.svg) | asset | - | |
 | ProjectPage (L97) | Non-Dashboard tabs empty state (no frames) | figma | - | same as L95 |
@@ -233,7 +233,7 @@ Source: `design/known-gaps.md` (L = line number there). Classes: **code** = code
 | NativeSelect/Textarea (L103) | No Figma select component read | figma | - | |
 | QuickAddCard (L104) | No chat screen; no DM recipient picker | code | B4 | feature, large; defer |
 | UploadFilesDialog (L105) | No Figma frame; no upload progress (supabase-js) ; no URL import | none | - | platform limit |
-| UploadFilesDialog (L105) | Uploaded file link plain hover underline | code | B3 | use `Link` |
+| UploadFilesDialog (L105) | Uploaded file link plain hover underline | code | B3 done | use `Link` |
 | ProjectFormDialog logos (L106) | Two 200px drop areas make dialog scroll; no current-logo preview; no remove logo | code | B4 | |
 | Dashboard metric tiles (L107) | Sparkline placeholder art; Head "…" decorative | none | - | |
 | RadialChart (L108) | progress-half browser check not run (auth) | code | B6 | smoke/browser check |

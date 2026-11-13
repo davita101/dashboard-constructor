@@ -53,3 +53,5 @@
 2026-11-13 APPROVED 9c-1 Icon
 2026-11-13 PLAN split 9d into 9d-1..3; planned 9d-1 Badge/Button/ButtonGroup/Textarea values
 2026-11-13 APPROVED 9d-1 values
+2026-11-13 PLAN 9d-2 closed as moot; planned 9d-3 (upload link, date format, sidebar shadow)
+2026-11-13 APPROVED 9d-3 dates/link
