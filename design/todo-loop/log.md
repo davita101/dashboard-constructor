@@ -43,3 +43,5 @@
 2026-11-13 APPROVED 8c metric-line-2 fluid f72f4b3
 2026-11-13 PLAN Quick Add Message dialog (project chat)
 2026-11-13 APPROVED Quick Add Message dialog
+2026-11-13 PLAN split known-gaps triage into 9a (classify doc) / 9b.. (fix batches); planned 9a
+2026-11-13 APPROVED 9a known-gaps triage
