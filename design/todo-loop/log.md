@@ -13,3 +13,5 @@
 2026-11-13 APPROVED 6b-2 wire chart widgets
 2026-11-13 PLAN ticked Phase 6 chart parent; blocked Later items (no Figma); planned "Every phase" checks
 2026-11-13 APPROVED every-phase checks (pending hash)
+2026-11-13 PLAN ff development to widgets tip; branch feat/backend-polish; split Phase 7 item1 into 7a-7d; planned 7a progress-half
+2026-11-13 APPROVED 7a progress-half

@@ -189,7 +189,11 @@
       "profit": "Profit",
       "incomeCost": "Income & cost",
       "tasksByStatus": "Tasks by status",
-      "last30": "last 30 days"
+      "last30": "last 30 days",
+      "taskCompletion": "Task completion",
+      "completed": "Completed",
+      "done": "Done",
+      "remaining": "Remaining"
     }
   },
   "projects": {

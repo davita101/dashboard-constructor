@@ -79,3 +79,10 @@ Transcript started, output file is design/todo-loop/console.log
 [14:10] build7-1 (todo-builder) -> design/agent-logs/20261113-141046-todo-build7-1.log
   BUILT
 [14:11] review7-1 (todo-director) -> design/agent-logs/20261113-141151-todo-review7-1.log
+  APPROVED
+  APPROVED
+=== Item 8 ===
+[14:12] plan8 (todo-director) -> design/agent-logs/20261113-141258-todo-plan8.log
+  ALL DONE
+All done.
+Loop ended after 8 item(s).

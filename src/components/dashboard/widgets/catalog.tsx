@@ -153,13 +153,25 @@ function RadialCardPreview({ kind }: { kind: "donut" | "pie" | "progress" | "pro
   const counts = data ? statusKeys.map((k) => data.charts.tasksByStatus[k]) : null
   const sum = counts ? counts.reduce((a, b) => a + b, 0) : 0
   const tones = kind === "pie" ? pieTones : donutTones
-  const live = counts && kind !== "progress-half"
-  const legendItems = live ? statusKeys.map((k, i) => ({ label: t(`status.${k}`), tone: tones[i] })) : kind === "progress-half" ? [...halfLegend] : [...sliceLegend]
+  const half = kind === "progress-half"
+  const live = data && counts
+  const tasks = data?.totals.tasks ?? 0
+  const ratio = tasks ? (data?.totals.tasksDone ?? 0) / tasks : 0
+  const legendItems = live
+    ? half
+      ? [
+          { label: t("done"), tone: "blue" as const },
+          { label: t("remaining"), tone: "gray" as const },
+        ]
+      : statusKeys.map((k, i) => ({ label: t(`status.${k}`), tone: tones[i] }))
+    : half
+      ? [...halfLegend]
+      : [...sliceLegend]
   const liveProps = live ? { total: sum, totalLabel: t("tasks") } : {}
   return (
     <ChartCard>
       <ChartCardHead>
-        <ChartCardTitle>{live ? t("tasksByStatus") : "Chart"}</ChartCardTitle>
+        <ChartCardTitle>{live ? (half ? t("taskCompletion") : t("tasksByStatus")) : "Chart"}</ChartCardTitle>
         <ChartCardAction data-soon />
       </ChartCardHead>
       <ChartCardContent className={cn(fluid && "min-h-0 flex-1")}>
@@ -172,7 +184,13 @@ function RadialCardPreview({ kind }: { kind: "donut" | "pie" | "progress" | "pro
         )}
         {kind === "progress-half" ? (
           <ChartCardPlot className={cn("py-4", plot)}>
-            <RadialChart preset="card" kind="progress-half" text className="h-33 w-66" />
+            <RadialChart
+              preset="card"
+              kind="progress-half"
+              text
+              className="h-33 w-66"
+              {...(live ? { ratio, total: `${Math.round(ratio * 100)}%`, totalLabel: t("completed") } : {})}
+            />
           </ChartCardPlot>
         ) : kind === "progress" ? (
           <ChartCardPlot inset="none" className={cn("py-4", plot)}>

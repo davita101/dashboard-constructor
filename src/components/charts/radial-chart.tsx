@@ -102,10 +102,12 @@ type Props = VariantProps<typeof radialChartVariants> & {
   /** Donut centre label: replaces "56" / "Total". */
   total?: string | number
   totalLabel?: string
+  /** kind="progress-half": filled share 0-1 (replaces the demo arc). */
+  ratio?: number
   className?: string
 }
 
-function RadialChart({ kind = "donut", text = false, count = 7, theme = "default", preset = "default", items = defaultRings, values, progress, total, totalLabel, className }: Props) {
+function RadialChart({ kind = "donut", text = false, count = 7, theme = "default", preset = "default", items = defaultRings, values, progress, total, totalLabel, ratio, className }: Props) {
   if (kind === "rings") {
     return (
       <span
@@ -229,6 +231,7 @@ function RadialChart({ kind = "donut", text = false, count = 7, theme = "default
     )
   }
 
+  const halfRatio = ratio === undefined ? (card ? 0.97 : 0.56) : Math.min(0.9999, Math.max(0, ratio))
   const h = text ? 132 : 28
   const w = text ? 264 : 56
   const radius = card ? (text ? 124 : 24) : text ? 126 : 25
@@ -242,7 +245,9 @@ function RadialChart({ kind = "donut", text = false, count = 7, theme = "default
           </linearGradient>
         </defs>
         <path d={arc(w / 2, h, radius, -90, 90).replace(/ 0 0 1/, " 0 0 1")} fill="none" stroke="var(--blue-alpha-15)" strokeWidth={card ? (text ? 8 : 4) : 2} />
-        <path d={arc(w / 2, h, radius, -90, -90 + 180 * (card ? 0.97 : 0.56))} fill="none" stroke={`url(#half-${text})`} strokeWidth={card ? (text ? 8 : 4) : text ? 3 : 2} strokeLinecap="round" />
+        {halfRatio > 0 && (
+          <path d={arc(w / 2, h, radius, -90, -90 + 180 * halfRatio)} fill="none" stroke={`url(#half-${text})`} strokeWidth={card ? (text ? 8 : 4) : text ? 3 : 2} strokeLinecap="round" />
+        )}
       </svg>
       {text && label}
     </span>

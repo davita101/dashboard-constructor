@@ -91,7 +91,12 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
     - [x] 6b-2 Wire the widgets in `catalog.tsx` to those props (income vs cost per month, tasks by status) — built: line/area/step/gradient/column-1,2,3,6 show income vs cost (9 months); donut/pie/progress show tasks by status; bar/candle/column-5/progress-half keep demo; picker unchanged; labels only in en.json (other locales have no `widgets` keys)
 
 ## Phase 7 — Finish and harden what exists (`feat/backend-polish`, no new Figma needed)
-- [ ] Remaining demo widgets show real project data: progress-half (overall task completion %), bar + stacked bar (tasks per project, stacked by status), column-5, metric-line-2 / metric-chart (income vs cost, real totals), metric-card (wide KPI strip: projects, tasks, members, files, income). Candle and metric-map have no meaningful project data: keep demo but hide them from the picker on the live board, or keep and note why
+- [ ] Remaining demo widgets show real project data (split into 7a-7d):
+  - [ ] 7a progress-half = overall task completion %
+  - [ ] 7b bar + stacked bar = tasks per project (stacked by status), column-5
+  - [ ] 7c metric-line-2 / metric-chart / metric-card = real totals (income vs cost, KPI strip)
+  - [ ] 7d candle + metric-map: hide from live picker or note why they keep demo
+  Original scope: progress-half (overall task completion %), bar + stacked bar (tasks per project, stacked by status), column-5, metric-line-2 / metric-chart (income vs cost, real totals), metric-card (wide KPI strip: projects, tasks, members, files, income). Candle and metric-map have no meaningful project data: keep demo but hide them from the picker on the live board, or keep and note why
 - [ ] Table widget: replace the product table on the live board with the user's projects (name + logo, progress, deadline, income, cost, members) using the existing Figma table component (`src/components/table/`); picker preview may keep the Figma sample
 - [ ] Chart cards' "Download" / "View More" footers and the head "…" action on live widgets: make them do something real (View More → /dashboard/projects; Download → CSV of the plotted data) or hide them; no dead controls
 - [ ] Quick Add "Message" tile: open a dialog that sends a message to the project chat (Phase 5 actions), built from existing Modal + Input/Textarea parts like the other Quick Add dialogs; record in known-gaps that there is no chat screen to read replies yet
