@@ -87,6 +87,8 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
   - Decision: charts show the user's projects. Monthly series (last 9 months by `projects.created_at`): income and cost per month. Share charts (donut/pie/progress): tasks by status (new / in work / done / failed). Others keep demo data.
   - [x] 6a Query `queryDashboardCharts` + `getDashboardCharts` + `DashboardCharts` type — uncached SQL in `loadDashboardCharts` (generate_series 9 months, zero-filled), cached wrapper; `scripts/dashboard-charts-smoke.mts` (run with `tsx --conditions=react-server`)
   - [ ] 6b Provide it via `WidgetDataProvider`; add data props to `CartesianChart` / `RadialChart`; wire line/area/column/donut/pie/progress widgets
+    - [x] 6b-1 Provide `charts` via `WidgetDataProvider` (+ `/dashboard` page); optional data props on `CartesianChart` (line/area/column) and `RadialChart` (donut/pie/progress); defaults = current demo data, no visual change — built: `chart-data.ts` helpers (niceMax, toRows) + smoke; `points`/`seriesLabels` on CartesianChart, `values`/`progress`/`total`/`totalLabel` on RadialChart; provider carries `charts`
+    - [ ] 6b-2 Wire the widgets in `catalog.tsx` to those props (income vs cost per month, tasks by status)
 
 ## Later — unbuilt sections (need Figma pages first)
 - [ ] Notes · Mail · Calendar (events) · Knowledge Base (articles) · Clients page · Users page

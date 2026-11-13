@@ -7,3 +7,5 @@
 2026-11-13 APPROVED Realtime subscription hook (live delivery unproven)
 2026-11-13 PLAN Phase 6a dashboard chart data query (ff development to chat tip; branch feat/backend-widgets; chat parent ticked; live board blocked)
 2026-11-13 APPROVED 6a dashboard charts query
+2026-11-13 PLAN 6b-1 chart data props + provider (split 6b into 6b-1/6b-2)
+2026-11-13 APPROVED 6b-1 chart data props + provider

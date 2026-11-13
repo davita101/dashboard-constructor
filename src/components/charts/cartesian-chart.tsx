@@ -20,6 +20,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart"
+import { formatCompact, niceMax, niceTicks, pointsMax, toRows, type ChartPoint } from "./chart-data"
 
 export type CartesianKind =
   | "line"
@@ -184,21 +185,48 @@ type Props = {
   tooltip?: boolean
   theme?: "default" | "white"
   preset?: "default" | "card"
+  /** Real data, one entry per x tick (`values[k]` = series k). Used by line*, column-1..4 and column-6; the Y axis then follows the data. */
+  points?: ChartPoint[]
+  /** Series names for the tooltip when `points` is given. */
+  seriesLabels?: string[]
   className?: string
 }
 
-function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, theme = "default", preset = "default", className }: Props) {
+const columnKeys: Record<number, string[]> = {
+  1: ["b", "a", "c"],
+  2: ["v"],
+  3: ["v"],
+  4: ["p1", "p2", "p3"],
+  6: ["v2", "v3"],
+}
+
+function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, theme = "default", preset = "default", points, seriesLabels, className }: Props) {
   const barBg = theme === "white" ? "var(--white-alpha-10)" : "var(--base-100)"
   const uid = React.useId().replace(/:/g, "")
   const isHorizontal =
     kind === "bar" || kind === "bar-double" || kind === "bar-stacked" || kind === "bar-negative"
   const card = preset === "card"
-  const pal = card ? cardPalette : palette
-  const data = card ? cardLineData : lineData
+  const isLineKind = kind === "line" || kind === "line-step" || kind === "line-gradient" || kind === "line-area"
+  const colT = kind.startsWith("column-") ? Number(kind.split("-")[1]) : 0
+  const dataKeys = isLineKind
+    ? Array.from({ length: Math.min(palette.length, Math.max(0, ...(points ?? []).map((p) => p.values.length))) }, (_, k) => `s${k}`)
+    : (columnKeys[colT] ?? [])
+  const live = !!points && (isLineKind || (colT > 0 && colT !== 5))
+  const liveRows = live && points ? toRows(points, dataKeys) : null
+  const top = live && points ? niceMax(pointsMax(points, colT === 4)) : 80000
+  const yTicks = live ? niceTicks(top) : ticks
+  const yFormat = live ? formatCompact : formatK
+  const pal = live ? palette.slice(0, dataKeys.length) : card ? cardPalette : palette
+  const data = liveRows ?? (card ? cardLineData : lineData)
   const curve = card ? "linear" : "monotone"
-  const config = Object.fromEntries(
-    pal.map((color, i) => [`s${i}`, { label: card ? cardLabels[i] : "Tooltip", color }]),
-  ) satisfies ChartConfig
+  const config = {
+    ...Object.fromEntries(
+      pal.map((color, i) => [`s${i}`, { label: live ? (seriesLabels?.[i] ?? "Tooltip") : card ? cardLabels[i] : "Tooltip", color }]),
+    ),
+    ...(live && !isLineKind
+      ? Object.fromEntries(dataKeys.map((key, i) => [key, { label: seriesLabels?.[i] ?? "Tooltip" }]))
+      : {}),
+  } satisfies ChartConfig
   const isLine = card && (kind === "line" || kind === "line-step" || kind === "line-gradient" || kind === "line-area")
   const grid =
     lines === "none" ? null : (
@@ -212,7 +240,7 @@ function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, 
   const tip = tooltip ? (
     <ChartTooltip
       // Figma draws the tooltip pinned open (Jul); the card preset shows it on hover instead, following the pointer.
-      defaultIndex={card ? undefined : 5}
+      defaultIndex={card || (live && !data.length) ? undefined : Math.min(5, Math.max(0, (live ? data.length : 9) - 1))}
       cursor={card ? { stroke: "var(--base-200)", strokeDasharray: "3 3" } : false}
       isAnimationActive={false}
       content={
@@ -239,12 +267,12 @@ function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, 
   const vYAxes = (
     <>
       {(yAxis === "left" || yAxis === "both") && (
-        <YAxis yAxisId="l" orientation="left" ticks={ticks} domain={[0, 80000]} tickFormatter={formatK} width={30} tickLine={false} axisLine={false} />
+        <YAxis yAxisId="l" orientation="left" ticks={yTicks} domain={[0, top]} tickFormatter={yFormat} width={30} tickLine={false} axisLine={false} />
       )}
       {(yAxis === "right" || yAxis === "both") && (
-        <YAxis yAxisId="r" orientation="right" ticks={ticks} domain={[0, 80000]} tickFormatter={formatK} width={30} tickLine={false} axisLine={false} />
+        <YAxis yAxisId="r" orientation="right" ticks={yTicks} domain={[0, top]} tickFormatter={yFormat} width={30} tickLine={false} axisLine={false} />
       )}
-      {yAxis === "none" && <YAxis yAxisId="l" hide domain={[0, 80000]} />}
+      {yAxis === "none" && <YAxis yAxisId="l" hide domain={[0, top]} />}
     </>
   )
   const x = <XAxis dataKey="month" tickLine={false} axisLine={false} interval={0} />
@@ -413,7 +441,7 @@ function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, 
         </>
       )
     chart = (
-      <BarChart data={t === 5 ? thin : columnData} margin={margin} barGap={2} barCategoryGap={4}>
+      <BarChart data={(t === 5 ? thin : liveRows ? liveRows.map((row) => ({ ...row, bg: top })) : columnData) as Record<string, string | number>[]} margin={margin} barGap={2} barCategoryGap={4}>
         <defs>
           <Gradient id={`${uid}-c`} from={gradTop} to={gradBottom} />
         </defs>

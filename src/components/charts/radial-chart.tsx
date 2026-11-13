@@ -76,9 +76,10 @@ function arc(cx: number, cy: number, r: number, from: number, to: number) {
   return `M ${x1} ${y1} A ${r} ${r} 0 ${to - from > 180 ? 1 : 0} 1 ${x2} ${y2}`
 }
 
-function slices(count: number) {
-  const parts = shares.slice(0, count)
+function slices(count: number, values?: number[]) {
+  const parts = values ? values.map((v) => Math.max(0, v)) : shares.slice(0, count)
   const total = parts.reduce((a, b) => a + b, 0)
+  if (!total) return []
   let angle = 0
   return parts.map((p, i) => {
     const sweep = (p / total) * 360
@@ -94,10 +95,17 @@ type Props = VariantProps<typeof radialChartVariants> & {
   preset?: "default" | "card"
   /** kind="rings": concentric outline circles with a Badge label each. */
   items?: RingItem[]
+  /** kind="donut" | "pie": slice sizes (replaces the demo shares). All zero draws no slices. */
+  values?: number[]
+  /** kind="progress": one ring per entry, `value` is 0-1 (replaces the demo rings). */
+  progress?: { color: string; value: number }[]
+  /** Donut centre label: replaces "56" / "Total". */
+  total?: string | number
+  totalLabel?: string
   className?: string
 }
 
-function RadialChart({ kind = "donut", text = false, count = 7, theme = "default", preset = "default", items = defaultRings, className }: Props) {
+function RadialChart({ kind = "donut", text = false, count = 7, theme = "default", preset = "default", items = defaultRings, values, progress, total, totalLabel, className }: Props) {
   if (kind === "rings") {
     return (
       <span
@@ -133,7 +141,7 @@ function RadialChart({ kind = "donut", text = false, count = 7, theme = "default
           kind === "progress-half" ? "text-24 leading-36" : "text-18 leading-28",
         )}
       >
-        56
+        {total ?? 56}
       </span>
       <span
         className={cn(
@@ -150,13 +158,13 @@ function RadialChart({ kind = "donut", text = false, count = 7, theme = "default
           kind === "progress-half" ? "text-12 leading-20" : kind === "progress" ? "" : "text-10 leading-16",
         )}
       >
-        Total
+        {totalLabel ?? "Total"}
       </span>
     </span>
   )
 
   if (kind === "donut" || kind === "pie") {
-    const parts = slices(count)
+    const parts = slices(count, values)
     const colors = kind === "pie" ? pieColors : sliceColors
     return (
       <span className={cn(radialChartVariants({ kind, text }), className)}>
@@ -205,12 +213,13 @@ function RadialChart({ kind = "donut", text = false, count = 7, theme = "default
     return (
       <span className={cn(radialChartVariants({ kind, text }), className)}>
         <svg viewBox={`0 0 ${size} ${size}`} className="size-full" role="img" aria-label="progress chart">
-          {rings.map((r, i) => {
+          {(progress ?? rings).map((r, i) => {
+            const value = Math.min(0.9999, Math.max(0, r.value))
             const radius = base - i * step
             return (
-              <g key={r.color}>
+              <g key={`${r.color}-${i}`}>
                 <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke={`var(--${r.color}-alpha-15)`} strokeWidth={text ? 6 : 4} />
-                <path d={arc(size / 2, size / 2, radius, 0, 360 * r.value)} fill="none" stroke={`var(--${r.color}-500)`} strokeWidth={text ? 6 : 4} strokeLinecap="round" />
+                <path d={arc(size / 2, size / 2, radius, 0, 360 * value)} fill="none" stroke={`var(--${r.color}-500)`} strokeWidth={text ? 6 : 4} strokeLinecap="round" />
               </g>
             )
           })}
