@@ -80,7 +80,8 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
 - [x] Verified in browser: first visit uploads theme/locale/layout, toggle saves, wiped local storage restores dark theme + 3-widget layout from the account
 - [x] Fixed `/dashboard/projects/new` prerender error (`new Date()` → hour-cached `cachedNow()`)
 - Sidebar collapsed state stays per device (localStorage `dashboard-sidebar-collapsed`): it depends on screen size
-- [ ] Dashboard widgets data: product table (`products` + stats) and chart widgets from real aggregates
+- [x] Dashboard metric tiles show the user's project numbers: Projects, Income (30-day trend), Tasks, Tasks done (ring = done ÷ all). `/dashboard` reads totals + finance and provides them through `WidgetDataProvider`; picker previews keep the Figma placeholders. `ProjectTotals.tasksDone` added
+- [ ] Chart / large metric widgets and the product table still show Figma demo data. The app has no products and the 21 chart templates have no data source: needs a per-widget "what does it show" decision (e.g. income vs cost per month, tasks by status) and data props on `CartesianChart` / `RadialChart`
 
 ## Later — unbuilt sections (need Figma pages first)
 - [ ] Notes · Mail · Calendar (events) · Knowledge Base (articles) · Clients page · Users page

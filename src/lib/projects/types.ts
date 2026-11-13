@@ -42,6 +42,8 @@ export type ProjectEvent = {
 export type ProjectTotals = {
   projects: number
   tasks: number
+  /** Tasks with status done (dashboard "Tasks done" metric). */
+  tasksDone: number
   members: number
   files: number
 }

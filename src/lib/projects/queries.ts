@@ -120,6 +120,7 @@ export async function queryProjectTotals(userId: string): Promise<ProjectTotals>
     .select({
       projects: sql<number>`count(*)::int`,
       tasks: sql<number>`coalesce(sum(${projectStats.tasks}), 0)::int`,
+      tasksDone: sql<number>`coalesce(sum(${projectStats.tasksDone}), 0)::int`,
       files: sql<number>`coalesce(sum(${projectStats.files}), 0)::int`,
       // Distinct people across the user's projects (a member of two projects counts once).
       members: sql<number>`(select count(distinct ${projectMembers.userId}) from ${projectMembers} where ${inArray(projectMembers.projectId, mine)})::int`,

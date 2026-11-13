@@ -5,7 +5,7 @@ import { Card, CardStatLabel, CardStatValue } from "@/components/ui/card"
 import type { ProjectTotals } from "@/lib/projects/types"
 
 // Figma Grid 14061:68492: four stat pills.
-const items: { key: keyof ProjectTotals; color: BadgeColor; icon: string }[] = [
+const items: { key: Exclude<keyof ProjectTotals, "tasksDone">; color: BadgeColor; icon: string }[] = [
   { key: "projects", color: "blue", icon: "/icons/material/material-assignment.svg" },
   { key: "tasks", color: "green", icon: "/icons/material/material-restore-page.svg" },
   { key: "members", color: "purple", icon: "/icons/material-account-circle.svg" },
