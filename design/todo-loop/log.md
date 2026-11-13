@@ -58,3 +58,4 @@
 2026-11-13 PLAN ticked 9d; split 9e into 9e-1..3; planned 9e-1 verify dead controls + stale gaps
 2026-11-13 APPROVED 9e-1 verify
 2026-11-13 PLAN ticked 9e-2 (already built); split 9e-3 into a/b; planned 9e-3a logo remove flags
+2026-11-13 APPROVED 9e-3a logo remove flags 9c05284
