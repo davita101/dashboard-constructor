@@ -39,3 +39,4 @@
 2026-11-13 APPROVED 8a chart footers View More + Download CSV
 2026-11-13 PLAN 8b hide head more action on live widgets
 2026-11-13 APPROVED 8b hide head more action
+2026-11-13 PLAN 8c metric-line-2 fluid plot

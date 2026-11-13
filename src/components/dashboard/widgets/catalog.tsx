@@ -361,13 +361,15 @@ const metricTile = (chart: "line" | "area" | "column" | "progress") => ({
 
 /** Metric-Line-2-Chart-Card: amount, two lines with a tooltip, actions. */
 function MetricLine2Preview() {
+  const fluid = useWidgetFluid()
   const t = useTranslations("widgets.data")
   const data = useWidgetData()
   const trend = data?.finance.incomeTrend ?? 0
   const months = data?.charts.months.slice(-9)
+  const stretch = fluid && !!months
   return (
-    <ChartMetricCard size="lg">
-      <div className="flex flex-col gap-4 p-5">
+    <ChartMetricCard size={stretch ? "fluid" : "lg"} className={cn(stretch && "h-full")}>
+      <div className={cn("flex flex-col gap-4 p-5", stretch && "min-h-0 flex-1")}>
         {data ? (
           <ChartMetricAmount
             tone="purple"
@@ -380,7 +382,7 @@ function MetricLine2Preview() {
         ) : (
           <ChartMetricAmount />
         )}
-        <ChartMetricPlot>
+        <ChartMetricPlot className={cn(stretch && "h-auto min-h-24 w-full flex-1")}>
           {months ? (
             <CartesianChart
               preset="card"
@@ -389,7 +391,7 @@ function MetricLine2Preview() {
               lines="none"
               points={months.map((m) => ({ label: m.label, values: [m.income, m.cost] }))}
               seriesLabels={[t("income"), t("cost")]}
-              className="h-24 w-70"
+              className={stretch ? "h-full w-full" : "h-24 w-70"}
             />
           ) : (
             <>

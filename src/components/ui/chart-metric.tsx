@@ -23,6 +23,8 @@ const chartMetricCardVariants = cva("group/metric relative flex flex-col overflo
       sm: "w-57.5 rounded-r20",
       md: "w-60 rounded-r20",
       lg: "w-80 rounded-r20",
+      // Dashboard board slot: takes the cell width, the caller sets the height.
+      fluid: "w-full min-w-0 rounded-r20",
       // Sign-In "New Features" tiles: 250x164, footer clipped by the fixed height.
       tile: "h-41 w-full min-w-0 rounded-r20 lg:max-w-62.5",
       wide: "w-196.25 rounded-r16 data-[appearance=image]:outline-white-alpha-20",
