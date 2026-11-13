@@ -23,3 +23,11 @@ Transcript started, output file is design/todo-loop/console.log
 [13:26] build1-1 (todo-builder) -> design/agent-logs/20261113-132633-todo-build1-1.log
   BUILT
 [13:32] review1-1 (todo-director) -> design/agent-logs/20261113-133253-todo-review1-1.log
+  APPROVED
+  APPROVED
+=== Item 2 ===
+[13:34] plan2 (todo-director) -> design/agent-logs/20261113-133436-todo-plan2.log
+  TASK READY
+[13:36] build2-1 (todo-builder) -> design/agent-logs/20261113-133613-todo-build2-1.log
+  BUILT
+[13:40] review2-1 (todo-director) -> design/agent-logs/20261113-134021-todo-review2-1.log

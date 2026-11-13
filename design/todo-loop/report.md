@@ -1,27 +1,27 @@
-# Report: 5a chat schema
+# Report: 5b chat queries, schemas, mutations, actions
 
-## Changed
-- new `src/db/schema/chat.ts`: enum `conversation_kind`, tables `conversations`, `conversation_members`, `messages` (checks, partial unique index, composite PK, indexes, SELECT policies, RLS on).
-- `src/db/schema/rls.ts`: `isConversationViewer()` helper (calls `public.viewer_conversation_ids()`).
-- `src/db/schema/index.ts` export chat; `relations.ts` relations for the 3 tables.
-- new `src/db/migrations/0003_chat.sql` (+ `meta/0003_snapshot.json`, `_journal.json`): drizzle output + hand-added SECURITY DEFINER `viewer_conversation_ids()` (before policies, revoke from public, grant to authenticated) + guarded `alter publication supabase_realtime add table public.messages`.
-- new `scripts/chat-schema-smoke.mjs`.
-- `design/backend/TODO.md` shows modified in git; not by me (untouched).
+## Files (all new, no UI/schema/migration changes)
+- `src/lib/chat/schemas.ts` – startDirectInput, sendMessageInput (trim 1..4000), markReadInput, ensureProjectConversationInput
+- `src/lib/chat/tags.ts` – userChatTag, conversationTag
+- `src/lib/chat/types.ts` – ConversationSummary, ChatMessage, WriteResult
+- `src/lib/chat/queries.ts` – canAccess (access check), getConversations (uncached), getMessages
+- `src/lib/chat/mutations.ts` – ChatError, startDirect, ensureProjectConversation, sendMessage, markRead
+- `src/lib/chat/actions.ts` – startDirectAction, ensureProjectConversationAction, sendMessageAction, markReadAction
+- `scripts/chat-actions-smoke.mts`
 
 ## Decisions
-- Messages index given explicit name `messages_conversation_id_created_at_idx` (drizzle needs a name for desc expressions).
-- Extra check: direct kind rejects project_id (follows from the kind/project_id CHECK).
-- Smoke script uses plain `postgres` + `process.loadEnvFile` (no tsx/@next/env).
+- Project chat creation is exposed as `ensureProjectConversation` + action (sendMessage needs a conversationId); task allowed that.
+- Action result extends `ActionState` with `conversationId` and `sent` (the message; `message` is already the error text field).
+- `startDirect` takes a per-pair advisory xact lock so concurrent calls don't create duplicates.
+- `markRead` on project chats inserts the viewer's members row; sendMessage updates sender's lastReadAt only if a row exists.
+- Nothing cached, so the tags are only expired by actions for later use.
+- Smoke runs with `--conditions=react-server` so `server-only` loads outside Next. Cleanup deletes the smoke project and smoke-created direct conversations (by created_by) before users.
 
 ## Commands
-- `pnpm exec drizzle-kit generate --name chat`: PASS (0003_chat.sql)
-- `pnpm db:migrate`: PASS applied
-- `node scripts/chat-schema-smoke.mjs`: PASS x10 lines, exit 0; rerun PASS, 0 leftover `smoke_%` users
-- pg_tables.rowsecurity true for all 3; messages in `supabase_realtime`: PASS
-- `pnpm db:generate`: "No schema changes": PASS
-- `pnpm exec tsc --noEmit`: PASS
-- `pnpm lint`: PASS (0 errors, 1 pre-existing warning in command.tsx)
-- `pnpm build`: PASS
+- `pnpm exec tsc --noEmit` PASS (no errors)
+- `pnpm lint` PASS (0 errors, 1 existing warning in ui/command.tsx)
+- `pnpm build` PASS
+- `pnpm exec tsx --conditions=react-server scripts/chat-actions-smoke.mts` PASS, all lines (direct start/idempotent, self/unknown refused, member send, non-member refused, project chat lazy + non-member refused, unread 1→0, pagination, body 0/4001 rejected, cleanup; no `smoke_` rows left)
 
 ## Undone
-Nothing.
+Nothing. TODO.md untouched.

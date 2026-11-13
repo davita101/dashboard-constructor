@@ -1,44 +1,43 @@
 # Task
-Phase 5a: chat schema (conversations, conversation_members, messages) with RLS select policies and migration 0003 applied to Supabase.
+Phase 5b: chat queries, Zod schemas, mutations and Server Actions (no UI: no chat Figma frame).
 
 ## TODO item
-- [ ] 5a Schema: tables + RLS select policies + migration `0003_chat.sql` applied + smoke test
+  - [ ] 5b Queries (`src/lib/chat/queries.ts`) + Zod schemas + Server Actions (start direct conversation, send message, mark read)
 
 ## Goal
-Backend tables for project chat and direct Messenger. No UI, no queries/actions (that is 5b). Writes go through the server later; RLS is SELECT-only so Supabase Realtime (browser, Clerk token) can deliver new messages only to participants.
+Server-side chat API on top of migration 0003 tables (`conversations`, `conversation_members`, `messages`), scoped to the Clerk viewer. Drizzle bypasses RLS, so code must do the access check.
 
 ## Files
-- read: `src/db/schema/files.ts`, `events.ts`, `settings.ts`, `rls.ts`, `relations.ts`, `index.ts`, `src/db/migrations/0000_core_schema.sql`, `0002_user_settings.sql`, `drizzle.config.ts`, `src/db/index.ts`
-- new: `src/db/schema/chat.ts`, `src/db/migrations/0003_chat.sql` (+ drizzle `meta/` snapshot/journal via `pnpm db:generate`), `scripts/chat-schema-smoke.mjs` (or `.ts` run with `tsx`)
-- change: `src/db/schema/index.ts`, `src/db/schema/relations.ts`, `src/db/schema/rls.ts` (helper), `design/backend/TODO.md` is NOT yours to edit
+Read: `src/db/schema/chat.ts`, `src/db/schema/relations.ts`, `src/lib/projects/actions.ts`, `mutations.ts`, `queries.ts`, `schemas.ts`, `src/lib/auth/viewer.ts`, `scripts/chat-schema-smoke.mjs`.
+Create: `src/lib/chat/{schemas,queries,mutations,actions,types,tags}.ts`, `scripts/chat-actions-smoke.mts` (or .mjs via tsx).
 
 ## Steps
-1. `conversation_kind` enum: `project`, `direct`.
-2. `conversations`: id uuid pk, kind, project_id (uuid, nullable, FK projects cascade; set only for kind=project; unique partial: one project conversation per project), created_by (text → users set null), created_at, `last_message_at` (timestamptz nullable, for sorting; updated by the server on send). CHECK: `(kind='project') = (project_id is not null)`.
-3. `conversation_members`: conversation_id (FK cascade), user_id (FK users cascade), joined_at, `last_read_at` (timestamptz nullable, for unread counts). Composite PK (conversation_id, user_id); index on user_id. For kind=project conversations rows are optional (access = project membership); for direct they are the participants.
-4. `messages`: id uuid pk, conversation_id (FK cascade), author_id (text → users set null), body text not null (CHECK length 1..4000), created_at, edited_at nullable. Index (conversation_id, created_at desc).
-5. RLS (enableRLS + SELECT policies to `authenticated`, no write policies). Use a SECURITY DEFINER helper `viewer_conversation_ids()` (stable, `set search_path = ''`, returns uuid set: direct conversations the viewer is a member of + project conversations whose project the viewer is a member of), modelled on existing `viewer_project_ids()` in `0001_storage_buckets.sql` — avoids recursive RLS on conversation_members. Policies: conversations `id in (select viewer_conversation_ids())`; messages `conversation_id in (…)`; conversation_members `conversation_id in (…)`. Grant execute to `authenticated`.
-6. Add Drizzle relations in `relations.ts`; export from `schema/index.ts`.
-7. `pnpm db:generate` (name `chat`), rename/check output is `0003_chat.sql`; hand-append the helper function (custom SQL, like 0001) ahead of the policies if drizzle does not emit it; keep Drizzle's policy defs in `chat.ts` so snapshot stays consistent. Apply with `pnpm db:migrate`.
-8. Realtime: `ALTER PUBLICATION supabase_realtime ADD TABLE public.messages;` in the migration (guard with DO block if publication missing/already contains it).
-9. Smoke script (loads `.env.local` via `@next/env`, uses Drizzle/postgres): insert a temp user pair, a direct conversation + 2 messages, a project conversation for a temp project, assert: CHECK constraints reject bad rows (project kind without project_id; empty body), unique project conversation, cascade delete from conversation removes messages; then clean up ONLY the rows it created. Optionally assert `viewer_conversation_ids()` with `set local request.jwt.claims` for a member vs non-member inside a rolled-back tx. Print `PASS <name>` lines.
+1. `schemas.ts` (Zod): `startDirectInput {userId}`, `sendMessageInput {conversationId uuid, body trimmed 1..4000}`, `markReadInput {conversationId}`.
+2. `tags.ts`: `userChatTag(userId)`, `conversationTag(id)`. Do NOT cache messages with "use cache" (realtime will read them live); cache only the conversation list per user if simple, otherwise skip caching and read uncached.
+3. `queries.ts` (server-only, take viewer id as arg):
+   - `getConversations(userId)`: visible conversations (direct where member; project where project member) with title (project name, or other participant's name/avatar for direct), last message preview, `lastMessageAt`, unread count (messages by others after `lastReadAt`; null lastReadAt = all by others). Sorted by lastMessageAt desc nulls last.
+   - `getMessages(userId, conversationId, {before?, limit=50})`: access check, newest-first page returned oldest-first, with author name/avatar; empty/NotFound if no access.
+   - `getProjectConversationId`-style helper not needed; project chat is created lazily in `sendMessage`/`ensureProjectConversation(userId, projectId)` (membership check, insert on conflict do nothing on unique project_id).
+4. `mutations.ts` (transactions, `ChatError` like `MutationError`):
+   - `startDirect(userId, otherId)`: other must exist in `users`, not self; reuse existing 2-member direct conversation if present, else create conversation + 2 members. Returns id.
+   - `sendMessage(userId, {conversationId, body})`: access check (direct: member; project: project member, ensure conversation_members row not required), insert message, set `conversations.lastMessageAt`, set sender's `lastReadAt` for direct members row if exists. Returns message.
+   - `markRead(userId, conversationId)`: access check; upsert `conversation_members` row (project chats: insert row for viewer if missing) with `lastReadAt = now()`.
+5. `actions.ts` ("use server"): `startDirectAction`, `sendMessageAction`, `markReadAction` — `getViewerId()` → parse → mutation → `updateTag` for affected users' chat tags; return plain result objects (`{status:"ok", ...}` / error state, reuse `ActionState` from projects).
+6. Smoke test script against Supabase (temp rows with `smoke_<tag>` prefix, remove only those at end), PASS lines for: direct start creates + is idempotent, self/unknown user refused, send by member ok, send by non-member refused, project chat lazily created & non-member refused, unread count 1 for recipient then 0 after markRead, pagination order, body length 0 / 4001 rejected.
+7. Tick 5b in TODO.md is reviewer's job; do not edit TODO.md.
 
 ## Acceptance
-- `pnpm exec tsc --noEmit` clean; `pnpm lint` 0 errors; `pnpm build` passes.
-- `pnpm db:generate` afterwards reports "No schema changes".
-- `node`/`pnpm exec tsx scripts/chat-schema-smoke.*` prints all PASS lines and exits 0; rerun leaves no rows behind.
-- Supabase has `conversations`, `conversation_members`, `messages` with RLS enabled (check `pg_tables.rowsecurity`) and `messages` in publication `supabase_realtime` (check `pg_publication_tables`).
-- Existing tables untouched (migration purely additive).
-- Grep new files: no hex colors, `space-[xy]-`, `dark:` (none expected).
+- `pnpm exec tsc --noEmit` clean; `pnpm lint` 0 errors; `pnpm build` ok.
+- Smoke script (`pnpm exec tsx scripts/chat-actions-smoke.mts` or node) prints all PASS lines above and exits 0; leaves no `smoke_` rows.
+- No UI files changed.
 
 ## Decisions
-- One shared `conversations` table with `kind` (project chat + direct) rather than two table sets: Messenger and project chat share message shape and Realtime channel logic.
-- Project conversation access derives from project membership (no member rows needed), so adding/removing project members needs no chat sync.
-- No read receipts per message; `last_read_at` per member gives unread counts cheaply.
-- No attachments/reactions/threads: no Figma frame defines them.
-- Message edit/delete not exposed yet (`edited_at` column only).
+- One shared conversations table already; project chat lazily created on first send/read (no backfill migration, no new migration).
+- Messages not cached (realtime later); conversation list read uncached to avoid stale unread counts.
+- Unread = messages by others after `lastReadAt`.
+- Any project member may post in project chat (same permission model as the rest).
+- Writes only through the server (no RLS write policies).
 
 ## Don't
-- No UI, no queries/actions/Zod (5b), no Realtime client hook yet.
-- Never drop/alter existing tables or touch non-seed data. Don't edit `.env.local`.
-- Don't edit TODO.md (reviewer ticks it).
+- No schema/migration changes, no UI, no Realtime subscription (next TODO item), no deleting non-smoke rows.
+- Don't edit `.env.local`.
