@@ -41,7 +41,7 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
 - [x] Removed unused `getProject`; `generateStaticParams` uses unscoped `getProjectSlugs()` (route shells only)
 - [x] Seed adds every Clerk user (CLERK_SECRET_KEY) as member of the seed projects
 - [x] Verified in browser (projects list, KPIs, events, project dashboard, 404) + `pnpm build`
-- [ ] Finance trends (incomeTrend/profitTrend) are 0: need history (ledger/snapshots)
+- [x] Finance trends: income/profit of projects started in the last 30 days vs the 30 before (proper history would need a ledger/snapshots)
 - [x] Note: re-seeding changes project ids; cached reads stay stale until `cacheLife` expires (dev: hard reload). Phase 3 writes `updateTag(userProjectsTag(...))` for every affected member
 
 ## Phase 3 — Mutations (`feat/backend-projects-write`)
@@ -54,8 +54,9 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
 - [x] UI: Quick Add Stages/Task/Member dialogs (project picker), Save Project = create/edit/delete form, Stages card menu "Add stage" + click a stage to edit/move/delete, Members card menu "Manage members"
 - [x] Permissions: every member may edit everything (no permission model in schema). Decide owner/admin rules before inviting real teams
 - [x] Verified: mutation smoke test against Supabase (auth, slugs, reorder, move, events, cleanup) + browser (task create, project edit/create/delete, stage reorder, member errors)
-- [ ] Seed timestamps are in 2078, so new events/updates sort below seed rows in "Latest events" / "Last Projects" until re-seeded with past dates
-- [ ] Wire the remaining stubs: ProjectSummaryCard "+" (add member to that project), task board actions once the Tasks tab is designed
+- [x] Seed shifts the Figma 2078 dates so the newest mock event is one day ago (deadlines/stages keep their spacing); re-seeded
+- [x] ProjectSummaryCard "+" opens Add Member for that project (no project picker)
+- [ ] Task board actions once the Tasks tab is designed
 
 ## Phase 4 — Files (`feat/backend-files`)
 - [ ] Supabase Storage bucket `project-files` + policies

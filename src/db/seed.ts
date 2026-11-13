@@ -26,6 +26,13 @@ const db = drizzle(client, { schema, casing: "snake_case" })
 const { users, clients, projects, projectMembers, projectStages, tasks, taskAssignees, labels, taskLabels, projectEvents, files } =
   schema
 
+// Mock dates are Figma's (2078). Shift them so the newest mock event lands one day ago: seed rows then sort
+// below anything created through the app, and deadlines/stages keep their spacing relative to it.
+const MOCK_NOW = Math.max(...mockEvents.map((e) => Date.parse(e.at)), ...mockProjects.map((p) => Date.parse(p.updatedAt)))
+const SHIFT = Date.now() - 86_400_000 - MOCK_NOW
+const shift = (iso: string) => new Date(Date.parse(iso) + SHIFT)
+const shiftDay = (day: string) => shift(`${day}T12:00:00Z`).toISOString().slice(0, 10)
+
 const SEED_CLIENT = "Facebook Company ltd"
 const seedUserId = (name: string) => `seed_${name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`
 
@@ -145,11 +152,11 @@ async function main() {
           ownerId,
           income: mp.income,
           cost: mp.cost,
-          deadline: mp.deadline,
+          deadline: shiftDay(mp.deadline),
           // Spread over the last ~2 months, oldest first: ordering by created_at keeps the Figma sidebar order,
           // and the finance trend (last 30 days vs the 30 before) has data on both sides.
           createdAt: new Date(Date.now() - (mockProjects.length - index) * 4 * 86_400_000),
-          updatedAt: new Date(mp.updatedAt),
+          updatedAt: shift(mp.updatedAt),
         })
         .returning({ id: projects.id })
       projectIdByMock.set(mp.id, row.id)
@@ -161,12 +168,12 @@ async function main() {
           projectId: row.id,
           userId: seedUserId(p.name),
           role: p.role,
-          joinedAt: new Date(Date.UTC(2078, 7, 1, 12, 0, i)),
+          joinedAt: new Date(MOCK_NOW + SHIFT - 60 * 86_400_000 + i * 1000),
         })),
       )
       if (clerkUsers.length)
         await tx.insert(projectMembers).values(
-          clerkUsers.map((u) => ({ projectId: row.id, userId: u.id, role: "Project Manager", joinedAt: new Date(Date.UTC(2078, 7, 1, 13)) })),
+          clerkUsers.map((u) => ({ projectId: row.id, userId: u.id, role: "Project Manager", joinedAt: new Date(MOCK_NOW + SHIFT - 59 * 86_400_000) })),
         )
 
       const stageRows = await tx
@@ -176,8 +183,8 @@ async function main() {
             projectId: row.id,
             position: s.index,
             name: s.name,
-            startDate: s.start,
-            endDate: s.end,
+            startDate: shiftDay(s.start),
+            endDate: shiftDay(s.end),
           })),
         )
         .returning({ id: projectStages.id, position: projectStages.position, startDate: projectStages.startDate, endDate: projectStages.endDate })
@@ -251,7 +258,7 @@ async function main() {
         actorId: e.kind === "member" && people.has(e.title) ? seedUserId(e.title) : ownerId,
         kind: e.kind,
         title: e.title,
-        at: new Date(e.at),
+        at: shift(e.at),
       })),
     )
   })

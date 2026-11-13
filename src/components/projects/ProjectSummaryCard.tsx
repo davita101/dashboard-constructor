@@ -1,6 +1,7 @@
 import { useFormatter, useTranslations } from "next-intl"
 import Link from "next/link"
 
+import { AddMemberDialog } from "@/components/projects/AddMemberDialog"
 import { Avatar, AvatarFallback, AvatarGroup, AvatarImage } from "@/components/ui/avatar"
 import { Button, ButtonIcon } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -59,9 +60,14 @@ function ProjectSummaryCard({ project }: { project: Project }) {
               </Avatar>
             ))}
           </AvatarGroup>
-          <Button variant="outline" size="icon-24" shape="rounded" data-soon className="relative z-10" aria-label={t("addMember", { name: project.name })}>
-            <ButtonIcon src="/icons/material-add.svg" />
-          </Button>
+          <AddMemberDialog
+            projects={[{ id: project.id, name: project.name }]}
+            trigger={
+              <Button variant="outline" size="icon-24" shape="rounded" className="relative z-10" aria-label={t("addMember", { name: project.name })}>
+                <ButtonIcon src="/icons/material-add.svg" />
+              </Button>
+            }
+          />
         </TableCell>
       </div>
       <TableCell size="32" className="w-full">
