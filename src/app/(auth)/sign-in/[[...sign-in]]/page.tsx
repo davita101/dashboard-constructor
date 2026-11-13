@@ -5,7 +5,7 @@ export default function SignInPage() {
   return (
     <>
       <RedirectIfSignedIn />
-      <SignInForm />
+      <SignInForm demo={Boolean(process.env.DEMO_EMAIL && process.env.DEMO_PASSWORD)} />
     </>
   )
 }

@@ -9,7 +9,7 @@
 
 Live: https://dashboard-constructor.vercel.app
 
-Try it: sign in with Google, or use the demo account `DEMO_EMAIL` / `DEMO_PASSWORD`.
+Try it: sign in with Google, or click **Try the demo account** on the sign-in page (no sign-up needed).
 
 ## Screenshots
 
