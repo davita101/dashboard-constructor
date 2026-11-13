@@ -207,7 +207,7 @@ export async function loadDashboardCharts(userId: string): Promise<DashboardChar
   ])
   return {
     tasksByProject: byProject,
-    months: Array.from(monthRows).map((r) => ({
+    months: monthRows.rows.map((r) => ({
       month: r.month,
       label: MONTH_LABELS[Number(r.month.slice(5, 7)) - 1],
       income: Number(r.income),
