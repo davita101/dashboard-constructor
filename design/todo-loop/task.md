@@ -1,34 +1,36 @@
 # Task
-9d-3: small code-only fixes — UploadFilesDialog uses `Link`, project dates locale-formatted, Sidebar `shadow-lg` → shadow token.
+Verify "dead control" gaps are already fixed in code, remove stale lines from known-gaps.md, fix any still dead.
 
 ## TODO item
-  - [ ] 9d-3 blur/shadow constants, date formatting (ProjectPage), UploadFilesDialog link, Dialog Black Cancel, Sidebar shadows
+    - [ ] 9e-1 Verify Night Mode switch, footer back-to-top, QuickAddCard tiles, forgot-password/verify routes are already wired in code; drop stale lines from known-gaps.md; fix whatever is still dead
 
 ## Goal
-Three tiny gap fixes from `design/known-gaps-triage.md` batch B3 (rows L52/L74/L95/L105). Blur/shadow literals (L13, Figma values unverified) and Dialog Black Cancel (no Figma-verified variant to pick) are skipped.
+Planner's read: Night Mode (`src/components/dashboard/theme.ts`, sidebar row), back-to-top (`dashboard-footer.tsx` onClick), QuickAddCard (all 5 tiles open dialogs), `/forgot-password` + `/check-email` pages exist. known-gaps.md still lists them as gaps (L84, L89, L97 area, L81-83). Confirm each by reading code, then correct known-gaps.md. Fix real remaining dead ends only if small (≤ 3 files).
 
 ## Files
-- `src/components/projects/UploadFilesDialog.tsx` (line ~169 `<a href="/api/files/..." className="hover:underline">`)
-- `src/components/ui/link.tsx` (existing `Link`, variants/size)
-- `src/components/projects/ProjectStagesCard.tsx` (line ~15 `ISO date -> dd.MM` helper) and any other dd.MM(.yyyy) formatter (grep `getDate`, `padStart`, `split("-")` in `src/components/projects`, `src/lib/projects`)
-- Sidebar component using `shadow-lg` (grep `shadow-lg` in `src`), `src/styles/color-mode.css` (`--shadow-base`), `src/styles/tailwind-theme.css`
-- `design/known-gaps.md`, `design/known-gaps-triage.md` (drop fixed lines)
+- design/known-gaps.md (lines mentioning Night Mode, back-to-top, QuickAddCard "no click handlers", Forgot password link, /verify)
+- src/components/dashboard/{theme.ts,dashboard-sidebar.tsx,dashboard-footer.tsx}
+- src/components/projects/QuickAddCard.tsx
+- src/app/(auth)/* (forgot-password, check-email, password-reset, set-new-password, sign-up)
+- design/known-gaps-triage.md (mark B4 rows done/stale)
 
 ## Steps
-1. Upload link: replace the plain `<a>` with `Link` (`render`-less is fine, `href` to `/api/files/<id>`, keep `download`/target attrs if present). Pick variant `900`, size `14`.
-2. Dates: replace hand-built dd.MM / dd.MM.yyyy strings with `Intl.DateTimeFormat` using the active locale (client: `useLocale()` from next-intl if already used in the repo; server: `getLocale()`); fall back `en`. Use `{day:"2-digit",month:"2-digit"}` / plus `year:"numeric"`. Keep output identical for `en` as far as reasonable (en gives MM/dd — if that changes the Figma look, use `en-GB` for `en`). Use a UTC timezone so ISO dates don't shift a day.
-3. Sidebar: change `shadow-lg` to the token shadow (`shadow-base` utility if defined in tailwind-theme.css; if not, add `--shadow-base` mapping to `@theme inline` in `tailwind-theme.css`'s generator `scripts/build-tokens.mjs` is NOT to be edited — use `shadow-[0_8px_16px_var(--shadow-base)]`-style arbitrary value only if no utility exists).
-4. Remove/adjust the matching lines in known-gaps.md; mark the three rows done in the triage doc.
+1. Read each file; confirm Night Mode switch toggles `.dark`, back-to-top scrolls, tiles open dialogs, forgot-password link target exists.
+2. Check `/verify` : does sign-up email-code step redirect to an existing route? Check what route it uses; if it points at a missing page, note it (do not build auth pages here; queue #5 owns that).
+3. Edit known-gaps.md: remove or rewrite only lines now false. Keep true remainders (chat screen, DM picker, 2FA if truly unwired, /verify if truly missing).
+4. Report what stayed dead.
 
 ## Acceptance
-- `pnpm exec tsc --noEmit` clean; `pnpm lint` 0 errors; `pnpm build` passes.
-- `grep -n "<a " src/components/projects/UploadFilesDialog.tsx` shows no plain file link.
-- `grep -rn "shadow-lg" src/components` has no sidebar hit.
-- No hex colors, `space-[xy]-`, `dark:` in changed lines.
+- `pnpm exec tsc --noEmit` passes; `pnpm lint` 0 errors; `pnpm build` passes.
+- `grep -n "Night Mode switch in Sidebar-01 is not wired" design/known-gaps.md` → no match.
+- `grep -n "back-to-top button still has no action" design/known-gaps.md` → no match.
+- `grep -n "no click handlers except Project" design/known-gaps.md` → no match.
+- Any remaining "page not built" claim in known-gaps matches reality (route absent in src/app).
 
 ## Decisions
-- Skipped blur/shadow constants (Figma values unverified, risk of visual drift) and Dialog Black Cancel (needs a Figma-verified variant): stays in gaps.
-- Tooltip/Counter/Double Input/CheckboxCard don't exist in code, BreadcrumbLink keeps its own Figma colors (9d-2 closed as moot).
+Pure verification/doc task: the code was fixed in earlier phases, only docs lag. Auth flow pages are out of scope.
 
 ## Don't
-- No new UI, no visual redesign, no edits to generated `src/styles/*`, no new deps.
+- No new UI, no new SVGs, no Figma invention.
+- Don't touch DB or migrations.
+- Don't rewrite known-gaps lines about unrelated components.

@@ -200,20 +200,20 @@ Source: `design/known-gaps.md` (L = line number there). Classes: **code** = code
 | Code Snippet (L82) | Hidden counter/icon in copy button | none | - | |
 | Mockups (L83) | Bezel art bitmap not exportable; checkerboard screen not reproduced | asset | - | |
 | Sign In (L84) | Slides 2–6 generated crops of hero.jpg | asset | - | |
-| Sign In (L84) | Forgot password link to `/forgot-password` (page not built) | code | B4 | |
+| Sign In (L84) | Forgot password link to `/forgot-password` (page not built) | code | B4 done (stale, verified wired) | |
 | Sign In (L84) | 2FA/verification steps not wired | code | B4 | Clerk flow; overlaps queue #5 |
 | Sign In (L84) | Apple/Facebook/Google need enabling in Clerk Dashboard | none | - | user dashboard action |
-| Sign Up (L85) | `/verify` page missing (queue #5) | code | B4 | belongs to queue #5; keep out of 9x if already planned |
-| Check Your Email (L86) | Reset code cannot be entered (/verify not built) | code | B4 | same as above |
+| Sign Up (L85) | `/verify` page missing (queue #5) | code | B4 done (stale, verified wired) | belongs to queue #5; keep out of 9x if already planned |
+| Check Your Email (L86) | Reset code cannot be entered (/verify not built) | code | B4 done (stale, verified wired) | same as above |
 | Check Your Email (L86) | Shared split layout instead of Figma header/footer | none | - | user choice |
-| Dashboard (L87) | Night Mode switch not wired to theme | code | B4 | `next-themes` or `.dark` toggle |
+| Dashboard (L87) | Night Mode switch not wired to theme | code | B4 done (stale, verified wired) | `next-themes` or `.dark` toggle |
 | Table (L88) | Product photos not in public/images (banner placeholder) | asset | - | |
 | Table (L88) | Header sort built beyond Figma | none | - | |
 | WidgetBoard (L89) | 5-tile rows not reproduced; odd chart leaves gap; chart 540 vs 528; 768 rail narrows board; mobile gap 12 vs 24 | code | B5 | `WidgetBoard` layout |
 | ProjectStats (L90) | No design-system preview page; `stat` variant not previewed | code | B6 | add `/design-system/project-stats` |
 | ProjectStats (L90) | KPI 2 columns below xl | none | - | decision |
 | ProjectEventsCard (L91) | Task kind color (purple assumed) not read | figma | - | |
-| QuickAddCard (L92) | No click handlers except Project | code | B4 | dead controls |
+| QuickAddCard (L92) | No click handlers except Project | code | B4 done (stale, verified wired) | dead controls |
 | FinanceMetricCard (L92) | Amounts rounded, locale currency vs Figma grouping | none | - | decision |
 | ProjectSummaryCard (L93) | none open | none | - | |
 | ProjectMembersCard (L94) | Row gap 6px not measured; avatar overlays omitted | figma | - | |
@@ -227,7 +227,7 @@ Source: `design/known-gaps.md` (L = line number there). Classes: **code** = code
 | ProjectPage (L97) | Logos not uploadable (Phase 4) | none | - | backend phase |
 | Projects page (L99) | Column layout between lg and xl, 36px sides | none | - | decision |
 | ScrollArea (L100) | Thumb fixed 4x96; Base UI limits | none | - | |
-| ScrollArea (L100) | Footer back-to-top button has no action | code | B4 | scroll to top of ScrollArea viewport |
+| ScrollArea (L100) | Footer back-to-top button has no action | code | B4 done (stale, verified wired) | scroll to top of ScrollArea viewport |
 | ComingSoon (L101) | Toast motion/position unspecified in Figma | none | - | decision |
 | ProjectForms (L102) | No Figma frames; stage reorder up/down, no second overlay on nested confirm | none | - | decision |
 | NativeSelect/Textarea (L103) | No Figma select component read | figma | - | |

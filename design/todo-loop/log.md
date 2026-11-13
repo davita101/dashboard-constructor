@@ -55,3 +55,5 @@
 2026-11-13 APPROVED 9d-1 values
 2026-11-13 PLAN 9d-2 closed as moot; planned 9d-3 (upload link, date format, sidebar shadow)
 2026-11-13 APPROVED 9d-3 dates/link
+2026-11-13 PLAN ticked 9d; split 9e into 9e-1..3; planned 9e-1 verify dead controls + stale gaps
+2026-11-13 APPROVED 9e-1 verify
