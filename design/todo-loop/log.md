@@ -59,3 +59,5 @@
 2026-11-13 APPROVED 9e-1 verify
 2026-11-13 PLAN ticked 9e-2 (already built); split 9e-3 into a/b; planned 9e-3a logo remove flags
 2026-11-13 APPROVED 9e-3a logo remove flags 9c05284
+2026-11-13 PLAN 9e-3b logo field compact + preview + remove
+2026-11-13 APPROVED 9e-3b logo field compact

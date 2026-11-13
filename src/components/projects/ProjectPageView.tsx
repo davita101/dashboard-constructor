@@ -4,7 +4,7 @@ import { DashboardPage } from "@/components/dashboard/dashboard-page"
 import { ProjectDashboardCard } from "@/components/projects/ProjectDashboardCard"
 import { ProjectPageHead } from "@/components/projects/ProjectPageHead"
 import { isProjectTab } from "@/lib/projects/tabs"
-import type { Project, ProjectDetail, ProjectEvent } from "@/lib/projects/types"
+import { DEFAULT_LOGO, type Project, ProjectDetail, ProjectEvent } from "@/lib/projects/types"
 
 // Figma "Projects (1600)" 14061:76419: per-project dashboard, also the "Add New Project" editor.
 // Below lg everything stacks in one column (no 360 frame yet).
@@ -34,6 +34,8 @@ async function ProjectPageView({
           deadline: project.deadline.slice(0, 10),
           income: project.income,
           cost: project.cost,
+          logo: project.logo === DEFAULT_LOGO ? "" : project.logo,
+          clientLogo: company.logo === DEFAULT_LOGO ? "" : company.logo,
         }
 
   return (

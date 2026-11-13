@@ -63,6 +63,9 @@ export type ProjectStage = {
   end: string
 }
 
+/** Placeholder for projects / clients without a logo yet. */
+export const DEFAULT_LOGO = "/icons/material-default-icon.svg"
+
 export type TeamMember = Member & { role: string }
 
 export type ProjectDetail = {

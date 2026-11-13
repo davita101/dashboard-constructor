@@ -5,7 +5,10 @@ import { useTranslations } from "next-intl"
 
 import { ActionDialog } from "@/components/projects/ActionDialog"
 import { FormField } from "@/components/projects/FormField"
+import { LogoAvatar } from "@/components/avatar/LogoAvatar"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { CheckboxField, CheckboxFieldContent, CheckboxFieldTitle } from "@/components/ui/checkbox-field"
 import { FieldGroup } from "@/components/ui/field"
 import { FileUpload } from "@/components/ui/file-upload"
 import { Input } from "@/components/ui/input"
@@ -23,6 +26,9 @@ export type ProjectFormValues = {
   deadline: string
   income: number
   cost: number
+  /** Current uploaded logos, "" when none. */
+  logo: string
+  clientLogo: string
 }
 
 /** Create (no `values`) or edit a project. Edit adds a Delete button with its own confirm dialog. */
@@ -56,8 +62,8 @@ function ProjectFormDialog({ trigger, values }: { trigger: React.ReactElement; v
           <FormField name="deadline" label={t("deadline")} state={state}>
             {(p) => <Input {...p} type="date" defaultValue={values?.deadline} placeholder="yyyy-mm-dd" />}
           </FormField>
-          <LogoField name="logo" label={t("logo")} state={state} />
-          <LogoField name="clientLogo" label={t("clientLogo")} state={state} />
+          <LogoField name="logo" label={t("logo")} state={state} current={values?.logo} />
+          <LogoField name="clientLogo" label={t("clientLogo")} state={state} current={values?.clientLogo} />
           <div className="grid grid-cols-2 gap-3">
             <FormField name="income" label={t("income")} state={state}>
               {(p) => <Input {...p} type="number" min={0} step={1} inputMode="numeric" defaultValue={values?.income ?? ""} placeholder="0" />}
@@ -72,21 +78,56 @@ function ProjectFormDialog({ trigger, values }: { trigger: React.ReactElement; v
   )
 }
 
-/** Optional logo upload (Figma Form-Upload-Files-Images); the picked file name replaces the hint. */
-function LogoField({ name, label, state }: { name: "logo" | "clientLogo"; label: string; state: ActionState }) {
+/**
+ * Optional logo upload (Figma Form-Upload-Files-Images, compact); the picked file name replaces the hint.
+ * With a `current` logo, a "Remove logo" checkbox posts `remove<Name>` and is applied on Save.
+ */
+function LogoField({
+  name,
+  label,
+  state,
+  current,
+}: {
+  name: "logo" | "clientLogo"
+  label: string
+  state: ActionState
+  current?: string
+}) {
   const t = useTranslations("forms.project")
   const [picked, setPicked] = React.useState<string>()
+  const [remove, setRemove] = React.useState(false)
 
   return (
     <FormField name={name} label={label} state={state}>
       {(p) => (
-        <FileUpload
-          {...p}
-          kind="images"
-          accept={Object.keys(LOGO_TYPES).join(",")}
-          hint={picked ? t("logoChosen", { name: picked }) : t("logoHint")}
-          onFilesChange={(files) => setPicked(files[0]?.name)}
-        />
+        <>
+          {current ? (
+            <CheckboxField>
+              <Checkbox
+                name={name === "logo" ? "removeLogo" : "removeClientLogo"}
+                value="on"
+                checked={remove}
+                onCheckedChange={setRemove}
+                aria-label={t("removeLogo")}
+              />
+              <CheckboxFieldContent className="items-center gap-2">
+                <LogoAvatar src={current} alt={t("currentLogo")} size="40" kind="icon" />
+                <CheckboxFieldTitle>{t("removeLogo")}</CheckboxFieldTitle>
+              </CheckboxFieldContent>
+            </CheckboxField>
+          ) : null}
+          <FileUpload
+            {...p}
+            kind="images"
+            size="compact"
+            accept={Object.keys(LOGO_TYPES).join(",")}
+            hint={picked ? t("logoChosen", { name: picked }) : t("logoHint")}
+            onFilesChange={(files) => {
+              setPicked(files[0]?.name)
+              if (files.length) setRemove(false)
+            }}
+          />
+        </>
       )}
     </FormField>
   )

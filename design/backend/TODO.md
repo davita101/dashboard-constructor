@@ -129,7 +129,7 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
     - [x] 9e-2 Non-Dashboard project tab panels: empty state — already built in `ProjectDashboardCard` (`Empty` + tab name + "empty" text for every tab except dashboard); verified by code read
     - [ ] 9e-3 ProjectFormDialog logo area: compact drop areas, current-logo preview, remove logo (split 9e-3a backend / 9e-3b UI)
       - [x] 9e-3a `removeLogo` / `removeClientLogo` flags in `projectFields` (form "on"/"true"/"1") + `setLogos` clears the column, upload wins over remove, client remove without client ignored, unused object deleted in same tx; smoke `scripts/logo-remove-smoke.mts` 8 PASS; no UI
-      - [ ] 9e-3b `FileUpload` compact size (cva), current-logo preview + "Remove logo" checkbox/button in `LogoField`, pass `values.logo` / `values.clientLogo` from ProjectPageView
+      - [x] 9e-3b `FileUpload` compact size (cva), current-logo preview + "Remove logo" checkbox/button in `LogoField`, pass `values.logo` / `values.clientLogo` from ProjectPageView — built: FileUpload `size` cva (default unchanged, compact), LogoField shows current logo + "Remove logo" checkbox (applied on Save), DEFAULT_LOGO moved to types.ts so placeholder is not "current"
   - [ ] 9f Missing variants and slots: Avatar ring + counter overlay, size/shape context, Tabs pill slots, Calendar year view, Date-Range/Select in Modal, Dropdown slots, WidgetBoard layout
   - [ ] 9g Previews and browser checks: project-stats and member-row previews, Input OTP / File Input / RadialChart browser checks
 - [ ] `design/pages-queue.md` statuses are stale (auth pages 3-8 marked todo but routes exist): verify each route renders and fix the statuses

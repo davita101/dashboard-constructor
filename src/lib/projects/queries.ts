@@ -5,15 +5,12 @@ import { cacheLife, cacheTag } from "next/cache"
 
 import { db } from "@/db"
 import { clients, projectEvents, projectMembers, projects, projectStages, projectStats, stageStats, users } from "@/db/schema"
-import type { DashboardCharts, Member, Project, ProjectOption, ProjectDetail, ProjectEvent, ProjectFinance, ProjectTotals } from "@/lib/projects/types"
+import { DEFAULT_LOGO, type DashboardCharts, type Member, type Project, type ProjectOption, type ProjectDetail, type ProjectEvent, type ProjectFinance, type ProjectTotals } from "@/lib/projects/types"
 import { projectTag, userProjectsTag } from "@/lib/projects/tags"
 
 // Cached Drizzle reads. Every function takes the Clerk user id as an argument (it is part of the cache key) and
 // only returns projects that user is a member of. Drizzle bypasses RLS, so this scoping is the access check.
 // Callers get the id from auth() (./data.ts); never pass an id that came from the client.
-
-/** Placeholder for projects / clients without a logo yet (upload comes with Storage, Phase 4). */
-const DEFAULT_LOGO = "/icons/material-default-icon.svg"
 
 /** Project ids the user belongs to. */
 const memberProjectIds = (userId: string) =>
