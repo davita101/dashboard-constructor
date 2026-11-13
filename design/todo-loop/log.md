@@ -63,3 +63,5 @@
 2026-11-13 APPROVED 9e-3b logo field compact
 2026-11-13 PLAN ticked 9e; planned shared fieldMessage for chat actions
 2026-11-13 APPROVED shared fieldMessage for chat actions
+2026-11-13 PLAN split 9f into 9f-1..6; planned 9f-1 Tabs pill icon/counter slots
+2026-11-13 APPROVED 9f-1 Tabs pill slots

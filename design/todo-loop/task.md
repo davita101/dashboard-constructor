@@ -1,31 +1,41 @@
 # Task
-Share the friendly Zod field-message mapper between project and chat actions.
+Add icon and counter slots to the Tabs pill items (`ui/tabs.tsx`), plus a demo use.
 
 ## TODO item
-- [ ] Supervisor browser check of Send message (sending works, message row saved): submitting empty shows raw Zod text ("Invalid input: expected string, received undefined", "Too small: expected string to have >=1 characters") instead of "Required" like the other dialogs. `src/lib/chat/actions.ts` calls `z.flattenError(parsed.error)` without the friendly mapper: move `fieldMessage` from `src/lib/projects/actions.ts` into a shared non-"use server" module (e.g. `src/lib/forms/field-message.ts`) and use it in both action files; also use the "Check the highlighted fields" summary message
+    - [ ] 9f-1 Tabs pill icon + counter slots (`TabsIcon`, `TabsCounter` in `ui/tabs.tsx`)
 
 ## Goal
-Empty Send message dialog shows "Required" per field and summary "Check the highlighted fields", same as project dialogs.
+Figma Tab-Group-Pilled items can have a left/right icon and a Badge-Square-Pilled counter. Today items are text only (known-gaps line "- Tabs:"). Build the slots in shadcn style so domain code just composes them.
 
 ## Files
-- src/lib/projects/actions.ts (remove local fieldMessage, import shared)
-- src/lib/chat/actions.ts (both `run` and `sendProjectMessageAction`)
-- new src/lib/forms/field-message.ts (plain module, no "use server", no "server-only" needed)
+- `src/components/ui/tabs.tsx` (change)
+- `src/components/ui/icon.tsx`, `src/components/ui/badge.tsx`, `src/components/ui/button.tsx` (`ButtonIcon`, `ButtonCounter`: pattern to copy, read only)
+- `src/components/projects/ProjectTabs.tsx` or `ProjectListCard.tsx` (only if an existing tab already has an icon/count in Figma data; otherwise do not touch)
+- `design/known-gaps.md` (edit the "- Tabs:" line)
 
 ## Steps
-1. Create `field-message.ts` exporting `fieldMessage(issue: z.core.$ZodIssue): string` (copy body verbatim) and `FORM_ERROR_MESSAGE = "Check the highlighted fields"`.
-2. projects/actions.ts: import both, delete local function, use constant.
-3. chat/actions.ts: in both places `schema.safeParse(raw, { reportInput: true })` (the mapper reads `issue.input`), `z.flattenError(parsed.error, fieldMessage).fieldErrors`, message = constant.
-4. Check `sendProjectMessageForm` in chat schemas: empty/missing body must yield a Zod issue (min 1) so it maps to "Required".
+1. Read `button.tsx` `ButtonIcon` / `ButtonCounter`, `badge.tsx` sizes.
+2. In `tabs.tsx` add `TabsIcon` (mask icon via `Icon` from `@/components/ui/icon`, props `src`, `position` start|end, sets `data-icon="inline-start|end"`, size follows the trigger's `[&_svg]` size rule: use `size-4` default, `size-3` for xs/micro via the trigger cva, e.g. add `[&_[data-slot=icon]:not([class*='size-'])]:size-4` to trigger base and size-3 / size-5 / size-6 in the size variants next to the existing svg rules).
+3. Add `TabsCounter` = `Badge` with `shape="pill"`, default `size="square-16"` and `variant` suited to active/idle (pick one existing Badge variant, e.g. `white-soft`), `data-slot="tabs-counter"`, `mx-0.5`-like gap handled by trigger `gap-1`.
+4. Add `has-data-[icon=inline-start]:pl-*` / `inline-end:pr-*` padding tweaks for the pill sizes `28` and `32` (reduce side padding by 4px on the icon side, as in `default` variant).
+5. Export both from `tabs.tsx`.
+6. Update the known-gaps "- Tabs:" line: remove the "left/right icon and badge slots are not built" sentence, say slots exist.
+7. Do not invent a new page. If a preview is wanted, no `/design-system/tabs` page exists: skip it.
 
 ## Acceptance
-- `pnpm exec tsc --noEmit` clean; `pnpm lint` 0 errors; `pnpm build` passes.
-- `grep -rn "function fieldMessage" src` → only src/lib/forms/field-message.ts.
-- Quick tsx script (delete after, or keep as scripts/field-message-smoke.mts printing PASS): parse sendProjectMessageForm with `{projectId:"", body:""}` and `{}` using reportInput + mapper → every message is "Required" (or other short human text), none contains "Invalid input:" / "Too small:".
+- `pnpm exec tsc --noEmit` → 0 errors
+- `pnpm lint` → 0 errors (known `command.tsx` warning ok)
+- `pnpm build` → success
+- `grep -nE "TabsIcon|TabsCounter" src/components/ui/tabs.tsx` shows both exported
+- grep new code: no hex colors, no `space-[xy]-`, no `dark:`
+- Existing tab usages (ProjectTabs, ProjectListCard, widget picker) unchanged visually: their diff is empty or className-free.
 
 ## Decisions
-- Shared module under src/lib/forms (a "use server" file may only export async functions).
-- Constant for summary message so both actions stay in sync.
+- Slots are composed from existing `Icon` and `Badge` (shadcn rule: no styled spans in domain code).
+- Counter uses Badge `shape="pill"` like Button's `ButtonCounter`; exact Figma badge size for the Tab-Group-Pilled unreadable, assume `square-16`, record in known-gaps.
+- No new UI/page: only the slots.
 
 ## Don't
-- No UI changes, no other schema changes, no behavior change for project actions.
+- No new Figma-less pages, no hand-written SVGs (use existing `public/icons/`).
+- Don't change other Tabs variants' look.
+- Don't touch the DB or other batches (9f-2..6).
