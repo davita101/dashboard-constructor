@@ -106,3 +106,4 @@ One line per component: what could not be matched to Figma. Update when fixed.
 - ProjectFormDialog logos: two Form-Upload-Files-Images drop areas (200px each) make the dialog scroll; no preview of the current logo, no "remove logo".
 - Dashboard metric tiles: values and trend are real (project totals/finance); the mini sparkline/columns art stays the Figma placeholder (no time series per metric). Head "…" is decorative (no menu).
 - RadialChart progress-half: live ratio wired; browser check not run (auth).
+- Widgets: candle chart and metric map are demo data (no project data source); hidden from the picker, still render if already on a board.

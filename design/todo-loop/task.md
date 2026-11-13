@@ -1,33 +1,31 @@
 # Task
-Phase 7c-3: metric-card (wide KPI strip) shows live totals: projects, tasks, members, files, income.
+Hide demo-only widgets (candle, metric-map) from the live widget picker.
 
 ## TODO item
-    - [ ] 7c-3 metric-card live: KPI strip (projects, tasks, members, files, income)
+  - [ ] 7d candle + metric-map: hide from live picker or note why they keep demo
 
 ## Goal
-On the live dashboard board, the `metric-card` widget renders one KPI cell per metric (Projects, Tasks, Members, Files, Income with 30-day trend) from `useWidgetData()`. Picker preview (no provider) stays the Figma sample, unchanged.
+`candle-chart` and `metric-map` have no meaningful project data. Users can't add them from the picker; layouts that already contain them still render (demo data) so nothing breaks.
 
 ## Files
-- `src/components/ui/chart-metric.tsx` (`ChartMetricWideBody`, ~line 497)
-- `src/components/dashboard/widgets/catalog.tsx` (`MetricWidePreview`, ~line 411; helpers `formatCount`, `formatUsd`, `trendOf` already there)
-- `messages/en.json` (`widgets.data`: add `projects`, `tasks`, `members`, `files` if missing; `income` exists)
-- read: `src/components/dashboard/widgets/widget-data.tsx`, `src/lib/projects/types.ts` (`ProjectTotals` already has projects/tasks/tasksDone/members/files)
+- `src/components/dashboard/widgets/catalog.tsx` (`WidgetDef`, `widgetCatalog`)
+- `src/components/dashboard/widgets/widget-picker-dialog.tsx` (filter at ~line 59)
+- `design/known-gaps.md` (append)
+- grep other users of the picker (design-system pages) before changing
 
 ## Steps
-1. `ChartMetricWideBody`: add optional `items?: { heading: string; value: string; delta?: string; deltaDirection?: "up"|"down"; additionalText?: string }[]`. Without `items` render exactly as today. With `items` render one existing cell layout per item (same markup/tokens: icon, heading, value, `ChartTrend` only when `delta` set, additional text), cells in a row, `flex-wrap` / equal widths so 5 cells fit the "full" width and wrap on small screens. Use `Separator` between cells if Figma sample has none: NO, just gap; do not add dividers.
-2. `MetricWidePreview`: when `useWidgetData()` is non-null pass items: Projects (`totals.projects`), Tasks (`totals.tasks`), Members (`totals.members`), Files (`totals.files`), Income (`formatUsd(finance.income)`, delta from `trendOf(finance.incomeTrend)`, additionalText `t("last30")`). Footer unchanged.
-3. Add missing en.json keys (other locales have no `widgets` keys; leave).
-4. Make sure only one cell gets the trend; no empty `ChartTrend` rendered for cells without delta.
+1. Add optional `demoOnly?: boolean` to `WidgetDef`; set it on `candle-chart` and `metric-map` (comment: no project data source).
+2. In the picker filter, skip `demoOnly` widgets. `getWidget` / board rendering unchanged (saved layouts keep working).
+3. If a design-system preview page lists the whole catalog and should still show them, keep that working (use `widgetCatalog` directly there).
+4. Append one line to `design/known-gaps.md`: `- Widgets: candle chart and metric map are demo data (no project data source); hidden from the picker, still render if already on a board.`
 
 ## Acceptance
 - `pnpm exec tsc --noEmit` clean; `pnpm lint` 0 errors; `pnpm build` passes.
-- Grep new/changed code: no hex colors, no `space-[xy]-`, no `dark:`.
-- `ChartMetricWideBody` with no `items` produces identical markup to before (picker preview untouched).
-- Reviewer reads diff: live branch only when `data` exists; values come from `totals`/`finance`.
+- grep: picker filter references `demoOnly`; exactly two catalog entries have it.
+- No hex colors, `space-[xy]-`, `dark:` in diff.
 
 ## Decisions
-- KPI set fixed as in the TODO line; income uses the same 30-day trend as other widgets; no new query (totals already carry members/files).
-- Generalize the existing Figma cell via an `items` prop rather than a new component (variant of same shape).
+Hide instead of invent data: a candle chart needs OHLC prices and a map needs geo data, neither exists for projects. Keep render path so saved layouts don't break.
 
 ## Don't
-- No new Figma-less UI, no new queries/migrations, no changes to other widgets, no edits to the picker preview or to non-en locales.
+- No new UI, no data queries, no removal of the widgets or their previews/components.

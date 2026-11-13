@@ -57,6 +57,7 @@ function WidgetPickerBody({ onAdd }: { onAdd: (id: string) => void }) {
   const results = React.useMemo(() => {
     const q = query.trim().toLowerCase()
     return widgetCatalog.filter((w) => {
+      if (w.demoOnly) return false
       if (filter !== "all" && w.category !== filter) return false
       if (!q) return true
       return [name(w.id), description(w.id), t(`categories.${w.category}`), ...w.keywords].some((s) => s.toLowerCase().includes(q))
