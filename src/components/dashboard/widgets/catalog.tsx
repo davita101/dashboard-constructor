@@ -159,7 +159,7 @@ function CartesianCardPreview({
         <ChartCardTitle>
           {liveBars ? t("tasksByProject") : live ? (isIncomeOnly ? t("incomePerMonth") : t("incomeCost")) : "Chart"}
         </ChartCardTitle>
-        <ChartCardAction data-soon />
+        {isLive ? null : <ChartCardAction data-soon />}
       </ChartCardHead>
       <ChartCardContent className={cn(fluid && "min-h-0 flex-1")}>
         {isLive ? null : <ChartCardSwitcher />}
@@ -241,7 +241,7 @@ function RadialCardPreview({ kind }: { kind: "donut" | "pie" | "progress" | "pro
     <ChartCard>
       <ChartCardHead>
         <ChartCardTitle>{live ? (half ? t("taskCompletion") : t("tasksByStatus")) : "Chart"}</ChartCardTitle>
-        <ChartCardAction data-soon />
+        {live ? null : <ChartCardAction data-soon />}
       </ChartCardHead>
       <ChartCardContent className={cn(fluid && "min-h-0 flex-1")}>
         {/* Live: the plot and legend carry the numbers; the Figma switcher and sample metrics would be fake. */}
@@ -335,7 +335,7 @@ function MetricTile({ chart }: { chart: MetricChart }) {
   }[chart]
   return (
     <ChartMetricCard size="tile" className="lg:max-w-none">
-      <ChartMetricHead title={live ? t(live.key) : undefined} />
+      <ChartMetricHead title={live ? t(live.key) : undefined} action={!live} />
       <ChartMetricBody layout="tile">
         <ChartMetricStats
           value={live?.value ?? body.value}
@@ -430,7 +430,7 @@ function MetricLargePreview({ kind }: { kind: "chart" | "map" }) {
     }))
     return (
       <ChartMetricCard size="lg">
-        <ChartMetricHead size="large" title={t("incomeCost")} />
+        <ChartMetricHead size="large" title={t("incomeCost")} action={false} />
         <ChartMetricBody layout="stack" className="pt-5">
           <ChartMetricAmounts>
             <ChartMetricAmount
@@ -462,7 +462,7 @@ function MetricLargePreview({ kind }: { kind: "chart" | "map" }) {
   }
   return (
     <ChartMetricCard size="lg">
-      <ChartMetricHead size="large" title={kind === "chart" ? "Line Chart Sample" : "Map"} />
+      <ChartMetricHead size="large" title={kind === "chart" ? "Line Chart Sample" : "Map"} action={!data} />
       <ChartMetricBody layout="stack" className="pt-5">
         {kind === "chart" ? (
           <ChartMetricAmounts>

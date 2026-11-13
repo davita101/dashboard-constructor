@@ -58,10 +58,13 @@ const chartMetricHeadVariants = cva("flex items-start justify-between", {
 })
 
 type ChartMetricHeadProps = Omit<React.ComponentProps<"div">, "title"> &
-  VariantProps<typeof chartMetricHeadVariants> & { title?: React.ReactNode; icon?: React.ReactNode }
+  VariantProps<typeof chartMetricHeadVariants> & { title?: React.ReactNode; icon?: React.ReactNode; action?: boolean }
 
-/** Figma Head: icon + title and the more button (more_horiz in compact cards, more_vert in large ones). */
-function ChartMetricHead({ className, size = "compact", title = "Heading", icon, ...props }: ChartMetricHeadProps) {
+/**
+ * Figma Head: icon + title and the more button (more_horiz in compact cards, more_vert in large ones).
+ * `action` (default true) shows the decorative more icon; pass false on live cards that have no menu.
+ */
+function ChartMetricHead({ className, size = "compact", title = "Heading", icon, action = true, ...props }: ChartMetricHeadProps) {
   return (
     <div data-slot="chart-metric-head" className={cn(chartMetricHeadVariants({ size }), className)} {...props}>
       <div className="flex items-center gap-2">
@@ -70,14 +73,16 @@ function ChartMetricHead({ className, size = "compact", title = "Heading", icon,
           {title}
         </span>
       </div>
-      <span
-        aria-hidden
-        className={cn(
-          "size-5 text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70",
-          maskIcon,
-          size === "large" ? "mask-[url(/icons/material-more-vert.svg)]" : "mask-[url(/icons/material-more-horiz.svg)]",
-        )}
-      />
+      {action ? (
+        <span
+          aria-hidden
+          className={cn(
+            "size-5 text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70",
+            maskIcon,
+            size === "large" ? "mask-[url(/icons/material-more-vert.svg)]" : "mask-[url(/icons/material-more-horiz.svg)]",
+          )}
+        />
+      ) : null}
     </div>
   )
 }
