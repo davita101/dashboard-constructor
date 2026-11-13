@@ -1,5 +1,6 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
+import Link from "next/link"
 
 import { ChartDot, ChartProgressCard, ChartTrend, type ChartTone } from "@/components/ui/chart-parts"
 import { Separator } from "@/components/ui/separator"
@@ -168,6 +169,10 @@ type ChartMetricFooterProps = React.ComponentProps<"div"> &
     up?: string
     down?: string
     link?: string
+    /** Makes `link` a real route link. */
+    linkHref?: string
+    /** Live value after the label; empty `up` / `down` hide that trend. */
+    amount?: string
   }
 
 /** Figma Footer: two headings and the Up / Down trends; `wide` adds the blue Link on the right. */
@@ -179,6 +184,8 @@ function ChartMetricFooter({
   up = "Text",
   down = "Text",
   link,
+  linkHref,
+  amount,
   ...props
 }: ChartMetricFooterProps) {
   const wide = size === "wide"
@@ -199,9 +206,14 @@ function ChartMetricFooter({
           {secondary ?? "Heading"}
         </span>
       )}
-      <ChartTrend direction="up" className="gap-2 font-semibold">{up}</ChartTrend>
-      <ChartTrend direction="down" className="gap-2 font-semibold">{down}</ChartTrend>
-      {link ? <span className="ml-auto text-10 leading-16 font-bold text-blue-600">{link}</span> : null}
+      {amount ? <span className="text-10 leading-16 font-bold text-base-900 group-data-[appearance=image]/metric:text-background-0">{amount}</span> : null}
+      {up ? <ChartTrend direction="up" className="gap-2 font-semibold">{up}</ChartTrend> : null}
+      {down ? <ChartTrend direction="down" className="gap-2 font-semibold">{down}</ChartTrend> : null}
+      {link && linkHref ? (
+        <Link href={linkHref} className="ml-auto text-10 leading-16 font-bold text-blue-600">{link}</Link>
+      ) : link ? (
+        <span className="ml-auto text-10 leading-16 font-bold text-blue-600">{link}</span>
+      ) : null}
     </div>
   )
 }
@@ -499,6 +511,8 @@ type ChartMetricWideItem = {
   delta?: string
   deltaDirection?: "up" | "down"
   additionalText?: string
+  /** Mask icon path in public/icons. */
+  icon?: string
 }
 
 /** Figma Metric-Card Content (785x128): icon, Head, value row (value, caption, Up, Down), caption. */
@@ -513,24 +527,31 @@ function ChartMetricWideBody({
 }: React.ComponentProps<"div"> & { heading?: string; value?: string; up?: string; down?: string; items?: ChartMetricWideItem[] }) {
   if (items) {
     return (
-      <div data-slot="chart-metric-wide-body" className={cn("flex flex-wrap gap-y-5", className)} {...props}>
-        {items.map((item) => (
-          <div key={item.heading} className="flex min-w-40 flex-1 gap-5 p-5">
-            <span aria-hidden className={cn("size-5 shrink-0 text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70", maskIcon, "mask-[url(/icons/material-default-icon.svg)]")} />
-            <div className="flex flex-col gap-3 pr-3">
-              <span className="text-10 leading-16 font-bold text-base-700 group-data-[appearance=image]/metric:text-background-0">{item.heading}</span>
-              <div className="flex items-center gap-3.25">
+      <div data-slot="chart-metric-wide-body" className={cn("flex", className)} {...props}>
+        {items.map((item) => {
+          const icon = `url(${item.icon ?? "/icons/material-default-icon.svg"})`
+          return (
+          <div key={item.heading} className="flex min-w-0 flex-1 gap-4 p-4">
+            <span
+              aria-hidden
+              className={cn("size-5 shrink-0 text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70", maskIcon)}
+              style={{ maskImage: icon, WebkitMaskImage: icon }}
+            />
+            <div className="flex min-w-0 flex-col gap-3">
+              <span className="truncate text-10 leading-16 font-bold text-base-700 group-data-[appearance=image]/metric:text-background-0">{item.heading}</span>
+              <div className="flex items-center gap-3 whitespace-nowrap">
                 <span className="text-20 leading-28 font-semibold text-base-900 group-data-[appearance=image]/metric:text-background-0">{item.value}</span>
                 {item.delta ? (
                   <ChartTrend direction={item.deltaDirection ?? "up"} size="md">{item.delta}</ChartTrend>
                 ) : null}
               </div>
               {item.additionalText ? (
-                <span className="text-10 leading-16 font-bold text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70">{item.additionalText}</span>
+                <span className="truncate text-10 leading-16 font-bold text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70">{item.additionalText}</span>
               ) : null}
             </div>
           </div>
-        ))}
+          )
+        })}
       </div>
     )
   }

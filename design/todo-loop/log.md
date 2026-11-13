@@ -31,3 +31,5 @@
 2026-11-13 APPROVED Table widget live projects table
 2026-11-13 PLAN 7e bar/stacked bar axes + legend
 2026-11-13 APPROVED 7e bar/stacked axes 7db18cf
+2026-11-13 PLAN 7f metric-card one row + real footer + icons
+2026-11-13 APPROVED 7f metric-card one row

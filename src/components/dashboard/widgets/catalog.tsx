@@ -422,11 +422,12 @@ function MetricWidePreview() {
   const data = useWidgetData()
   const items = data
     ? [
-        { heading: t("projects"), value: formatCount(data.totals.projects) },
-        { heading: t("tasks"), value: formatCount(data.totals.tasks) },
-        { heading: t("members"), value: formatCount(data.totals.members) },
-        { heading: t("files"), value: formatCount(data.totals.files) },
+        { heading: t("projects"), value: formatCount(data.totals.projects), icon: "/icons/material/material-assignment.svg" },
+        { heading: t("tasks"), value: formatCount(data.totals.tasks), icon: "/icons/material/material-restore-page.svg" },
+        { heading: t("members"), value: formatCount(data.totals.members), icon: "/icons/material-account-circle.svg" },
+        { heading: t("files"), value: formatCount(data.totals.files), icon: "/icons/material-file-download.svg" },
         {
+          icon: "/icons/material-account-balance-wallet.svg",
           heading: t("income"),
           value: formatUsd(data.finance.income),
           delta: trendOf(data.finance.incomeTrend).trend,
@@ -438,7 +439,19 @@ function MetricWidePreview() {
   return (
     <ChartMetricCard size="wide">
       <ChartMetricWideBody items={items} />
-      <ChartMetricFooter size="wide" link="Heading" />
+      {data ? (
+        <ChartMetricFooter
+          size="wide"
+          primary={t("profit")}
+          amount={formatUsd(data.finance.profit)}
+          up={data.finance.profitTrend > 0 ? trendOf(data.finance.profitTrend).trend : ""}
+          down={data.finance.profitTrend < 0 ? trendOf(data.finance.profitTrend).trend : ""}
+          link={t("viewProjects")}
+          linkHref="/dashboard/projects"
+        />
+      ) : (
+        <ChartMetricFooter size="wide" link="Heading" />
+      )}
     </ChartMetricCard>
   )
 }
