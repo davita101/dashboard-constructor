@@ -1,5 +1,7 @@
 import { z } from "zod"
 
+import { LOGO_TYPES, MAX_LOGO_BYTES } from "@/lib/files/paths"
+
 // Input schemas for the Projects write actions (./actions.ts). Client-safe: forms may reuse them for hints.
 // FormData values arrive as strings, so optional fields accept "" and turn it into undefined/null.
 
@@ -24,6 +26,14 @@ const money = z.union([z.literal("").transform(() => 0), z.coerce.number().min(0
 export const taskStatuses = ["new", "in_work", "done", "failed"] as const
 export type TaskStatus = (typeof taskStatuses)[number]
 
+/** Optional image from <input type="file">: an empty input posts a 0-byte File → undefined. */
+const logoFile = z
+  .custom<File>((v) => v instanceof File)
+  .optional()
+  .transform((f) => (f && f.size > 0 ? f : undefined))
+  .refine((f) => !f || f.size <= MAX_LOGO_BYTES, "Max 2 MB")
+  .refine((f) => !f || f.type in LOGO_TYPES, "PNG, JPG, WEBP or GIF")
+
 // --- Projects ---
 
 export const projectFields = z.object({
@@ -33,6 +43,8 @@ export const projectFields = z.object({
   deadline: isoDate,
   income: money,
   cost: money,
+  logo: logoFile,
+  clientLogo: logoFile,
 })
 export const createProjectInput = projectFields
 export const updateProjectInput = projectFields.extend({ projectId: id })
@@ -94,3 +106,14 @@ export const moveTaskInput = z.object({ taskId: id, status: z.enum(taskStatuses)
 export const setTaskAssigneesInput = z.object({ taskId: id, userIds: z.array(text(64)).max(50) })
 export const setTaskStatusInput = z.object({ taskId: id, status: z.enum(taskStatuses) })
 export const deleteTaskInput = z.object({ taskId: id })
+
+// --- Files ---
+
+/** After the browser uploaded to project-files/<projectId>/<uuid>/<name>: record it. */
+export const registerFileInput = z.object({
+  projectId: id,
+  path: z.string().max(400),
+  name: text(255),
+  stageId: optionalId,
+})
+export const deleteFileInput = z.object({ fileId: id })

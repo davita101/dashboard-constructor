@@ -1,6 +1,44 @@
 {
-  "generatedAt": "2026-11-12T18:20:20.944Z",
+  "generatedAt": "2026-11-13T08:16:08.993Z",
   "entities": [
+    {
+      "name": "StageValues",
+      "table": "stage_values",
+      "file": "src/components/projects/StageFormDialog.tsx",
+      "line": 15,
+      "comment": "",
+      "extends": [],
+      "fields": [
+        {
+          "name": "id",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "uuid primary key"
+        },
+        {
+          "name": "name",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "text"
+        },
+        {
+          "name": "start",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "date"
+        },
+        {
+          "name": "end",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "date"
+        }
+      ]
+    },
     {
       "name": "ProductRow",
       "table": "product_rows",
@@ -185,6 +223,13 @@
           "sql": "numeric(12,2)"
         },
         {
+          "name": "cost",
+          "ts": "number",
+          "optional": false,
+          "comment": "Whole currency units (USD); \"Costs\" tab order.",
+          "sql": "numeric(12,2)"
+        },
+        {
           "name": "deadline",
           "ts": "string",
           "optional": false,
@@ -204,7 +249,7 @@
       "name": "ProjectEvent",
       "table": "project_events",
       "file": "src/lib/projects/types.ts",
-      "line": 30,
+      "line": 32,
       "comment": "",
       "extends": [],
       "fields": [
@@ -254,7 +299,7 @@
       "name": "ProjectStage",
       "table": "project_stages",
       "file": "src/lib/projects/types.ts",
-      "line": 49,
+      "line": 51,
       "comment": "--- Project page (Figma Projects (1600) 14061:76419: per-project dashboard) ---",
       "extends": [],
       "fields": [
@@ -324,7 +369,7 @@
       "name": "TeamMember",
       "table": "team_members",
       "file": "src/lib/projects/types.ts",
-      "line": 62,
+      "line": 64,
       "comment": "",
       "extends": [
         "Member"
@@ -360,14 +405,115 @@
           "sql": "text"
         }
       ]
+    },
+    {
+      "name": "ProjectOption",
+      "table": "project_options",
+      "file": "src/lib/projects/types.ts",
+      "line": 87,
+      "comment": "Pickers for the create dialogs (Quick Add): the user's projects with their stages and members.",
+      "extends": [],
+      "fields": [
+        {
+          "name": "id",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "uuid primary key"
+        },
+        {
+          "name": "name",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "text"
+        },
+        {
+          "name": "stages",
+          "ts": "{ id: string; name: string }[]",
+          "optional": false,
+          "comment": "",
+          "sql": "jsonb",
+          "note": "inline object (table or computed?)"
+        },
+        {
+          "name": "members",
+          "ts": "Member[]",
+          "optional": false,
+          "comment": "",
+          "sql": null,
+          "relation": {
+            "kind": "many",
+            "target": "Member"
+          }
+        }
+      ]
     }
   ],
   "valueTypes": [
     {
+      "name": "ActionState",
+      "kind": "object",
+      "file": "src/lib/projects/action-state.ts",
+      "line": 4,
+      "fields": [
+        {
+          "name": "status",
+          "ts": "\"idle\" | \"ok\" | \"error\"",
+          "comment": ""
+        },
+        {
+          "name": "message",
+          "ts": "string",
+          "comment": ""
+        },
+        {
+          "name": "fieldErrors",
+          "ts": "Record<string, string[] | undefined>",
+          "comment": ""
+        }
+      ],
+      "usedBy": []
+    },
+    {
+      "name": "WriteResult",
+      "kind": "object",
+      "file": "src/lib/projects/mutations.ts",
+      "line": 41,
+      "fields": [
+        {
+          "name": "projectId",
+          "ts": "string",
+          "comment": ""
+        },
+        {
+          "name": "memberIds",
+          "ts": "string[]",
+          "comment": "Members before and after the write: their `user-projects:` cache must be expired."
+        },
+        {
+          "name": "slug",
+          "ts": "string",
+          "comment": ""
+        },
+        {
+          "name": "slugsChanged",
+          "ts": "boolean",
+          "comment": "The slug list changed (create/delete): expire `project-slugs`."
+        },
+        {
+          "name": "fileId",
+          "ts": "string",
+          "comment": "registerFile: the new `files` row."
+        }
+      ],
+      "usedBy": []
+    },
+    {
       "name": "ProjectEventKind",
       "kind": "enum",
       "file": "src/lib/projects/types.ts",
-      "line": 28,
+      "line": 30,
       "values": [
         "member",
         "comment",
@@ -383,7 +529,7 @@
       "name": "ProjectTotals",
       "kind": "object",
       "file": "src/lib/projects/types.ts",
-      "line": 40,
+      "line": 42,
       "fields": [
         {
           "name": "projects",
@@ -412,7 +558,7 @@
       "name": "ProjectDetail",
       "kind": "object",
       "file": "src/lib/projects/types.ts",
-      "line": 64,
+      "line": 66,
       "fields": [
         {
           "name": "project",
@@ -456,7 +602,7 @@
       "name": "ProjectFinance",
       "kind": "object",
       "file": "src/lib/projects/types.ts",
-      "line": 75,
+      "line": 77,
       "fields": [
         {
           "name": "income",
@@ -503,33 +649,20 @@
       "to": "Project",
       "kind": "fk",
       "suggestion": "ProjectEvent.projectId → Project.id (FK)"
+    },
+    {
+      "from": "ProjectOption",
+      "field": "members",
+      "to": "Member",
+      "kind": "many",
+      "suggestion": "ProjectOption ↔ Member: many-to-many → join table project_option_members (or 1-n FK on Member if exclusive)"
     }
   ],
   "getters": [
     {
-      "name": "getNewProjectDetail",
-      "file": "src/lib/projects/data.ts",
-      "line": 139,
-      "params": "",
-      "returns": "Promise<ProjectDetail>",
-      "usedBy": [
-        "src/app/dashboard/projects/new/page.tsx"
-      ]
-    },
-    {
-      "name": "getProjectDetail",
-      "file": "src/lib/projects/data.ts",
-      "line": 152,
-      "params": "slug: string",
-      "returns": "Promise<ProjectDetail | undefined>",
-      "usedBy": [
-        "src/app/dashboard/projects/[slug]/[tab]/page.tsx"
-      ]
-    },
-    {
       "name": "getProjects",
       "file": "src/lib/projects/data.ts",
-      "line": 157,
+      "line": 18,
       "params": "",
       "returns": "Promise<Project[]>",
       "usedBy": [
@@ -540,17 +673,19 @@
       ]
     },
     {
-      "name": "getProject",
+      "name": "getProjectDetail",
       "file": "src/lib/projects/data.ts",
-      "line": 161,
+      "line": 22,
       "params": "slug: string",
-      "returns": "Promise<Project | undefined>",
-      "usedBy": []
+      "returns": "Promise<ProjectDetail | undefined>",
+      "usedBy": [
+        "src/app/dashboard/projects/[slug]/[tab]/page.tsx"
+      ]
     },
     {
       "name": "getProjectEvents",
       "file": "src/lib/projects/data.ts",
-      "line": 165,
+      "line": 26,
       "params": "",
       "returns": "Promise<ProjectEvent[]>",
       "usedBy": [
@@ -561,7 +696,7 @@
     {
       "name": "getProjectTotals",
       "file": "src/lib/projects/data.ts",
-      "line": 169,
+      "line": 30,
       "params": "",
       "returns": "Promise<ProjectTotals>",
       "usedBy": [
@@ -571,11 +706,41 @@
     {
       "name": "getProjectFinance",
       "file": "src/lib/projects/data.ts",
-      "line": 173,
+      "line": 34,
       "params": "",
       "returns": "Promise<ProjectFinance>",
       "usedBy": [
         "src/app/dashboard/projects/page.tsx"
+      ]
+    },
+    {
+      "name": "getProjectOptions",
+      "file": "src/lib/projects/data.ts",
+      "line": 39,
+      "params": "",
+      "returns": "Promise<ProjectOption[]>",
+      "usedBy": [
+        "src/app/dashboard/projects/page.tsx"
+      ]
+    },
+    {
+      "name": "getProjectSlugs",
+      "file": "src/lib/projects/data.ts",
+      "line": 44,
+      "params": "",
+      "returns": "Promise<string[]>",
+      "usedBy": [
+        "src/app/dashboard/projects/[slug]/[tab]/page.tsx"
+      ]
+    },
+    {
+      "name": "getNewProjectDetail",
+      "file": "src/lib/projects/data.ts",
+      "line": 49,
+      "params": "",
+      "returns": "Promise<ProjectDetail>",
+      "usedBy": [
+        "src/app/dashboard/projects/new/page.tsx"
       ]
     }
   ],
@@ -595,6 +760,61 @@
         "income",
         "conversion",
         "total"
+      ],
+      "likelyData": true
+    },
+    {
+      "name": "members",
+      "file": "src/db/mock-data.ts",
+      "line": 13,
+      "type": "Member[]",
+      "rows": 6,
+      "keys": [
+        "id",
+        "name",
+        "avatar"
+      ],
+      "likelyData": true
+    },
+    {
+      "name": "mockEvents",
+      "file": "src/db/mock-data.ts",
+      "line": 69,
+      "type": "ProjectEvent[]",
+      "rows": 10,
+      "keys": [
+        "id",
+        "projectId",
+        "kind",
+        "title",
+        "at"
+      ],
+      "likelyData": true
+    },
+    {
+      "name": "mockTeam",
+      "file": "src/db/mock-data.ts",
+      "line": 109,
+      "type": "TeamMember[]",
+      "rows": 8,
+      "keys": [
+        "id",
+        "name",
+        "role",
+        "avatar"
+      ],
+      "likelyData": true
+    },
+    {
+      "name": "FILE_TYPES",
+      "file": "src/db/seed.ts",
+      "line": 57,
+      "type": "",
+      "rows": 3,
+      "keys": [
+        "ext",
+        "mime",
+        "size"
       ],
       "likelyData": true
     },
@@ -627,25 +847,12 @@
     {
       "name": "facts",
       "file": "src/components/projects/ProjectSummaryCard.tsx",
-      "line": 29,
+      "line": 30,
       "type": "",
       "rows": 4,
       "keys": [
         "icon",
         "text"
-      ],
-      "likelyData": false
-    },
-    {
-      "name": "actions",
-      "file": "src/components/projects/QuickAddCard.tsx",
-      "line": 8,
-      "type": "",
-      "rows": 6,
-      "keys": [
-        "key",
-        "icon",
-        "href"
       ],
       "likelyData": false
     },
@@ -671,6 +878,18 @@
       "keys": [
         "color",
         "text"
+      ],
+      "likelyData": false
+    },
+    {
+      "name": "LABELS",
+      "file": "src/db/seed.ts",
+      "line": 51,
+      "type": "",
+      "rows": 4,
+      "keys": [
+        "name",
+        "color"
       ],
       "likelyData": false
     }

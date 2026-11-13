@@ -1,6 +1,6 @@
 "use client"
 
-import { useSignIn } from "@clerk/nextjs"
+import { useClerk, useSignIn } from "@clerk/nextjs"
 import NextLink from "next/link"
 import { useRouter } from "next/navigation"
 import * as React from "react"
@@ -33,6 +33,7 @@ const strategies = {
 // Figma Sign-In-01 (open form on the panel, social buttons), wired to Clerk's custom flow (password + OAuth).
 function SignInForm({ redirectUrl = "/dashboard" }: { redirectUrl?: string }) {
   const { signIn, errors, fetchStatus } = useSignIn()
+  const clerk = useClerk()
   const router = useRouter()
   const busy = fetchStatus === "fetching"
   const [failed, setFailed] = React.useState<string>()
@@ -58,12 +59,17 @@ function SignInForm({ redirectUrl = "/dashboard" }: { redirectUrl?: string }) {
   async function onProvider(provider: keyof typeof strategies) {
     setFailed(undefined)
     rememberMe.set(remember)
-    const { error } = await signIn.sso({
-      strategy: strategies[provider],
-      redirectUrl,
-      redirectCallbackUrl: "/sso-callback",
-    })
-    if (error) setFailed(error.message)
+    // Not signIn.sso(): it reuses an attempt already in progress (e.g. after a wrong password, status
+    // needs_first_factor) and then resolves without redirecting. authenticateWithRedirect always starts a new one.
+    try {
+      await clerk.client?.signIn.authenticateWithRedirect({
+        strategy: strategies[provider],
+        redirectUrl: "/sso-callback",
+        redirectUrlComplete: redirectUrl,
+      })
+    } catch (error) {
+      setFailed(error instanceof Error ? error.message : "Could not start sign-in, try again")
+    }
   }
 
   return (
