@@ -178,7 +178,14 @@
       "projects": "Projects",
       "income": "Income",
       "tasks": "Tasks",
-      "tasksDone": "Tasks done"
+      "tasksDone": "Tasks done",
+      "cost": "Cost",
+      "status": {
+        "new": "New",
+        "inWork": "In work",
+        "done": "Done",
+        "failed": "Failed"
+      }
     }
   },
   "projects": {

@@ -1,19 +1,24 @@
-# Report 6b-1
+# Report 6b-2
 
 ## Changed
-- `src/components/charts/chart-data.ts` (new): `niceMax`, `niceTicks`, `formatCompact`, `toRows`, `pointsMax`, `ChartPoint`.
-- `scripts/chart-data-smoke.mts` (new).
-- `cartesian-chart.tsx`: props `points?: ChartPoint[]`, `seriesLabels?: string[]`. Live for line kinds + column-1,2,3,4,6 (column-5 ignores). Keys: lines `s0..`, c1 `b,a,c`, c2/c3 `v`, c4 `p1..p3`, c6 `v2,v3`. Y axis ticks/domain/format from data (column-4 uses stacked sum). Tooltip defaultIndex clamped. Column-1/2 background bar `bg` = axis top when live. Without `points` same code path as before.
-- `radial-chart.tsx`: `values`, `progress`, `total`, `totalLabel`. Zero-sum -> no slices, no NaN. Progress value clamped 0..0.9999 (full arc degenerate).
-- `widget-data.tsx`: `charts: DashboardCharts`. `dashboard/page.tsx`: fetches `getDashboardCharts()`. Only one provider user.
+- `src/components/dashboard/widgets/catalog.tsx`
+  - `CartesianCardPreview`: with `useWidgetData()` set and kind in line / line-area / line-step / line-gradient / column-1 / 2 / 3 / 6, it passes `points` (income, cost per month) and `seriesLabels` (Income, Cost). Legend becomes Income (purple) / Cost (orange), the tones of the first two palette series. Other kinds and the picker keep the demo data and legend.
+  - `RadialCardPreview`: with data set, donut and pie get `values` = [new, inWork, done, failed], `total` = sum and `totalLabel` = "Tasks". Legend is the four statuses.
+  - `progress`: one ring per status, value = count ÷ total (0 when total is 0). Vertical legend, same colours as the rings.
+  - `progress-half`: `RadialChart` has no data props for it, so it keeps the demo data. Not wired.
+- `messages/en.json`: added `widgets.data.cost` and `widgets.data.status.{new,inWork,done,failed}`.
+
+## Decisions
+- Tones match the slice colours by index. Donut and progress use blue, green, orange, sky. Pie starts with purple (its own `pieColors`), so its legend is purple, green, orange, sky.
+- Only `en.json` has `widgets` / `widgets.data`. de, es, fr and ka have no such keys, so no translation was added there.
+- All-zero data: donut and pie draw no slices (already handled), progress rings have value 0, cartesian is zero-filled.
 
 ## Commands
-- `pnpm exec tsc --noEmit`: PASS (0 errors)
-- `pnpm lint`: PASS (0 errors, 1 pre-existing warning in ui/command.tsx)
+- `pnpm exec tsc --noEmit`: PASS (no errors)
+- `pnpm lint`: PASS (0 errors, 1 existing warning in `command.tsx`)
 - `pnpm build`: PASS
-- `pnpm exec tsx scripts/chart-data-smoke.mts`: PASS (all 8 lines)
-- Grep hex / space-x|y / dark: on diff: no new matches.
+- `curl /dashboard` returns 307 (auth redirect).
 
-## Notes
-- Browser check not run; defaults branch is code-reviewed identical.
-- niceMax(0) = 10, steps 1,1.5,2,2.5,3,4,5,6,8,10 x 10^k (1234 -> 1500).
+## Not done
+- No visual check in the browser: `/dashboard` needs a login, which I don't have. Picker and demo are unaffected, because without data every new prop is `undefined` and the old defaults apply.
+- No hex, `space-[xy]-` or `dark:` in the new code.

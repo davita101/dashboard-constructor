@@ -73,6 +73,13 @@ const halfLegend = [
   { label: "Visits", tone: "gray" },
 ] as const
 
+const liveCartesianKinds = new Set<CartesianKind>(["line", "line-area", "line-step", "line-gradient", "column-1", "column-2", "column-3", "column-6"])
+
+const statusKeys = ["new", "inWork", "done", "failed"] as const
+// Same colours as the slices / rings in RadialChart (donut and progress: blue green orange sky; pie starts with purple).
+const donutTones = ["blue", "green", "orange", "sky"] as const
+const pieTones = ["purple", "green", "orange", "sky"] as const
+
 /** Same ChartCard composition as /design-system/chart-card, one per widget. */
 function CartesianCardPreview({
   kind,
@@ -86,6 +93,17 @@ function CartesianCardPreview({
   tall?: boolean
 }) {
   const fluid = useWidgetFluid()
+  const t = useTranslations("widgets.data")
+  const data = useWidgetData()
+  const live = data && liveCartesianKinds.has(kind) ? data.charts.months : null
+  const legendItems = live
+    ? [
+        { label: t("income"), tone: "purple" as const },
+        { label: t("cost"), tone: "orange" as const },
+      ]
+    : legend === "labels"
+      ? [...labelLegend]
+      : undefined
   return (
     <ChartCard>
       <ChartCardHead>
@@ -99,10 +117,12 @@ function CartesianCardPreview({
           <CartesianChart
             preset="card"
             kind={kind}
+            points={live?.map((m) => ({ label: m.label, values: [m.income, m.cost] }))}
+            seriesLabels={live ? [t("income"), t("cost")] : undefined}
             className={fluid ? "h-full min-h-40 w-full" : cn(tall ? "h-97" : "h-79", wide ? "w-70" : "w-66")}
           />
         </ChartCardPlot>
-        {legend !== "none" && <ChartCardLegend items={legend === "labels" ? [...labelLegend] : undefined} />}
+        {legend !== "none" && <ChartCardLegend items={legendItems} />}
       </ChartCardContent>
       <ChartCardFooter />
     </ChartCard>
@@ -111,7 +131,15 @@ function CartesianCardPreview({
 
 function RadialCardPreview({ kind }: { kind: "donut" | "pie" | "progress" | "progress-half" }) {
   const fluid = useWidgetFluid()
+  const t = useTranslations("widgets.data")
+  const data = useWidgetData()
   const plot = cn(fluid && "min-h-0 flex-1 items-center")
+  const counts = data ? statusKeys.map((k) => data.charts.tasksByStatus[k]) : null
+  const sum = counts ? counts.reduce((a, b) => a + b, 0) : 0
+  const tones = kind === "pie" ? pieTones : donutTones
+  const live = counts && kind !== "progress-half"
+  const legendItems = live ? statusKeys.map((k, i) => ({ label: t(`status.${k}`), tone: tones[i] })) : kind === "progress-half" ? [...halfLegend] : [...sliceLegend]
+  const liveProps = live ? { total: sum, totalLabel: t("tasks") } : {}
   return (
     <ChartCard>
       <ChartCardHead>
@@ -127,14 +155,21 @@ function RadialCardPreview({ kind }: { kind: "donut" | "pie" | "progress" | "pro
           </ChartCardPlot>
         ) : kind === "progress" ? (
           <ChartCardPlot inset="none" className={cn("py-4", plot)}>
-            <RadialChart preset="card" kind="progress" text className={fluid ? "size-36" : "size-66"} />
+            <RadialChart
+              preset="card"
+              kind="progress"
+              text
+              className={fluid ? "size-36" : "size-66"}
+              progress={counts ? counts.map((c, i) => ({ color: donutTones[i], value: sum ? c / sum : 0 })) : undefined}
+              {...liveProps}
+            />
           </ChartCardPlot>
         ) : (
           <ChartCardPlot inset="none" className={cn("py-4", plot)}>
-            <RadialChart preset="card" kind={kind} count={kind === "donut" ? 4 : 7} className="size-49" />
+            <RadialChart preset="card" kind={kind} count={kind === "donut" ? 4 : 7} values={counts ?? undefined} className="size-49" {...liveProps} />
           </ChartCardPlot>
         )}
-        <ChartCardLegend type={kind === "progress" ? "vertical" : undefined} items={kind === "progress-half" ? [...halfLegend] : [...sliceLegend]} />
+        <ChartCardLegend type={kind === "progress" ? "vertical" : undefined} items={legendItems} />
       </ChartCardContent>
       <ChartCardFooter />
     </ChartCard>

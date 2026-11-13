@@ -9,3 +9,5 @@
 2026-11-13 APPROVED 6a dashboard charts query
 2026-11-13 PLAN 6b-1 chart data props + provider (split 6b into 6b-1/6b-2)
 2026-11-13 APPROVED 6b-1 chart data props + provider
+2026-11-13 PLAN 6b-2 wire chart widgets in catalog.tsx
+2026-11-13 APPROVED 6b-2 wire chart widgets

@@ -1,35 +1,37 @@
 # Task
-Provide dashboard chart data through WidgetDataProvider and add optional data props to CartesianChart / RadialChart (no widget wiring yet).
+Wire dashboard chart widgets in `catalog.tsx` to the real chart data (6b-2).
 
 ## TODO item
-  - [ ] 6b-1 Provide `charts` via `WidgetDataProvider` (+ `/dashboard` page); optional data props on `CartesianChart` (line/area/column) and `RadialChart` (donut/pie/progress); defaults = current demo data, no visual change
+- [ ] 6b-2 Wire the widgets in `catalog.tsx` to those props (income vs cost per month, tasks by status)
 
 ## Goal
-Charts accept real data when given; render identical to today when not given. Provider carries `charts: DashboardCharts`. Catalog untouched (6b-2 wires it).
+On `/dashboard` (inside `WidgetDataProvider`) the chart widgets show the user's data; in the widget picker (no provider, `useWidgetData()` = null) they keep the Figma demo data, unchanged.
 
 ## Files
-- `src/components/dashboard/widgets/widget-data.tsx` (add `charts: DashboardCharts` to `WidgetData`)
-- `src/app/dashboard/page.tsx` (fetch `getDashboardCharts()` in the Promise.all, pass in value)
-- `src/components/charts/cartesian-chart.tsx`
-- `src/components/charts/radial-chart.tsx`
-- `src/lib/projects/types.ts` (read `DashboardCharts`); check other `WidgetDataProvider` users compile (`grep -rn WidgetDataProvider src`)
+- `src/components/dashboard/widgets/catalog.tsx` (main change: `CartesianCardPreview`, `RadialCardPreview`)
+- `src/components/dashboard/widgets/widget-data.tsx` (`useWidgetData`, `DashboardCharts` in `src/lib/projects/types.ts`)
+- `src/components/charts/cartesian-chart.tsx`, `radial-chart.tsx`, `chart-data.ts` (props added in 6b-1; read, change only if a bug blocks)
+- `src/components/charts/` ChartCard parts (find with Glob `**/chart-card*`) for legend `items`
+- i18n messages (`widgets.data` namespace; grep `"widgets"` in `messages/` or `src/i18n`) if labels need translating
 
 ## Steps
-1. WidgetData gets `charts`; page provides it. Fix any other provider usage.
-2. CartesianChart: new optional prop `series?: { label: string; data: { label: string; values: number[] } ... }` — simpler: `data?: { label: string; values: Record<string, number> }[]`-style is up to you, but keep it small: `points?: { label: string; values: number[] }[]` (one entry per x tick, `values[k]` = series k) plus `seriesLabels?: string[]`. Used by kinds line, line-gradient, line-step, line-area and column-1..4,6 (map values onto the dataKeys those kinds use: lines `s0..`, columns use `v`/`v2,v3`/`a,b,c`/`p1..p3` — pick: when `points` given, build rows for the kind's keys from `values` in order). XAxis uses point labels. When points given, Y axis domain/ticks derive from data max (nice rounding, `formatK`-style compact ticks) instead of fixed 0–80000. Tooltip `defaultIndex` stays valid (clamp to length-1). Other kinds ignore `points`.
-3. RadialChart: optional `values?: number[]` for donut/pie (slice sizes; zero-sum → render nothing but center label, no NaN) and `progress?: { color; value(0-1) }[]` for kind=progress. Donut center label total: optional `total?: string|number` and `totalLabel?: string` replacing the hardcoded "56"/"Total" when given.
-4. Keep existing exports (`months`, `RingItem`). No new hex, no `dark:`, no `space-[xy]-`.
+1. In `CartesianCardPreview`: `const data = useWidgetData()`. When `data` is set and kind is a supported live kind (`line`, `line-area`, `line-step`, `line-gradient`, `column-1`, `column-2`, `column-3`, `column-6`; NOT `column-5`, `bar`, `bar-stacked`, `candle`), pass `points = data.charts.months.map(m => ({ label: m.label, values: [m.income, m.cost] }))` and `seriesLabels={[Income, Cost]}` (translated). Unsupported kinds keep demo data.
+2. Legend of those cartesian cards (when live): two items Income / Cost with the tones of the first two series (match the existing `labelLegend` tones primary/orange or whatever matches the series colours); keep the demo legend otherwise.
+3. In `RadialCardPreview`: when `data` set, `donut` and `pie` get `values = [new, inWork, done, failed]` (from `tasksByStatus`), `total = sum`, `totalLabel` = "Tasks" (translated; donut only if the prop applies). Legend items = four statuses (New / In work / Done / Failed) with four tones matching the slice colours (check how `RadialChart` colours slices by index and which legend tones map to those).
+4. `progress` (concentric rings): `progress = [{color, value}]` one ring per status share (value = count ÷ total, 0-1), same colours/order as step 3 legend; legend vertical with the same statuses. `progress-half`: show done ÷ all as a single gauge if `RadialChart` supports it through `progress`/`total` props; if not, leave demo data and say so in the report.
+5. Empty data (all zero) must not crash: donut/pie draw no slices (already handled), cartesian zero-filled.
+6. Translate new labels in every locale file that has the `widgets.data` keys (en + the rest).
 
 ## Acceptance
-- `pnpm exec tsc --noEmit` 0 errors; `pnpm lint` 0 errors; `pnpm build` ok.
-- `/design-system` chart pages and `/dashboard` render unchanged when no data props passed (code review: defaults branch identical to old consts).
-- Grep: `grep -nE "#[0-9a-fA-F]{3,8}\b|space-[xy]-|dark:" ` on the changed files adds no new matches.
-- Smoke (optional but preferred): a tiny `scripts/chart-props-smoke.mts` is NOT required; instead a pure helper (e.g. `niceMax`, `toRows`) exported from a `src/components/charts/chart-data.ts` and tested with `pnpm exec tsx scripts/chart-data-smoke.mts` printing `PASS ...` lines (nice max for 0, 1234, 80000; rows mapping; empty values).
+- `pnpm exec tsc --noEmit` clean; `pnpm lint` 0 errors; `pnpm build` passes.
+- `node`/`tsx` smoke not required (UI wiring); instead run `pnpm dev` and open `/dashboard`, add the line, column, donut, pie, progress widgets: they show 9 months of income/cost and the task status shares; picker previews still show demo values. Report what was seen (no console errors).
+- Grep new/changed code: no hex colors, `space-[xy]-`, `dark:`.
+- Picker/demo (`/design-system/chart-card`) unchanged visually.
 
 ## Decisions
-- Charts show user's projects: monthly income/cost (line/area/column), tasks by status (donut/pie/progress). Chosen at Phase 6 earlier; data props are generic so 6b-2 maps them.
-- Axis derived from data when data given; demo axes kept otherwise.
+- Cartesian widgets (line/area/step/gradient/column 1,2,3,6) all show monthly income vs cost, last 9 months: the dashboard is projects-based, income/cost are the only monthly series available.
+- Share charts show tasks by status. Bar/stacked/candle/column-5/progress-half-if-unsupported keep demo data (no matching data source).
+- No UI invented: same cards, same Figma layout; only data and legend labels change.
 
 ## Don't
-- Don't touch `catalog.tsx` (except if tsc forces a type fix), no new Figma-less UI, no DB changes.
-- Don't change demo visuals.
+- No new components, layouts or Figma-less UI. No DB/schema changes. Don't touch metric tiles (already live). Don't change chart visuals when no data is provided.
