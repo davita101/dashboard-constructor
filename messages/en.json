@@ -197,7 +197,13 @@
       "taskCompletion": "Task completion",
       "completed": "Completed",
       "done": "Done",
-      "remaining": "Remaining"
+      "remaining": "Remaining",
+      "project": "Project",
+      "progress": "Progress",
+      "deadline": "Deadline",
+      "noProjects": "No projects yet",
+      "selectAll": "Select all",
+      "selectRow": "Select {name}"
     }
   },
   "projects": {

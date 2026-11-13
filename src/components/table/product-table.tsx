@@ -48,7 +48,7 @@ const compare = (key: SortKey, a: ProductRow, b: ProductRow) =>
   key === "name" ? a.name.localeCompare(b.name) : numeric(a[key]) - numeric(b[key])
 
 /** Header cell that sorts its column: first click ascending, second descending, third clears. */
-function SortHead({ id, className, sort, onSort, children }: { id: SortKey; className?: string; sort: Sort; onSort: (key: SortKey) => void; children: React.ReactNode }) {
+function SortHead<K extends string>({ id, className, sort, onSort, children }: { id: K; className?: string; sort: { key: K; direction: "up" | "down" } | null; onSort: (key: K) => void; children: React.ReactNode }) {
   const direction = sort?.key === id ? sort.direction : undefined
   return (
     <TableHead className={className} aria-sort={direction ? (direction === "up" ? "ascending" : "descending") : "none"}>
@@ -146,5 +146,5 @@ function ProductTable({
   )
 }
 
-export { ProductTable }
+export { ProductTable, SortHead }
 export type { ProductRow }

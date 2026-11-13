@@ -6,6 +6,7 @@ import * as React from "react"
 import { CartesianChart, type CartesianKind } from "@/components/charts/cartesian-chart"
 import { RadialChart } from "@/components/charts/radial-chart"
 import { ProductTable } from "@/components/table/product-table"
+import { ProjectsTable } from "@/components/table/projects-table"
 import {
   ChartCard,
   ChartCardAction,
@@ -246,6 +247,12 @@ function RadialCardPreview({ kind }: { kind: "donut" | "pie" | "progress" | "pro
 type MetricChart = "line" | "area" | "column" | "progress"
 
 const formatCount = (n: number) => new Intl.NumberFormat("en-US").format(n)
+/** Live board table: the user's projects; the Figma product sample outside the data provider. */
+function ProjectsTableWidget() {
+  const data = useWidgetData()
+  return data ? <ProjectsTable projects={data.projects} /> : <ProductTable />
+}
+
 const formatUsd = (n: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n)
 
 /** The real metric behind each tile (user's projects): Projects, Income (30-day trend), Tasks, Tasks done. */
@@ -461,7 +468,7 @@ const widgetCatalog: WidgetDef[] = [
   { id: "metric-chart", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "chart", "amounts", "list"], preview: <MetricLargePreview kind="chart" /> },
   { id: "metric-map", demoOnly: true /* no project data source */, category: "metrics", icon: ICON("language"), keywords: ["metric", "map", "countries", "geo"], preview: <MetricLargePreview kind="map" /> },
   { id: "metric-card", category: "metrics", icon: ICON("account-balance-wallet"), keywords: ["metric", "kpi", "wide", "strip"], preview: <MetricWidePreview />, size: "full" },
-  { id: "table", category: "tables", icon: ICON("list"), keywords: ["table", "grid", "products", "rows", "data", "orders"], preview: <div className="w-210"><ProductTable /></div>, size: "full", board: <ProductTable /> },
+  { id: "table", category: "tables", icon: ICON("list"), keywords: ["table", "grid", "products", "rows", "data", "orders"], preview: <div className="w-210"><ProductTable /></div>, size: "full", board: <ProjectsTableWidget /> },
 ]
 
 const widgetsById = new Map(widgetCatalog.map((w) => [w.id, w]))

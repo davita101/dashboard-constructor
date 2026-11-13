@@ -107,3 +107,4 @@ One line per component: what could not be matched to Figma. Update when fixed.
 - Dashboard metric tiles: values and trend are real (project totals/finance); the mini sparkline/columns art stays the Figma placeholder (no time series per metric). Head "…" is decorative (no menu).
 - RadialChart progress-half: live ratio wired; browser check not run (auth).
 - Widgets: candle chart and metric map are demo data (no project data source); hidden from the picker, still render if already on a board.
+- Projects table widget: reuses product-table frame (14055:68891) columns swapped; no Figma frame for projects columns.

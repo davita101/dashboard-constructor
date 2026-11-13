@@ -27,3 +27,5 @@
 2026-11-13 APPROVED 7c-3 metric-card live KPI strip
 2026-11-13 PLAN ticked 7c; planned 7d hide candle + metric-map from picker
 2026-11-13 APPROVED 7d hide candle + metric-map from picker
+2026-11-13 PLAN Table widget live projects table
+2026-11-13 APPROVED Table widget live projects table
