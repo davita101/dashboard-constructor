@@ -73,3 +73,4 @@
 2026-11-13 APPROVED 9f-4 Dropdown slots
 2026-11-13 PLAN 9f-5 WidgetBoard layout fixes
 2026-11-13 APPROVED 9f-5 WidgetBoard layout
+2026-11-13 PLAN /dashboard/projects/new uncached-data log fix
