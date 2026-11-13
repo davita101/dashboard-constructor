@@ -138,7 +138,7 @@ Source: `design/known-gaps.md` (L = line number there). Classes: **code** = code
 | Dialog (L52) | Tree missing; Black type, button size 24 unread; shadow/overlay assumed | figma | - | |
 | Dialog (L52) | Black Cancel uses black-soft (darker than Figma) | code | B3 | pick variant |
 | Modal (L53) | Form, Switcher-List/Payment/Users, Files, 2FA, Pin copy and field lists guessed | figma | - | |
-| Modal (L54) | Date-Range has no Calendar range; Payment State no Select primitive | code | B5 | shadcn `Calendar` range + Select (NativeSelect) |
+| Modal (L54) | Date-Range has no Calendar range; Payment State no Select primitive | moot | — | Modal removed in a9183ee (9f-6) |
 | Modal (L54) | Welcome omits Player-Video | figma | - | no primitive |
 | Modal (L54) | Head icon placeholder material-default-icon | asset | - | |
 | Modal (L54) | Backdrop opacity, card shadow unread | figma | - | |

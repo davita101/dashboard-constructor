@@ -131,13 +131,13 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
     - [x] 9e-3 ProjectFormDialog logo area: compact drop areas, current-logo preview, remove logo (split 9e-3a backend / 9e-3b UI)
       - [x] 9e-3a `removeLogo` / `removeClientLogo` flags in `projectFields` (form "on"/"true"/"1") + `setLogos` clears the column, upload wins over remove, client remove without client ignored, unused object deleted in same tx; smoke `scripts/logo-remove-smoke.mts` 8 PASS; no UI
       - [x] 9e-3b `FileUpload` compact size (cva), current-logo preview + "Remove logo" checkbox/button in `LogoField`, pass `values.logo` / `values.clientLogo` from ProjectPageView — built: FileUpload `size` cva (default unchanged, compact), LogoField shows current logo + "Remove logo" checkbox (applied on Save), DEFAULT_LOGO moved to types.ts so placeholder is not "current"
-  - [ ] 9f Missing variants and slots: Avatar ring + counter overlay, size/shape context, Tabs pill slots, Calendar year view, Date-Range/Select in Modal, Dropdown slots, WidgetBoard layout (split by component)
+  - [x] 9f Missing variants and slots: Avatar ring + counter overlay, size/shape context, Tabs pill slots, Calendar year view, Date-Range/Select in Modal, Dropdown slots, WidgetBoard layout (split by component)
     - [x] 9f-1 Tabs pill icon + counter slots (`TabsIcon`, `TabsCounter` in `ui/tabs.tsx`): Icon/Badge-pill composed, trigger size rules size the icon, counter default `square-16` + `gray` (assumed)
     - [x] 9f-2 Avatar progress ring + counter overlay: `Avatar progress` (0-100 conic ring, wins over story) + `AvatarCounter` slot (Badge red, square-16/12); no ContentCard in src/, nothing to adopt
     - [x] 9f-3 Size/shape context: `FieldProvider`/`useFieldContext` (field-context.tsx), InputGroup + Input inherit size/shape (prop > Join > Field > default), group slots Button/Tag/Avatar/Swatch inherit shape; cva split to input-variants.ts; ButtonGroup not in repo, skipped
 - [x] 9f-4 Dropdown lead/trail slots (DropdownMenuItemAvatar/Flag/Checkbox/Radio/Switch/Payment wrap Addon; added ui/radio-group; end frames +8px guess)
 - [x] 9f-5 WidgetBoard layout: mobile 1-track chart-to-chart gap 24 (`@max-xl:mt-3`, tiles keep 12); 528 height, odd-chart gap, 5-tile rows, 768 rail left in known-gaps (no simple code fix)
-    - [ ] 9f-6 Calendar year view; Date-Range calendar + Select in Modal
+    - [x] 9f-6 Calendar year view; Date-Range calendar + Select in Modal — closed as moot: Modal was removed in a9183ee (no consumer for range Calendar/Select); EventCalendar only used decoratively in auth showcase slides, year view waits for the Calendar page (Later, blocked: needs Figma)
   - [ ] 9g Previews and browser checks: project-stats and member-row previews, Input OTP / File Input / RadialChart browser checks
 - [ ] `design/pages-queue.md` statuses are stale (auth pages 3-8 marked todo but routes exist): verify each route renders and fix the statuses
 - [ ] Integration smoke script for the whole backend (projects CRUD, members, stages, tasks, files register/delete, settings upsert, chat send/read) against Supabase with cleanup; one command, PASS/FAIL lines
