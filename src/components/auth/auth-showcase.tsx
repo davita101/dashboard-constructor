@@ -44,9 +44,9 @@ function Metrics() {
   return (
     <div className="grid w-full max-w-131 grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4 xl:gap-6">
       <MetricCard title="Total Tasks" value="425" trend={{ up: "+2.45%" }} chart={<ChartColumnsMini tone="blue" type={4} />} />
-      <MetricCard title="Competed Tasks" value="87" trend={{ up: "+20%" }} chart={<ChartLine tone="purple" type={1} className="h-27 w-23.25" preserveAspectRatio="none" />} />
-      <MetricCard title="Incomplete Tasks" value="72,550" trend={{ down: "21,33%" }} chart={<ProgressCircle size="56" value={64} color="blue" aria-label="64%" />} />
-      <MetricCard title="Done Tasks" value="72,550" trend={{ down: "21,33%" }} chart={<ProgressCircle size="56" value={36} color="green" aria-label="36%" />} />
+      <MetricCard title="Completed Tasks" value="87" trend={{ up: "+20%" }} chart={<ChartLine tone="purple" type={1} className="h-27 w-23.25" preserveAspectRatio="none" />} />
+      <MetricCard title="Incomplete Tasks" value="138" trend={{ down: "21.33%" }} chart={<ProgressCircle size="56" value={32} color="blue" aria-label="32%" />} />
+      <MetricCard title="Done Tasks" value="287" trend={{ up: "+12.75%" }} chart={<ProgressCircle size="56" value={68} color="green" aria-label="68%" />} />
     </div>
   )
 }

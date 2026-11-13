@@ -11,7 +11,6 @@ import { rememberMe } from "@/components/auth/remember-me"
 import {
   Auth,
   AuthContent,
-  AuthDescription,
   AuthFields,
   AuthHead,
   AuthRow,
@@ -77,7 +76,6 @@ function SignInForm({ redirectUrl = "/dashboard" }: { redirectUrl?: string }) {
       <Auth gap="5">
         <AuthHead align="center" gap="compact">
           <AuthTitle>Sign in to Account</AuthTitle>
-          <AuthDescription tone="accent">Start Your 14 day free trial</AuthDescription>
         </AuthHead>
         <AuthContent>
       <AuthFields>

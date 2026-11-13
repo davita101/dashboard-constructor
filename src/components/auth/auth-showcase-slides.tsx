@@ -294,7 +294,7 @@ function TeamCard({ kind }: { kind: "user" | "company" }) {
         <ProfileCardBanner src="/images/banners/banner-1.png" />
         <ProfileCardAvatar>
           {user ? (
-            <ProfileAvatar size="60" shape="circle" src="/images/avatars/avatar-1.png" alt="Jogn Trees" verified="primary" />
+            <ProfileAvatar size="60" shape="circle" src="/images/avatars/avatar-1.png" alt="Maya Patel" verified="primary" />
           ) : (
             <LogoAvatar size="60" shape="circle" src="/images/avatars/logo-adobe.png" alt="Miro" />
           )}
@@ -302,11 +302,11 @@ function TeamCard({ kind }: { kind: "user" | "company" }) {
       </ProfileCardHead>
       <ProfileCardContent>
         <ProfileCardName>
-          <ProfileCardTitle>{user ? "Jogn Trees" : "Miro Realtime Board"}</ProfileCardTitle>
-          <ProfileCardSubtitle>{user ? "@jogntrees" : "Software as a service"}</ProfileCardSubtitle>
+          <ProfileCardTitle>{user ? "Maya Patel" : "Miro Realtime Board"}</ProfileCardTitle>
+          <ProfileCardSubtitle>{user ? "@mayapatel" : "Software as a service"}</ProfileCardSubtitle>
         </ProfileCardName>
         <ProfileCardBio className="w-full">
-          {user ? "Designer, Webflow fanatic and front-end enthusiast." : "Online whiteboard for visual collaboration across teams."}
+          {user ? "Product designer focused on design systems and front-end." : "Online whiteboard for visual collaboration across teams."}
         </ProfileCardBio>
         <ProfileCardActions>
           <Button variant="dark" size="32" shape="pill">
