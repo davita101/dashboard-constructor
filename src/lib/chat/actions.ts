@@ -53,6 +53,26 @@ export async function sendMessageAction(input: z.input<typeof s.sendMessageInput
   return run(s.sendMessageInput, input, m.sendMessage)
 }
 
+export async function sendProjectMessageAction(_state: ActionState, form: FormData): Promise<ActionState> {
+  const userId = await getViewerId()
+  const parsed = s.sendProjectMessageForm.safeParse(Object.fromEntries(form))
+  if (!parsed.success) {
+    return { status: "error", message: "Invalid input", fieldErrors: z.flattenError(parsed.error).fieldErrors }
+  }
+  try {
+    // Both mutations check project membership.
+    const conversation = await m.ensureProjectConversation(userId, parsed.data.projectId)
+    expire(conversation)
+    const sent = await m.sendMessage(userId, { conversationId: conversation.conversationId, body: parsed.data.body })
+    expire(sent)
+    return { status: "ok" }
+  } catch (error) {
+    if (error instanceof m.ChatError) return { status: "error", message: error.message }
+    console.error("[chat action]", error)
+    return { status: "error", message: "Something went wrong, try again" }
+  }
+}
+
 export async function markReadAction(input: z.input<typeof s.markReadInput>): Promise<ChatActionState> {
   return run(s.markReadInput, input, (userId, { conversationId }) => m.markRead(userId, conversationId))
 }

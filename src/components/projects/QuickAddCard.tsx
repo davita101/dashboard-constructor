@@ -2,6 +2,7 @@ import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 
 import { AddMemberDialog } from "@/components/projects/AddMemberDialog"
+import { SendMessageDialog } from "@/components/projects/SendMessageDialog"
 import { StageFormDialog } from "@/components/projects/StageFormDialog"
 import { TaskFormDialog } from "@/components/projects/TaskFormDialog"
 import { UploadFilesDialog } from "@/components/projects/UploadFilesDialog"
@@ -23,7 +24,7 @@ type Key = keyof typeof icons
 
 /**
  * Projects Quick Add: 2x3 grid of create actions. Project opens the editor page; Stages, Task and Member open
- * their dialogs (with a project picker), File opens the upload dialog; Message (Phase 5) is not built yet.
+ * their dialogs (with a project picker), File opens the upload dialog, Message posts to the project chat.
  */
 async function QuickAddCard({ projects }: { projects: ProjectOption[] }) {
   const t = await getTranslations("projects.quickAdd")
@@ -45,7 +46,7 @@ async function QuickAddCard({ projects }: { projects: ProjectOption[] }) {
         {needsProject("stages", <StageFormDialog trigger={tile("stages")} projects={projects} />)}
         {needsProject("task", <TaskFormDialog trigger={tile("task")} projects={projects} />)}
         {needsProject("member", <AddMemberDialog trigger={tile("member")} projects={projects} />)}
-        {tile("message", { "data-soon": "" })}
+        {needsProject("message", <SendMessageDialog trigger={tile("message")} projects={projects} />)}
         {needsProject("file", <UploadFilesDialog trigger={tile("file")} projects={projects} />)}
       </div>
     </Card>

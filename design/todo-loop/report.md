@@ -1,18 +1,26 @@
-# Report: metric-line-2 fluid
+# Report
 
 ## Changed
-- `src/components/ui/chart-metric.tsx`: new `size: "fluid"` in `chartMetricCardVariants` (`w-full min-w-0 rounded-r20`).
-- `src/components/dashboard/widgets/catalog.tsx` `MetricLine2Preview`: calls `useWidgetFluid()`. `stretch = fluid && live data`. When stretch: card `size="fluid"` + `h-full`, body `min-h-0 flex-1`, plot `h-auto min-h-24 w-full flex-1`, chart `h-full w-full`. Otherwise the old classes (w-80 card, h-24 w-70 plot).
+- `src/lib/chat/schemas.ts`: `sendProjectMessageForm` (projectId uuid, body trimmed 1..4000).
+- `src/lib/chat/actions.ts`: `sendProjectMessageAction(state, form)`: getViewerId → parse → ensureProjectConversation → sendMessage → expire both → ok. Zod/ChatError/generic errors handled. Membership checked in the mutations.
+- `src/components/projects/SendMessageDialog.tsx` (new): mirrors AddMemberDialog; hidden projectId if 1 project, else NativeSelect; Textarea body.
+- `src/components/projects/QuickAddCard.tsx`: Message tile via `needsProject`, `data-soon` removed, JSDoc updated.
+- `messages/en.json`: `forms.message.*`.
+- `design/known-gaps.md`: Message line updated.
 
 ## Decisions
-- Stretch needs live data (months). Without data the placeholder SVGs stay in the picker size, as the task says.
-- No `board` variant added; the existing context handles it.
+- Did not write a new `run` variant; the action is inline since it makes two mutations. Both expire tags separately.
+- No new shadcn primitive was added (Textarea exists), so I did not invoke the shadcn skill.
+- No new smoke script: the action needs Next auth. Ran the existing smoke instead.
 
 ## Commands
 - `pnpm exec tsc --noEmit`: PASS (0 errors)
-- `pnpm lint`: PASS (0 errors, 1 existing warning in command.tsx)
+- `pnpm lint`: PASS (only the known command.tsx warning)
 - `pnpm build`: PASS
-- Grep of the changed lines: no hex, `space-[xy]`, `dark:` or `w-N h-N` pairs.
+- `grep data-soon QuickAddCard.tsx`: PASS (no match)
+- `tsx --conditions=react-server scripts/chat-actions-smoke.mts`: PASS (all PASS lines)
+- Hex / `space-[xy]-` / `dark:` grep on SendMessageDialog: no matches (checked with the Grep tool).
+- Code check: `needsProject("message", <SendMessageDialog .../>)`, and ActionDialog uses a DialogTrigger.
 
-## Not done
-- No browser check of `/dashboard`: it needs auth and live data, and no browser was available. The check was by code reading only.
+## Undone
+- No browser check of the dialog.

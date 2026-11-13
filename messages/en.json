@@ -438,6 +438,16 @@
       "roleOf": "Role of {name}",
       "remove": "Remove {name}"
     },
+    "message": {
+      "title": "Send message",
+      "description": "Posts to the project chat, visible to every member.",
+      "project": "Project",
+      "projectPlaceholder": "Choose a project",
+      "body": "Message",
+      "bodyPlaceholder": "Write a message…",
+      "send": "Send",
+      "sent": "Message sent"
+    },
     "files": {
       "title": "Upload files",
       "description": "Files are shared with every member of the project.",

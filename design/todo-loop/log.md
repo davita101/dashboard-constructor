@@ -41,3 +41,5 @@
 2026-11-13 APPROVED 8b hide head more action
 2026-11-13 PLAN 8c metric-line-2 fluid plot
 2026-11-13 APPROVED 8c metric-line-2 fluid f72f4b3
+2026-11-13 PLAN Quick Add Message dialog (project chat)
+2026-11-13 APPROVED Quick Add Message dialog
