@@ -163,6 +163,18 @@ function Gradient({ id, from, to }: { id: string; from: string; to: string }) {
 
 type CandleDatum = (typeof candles)[number]
 
+const TICK_MAX = 14
+const truncate = (name: string) => (name.length > TICK_MAX ? `${name.slice(0, TICK_MAX - 1)}…` : name)
+
+/** Category tick for live bars: name cut with an ellipsis (full name stays in the row data and the tooltip). */
+function TruncatedTick({ x = 0, y = 0, payload }: { x?: number; y?: number; payload?: { value: string } }) {
+  return (
+    <text x={x} y={y} dy={4} textAnchor="end" className="fill-base-600 text-11">
+      {truncate(String(payload?.value ?? ""))}
+    </text>
+  )
+}
+
 function CandleShape(props: {
   x?: number
   y?: number
@@ -242,6 +254,7 @@ function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, 
     ...(live && !isLineKind
       ? Object.fromEntries(dataKeys.map((key, i) => [key, { label: seriesLabels?.[i] ?? "Tooltip" }]))
       : {}),
+    ...(categories && kind === "bar" ? { v: { label: seriesLabels?.[0] ?? "Tooltip" } } : {}),
     ...(categories && kind === "bar-stacked"
       ? Object.fromEntries(statusColors.map((color, k) => [`p${k}`, { label: seriesLabels?.[k] ?? "Tooltip", color }]))
       : {}),
@@ -384,8 +397,8 @@ function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, 
         </defs>
         {grid}
         <XAxis type="number" domain={[0, barTop]} ticks={niceTicks(barTop, barTop < 4 ? barTop : 4)} tickFormatter={formatCompact} tickLine={false} axisLine={false} />
-        <YAxis yAxisId="l" type="category" dataKey="name" tickLine={false} axisLine={false} width={58} />
-        <YAxis yAxisId="r" type="category" dataKey="name" tickLine={false} axisLine={false} width={58} orientation="right" />
+        <ChartTooltip cursor={false} isAnimationActive={false} content={<ChartTooltipContent />} />
+        <YAxis yAxisId="l" type="category" dataKey="name" tickLine={false} axisLine={false} width={96} tick={<TruncatedTick />} />
         <Bar yAxisId="l" dataKey="v" barSize={3} radius={2} isAnimationActive={false} label={label}>
           {rows.map((d) => (
             <Cell key={d.i} fill={`url(#${uid}-h${d.i})`} />
@@ -431,14 +444,20 @@ function CartesianChart({ kind, yAxis = "both", lines = "grid", tooltip = true, 
           <ChartTooltip cursor={false} isAnimationActive={false} content={<ChartTooltipContent />} />
         )}
         <XAxis type="number" tickFormatter={(v: number) => `${Math.round(v * 100)}%`} tickLine={false} axisLine={false} />
-        {(yAxis === "left" || yAxis === "both") && (
-          <YAxis yAxisId="l" type="category" dataKey="name" tickLine={false} axisLine={false} width={58} />
-        )}
-        {(yAxis === "right" || yAxis === "both") && (
-          <YAxis yAxisId="r" type="category" dataKey="name" tickLine={false} axisLine={false} width={58} orientation="right" />
+        {categories ? (
+          <YAxis yAxisId="l" type="category" dataKey="name" tickLine={false} axisLine={false} width={96} tick={<TruncatedTick />} />
+        ) : (
+          <>
+            {(yAxis === "left" || yAxis === "both") && (
+              <YAxis yAxisId="l" type="category" dataKey="name" tickLine={false} axisLine={false} width={58} />
+            )}
+            {(yAxis === "right" || yAxis === "both") && (
+              <YAxis yAxisId="r" type="category" dataKey="name" tickLine={false} axisLine={false} width={58} orientation="right" />
+            )}
+          </>
         )}
         {(categories ? statusColors : stackColors).map((c, k) => (
-          <Bar key={c} yAxisId={yAxis === "right" ? "r" : "l"} dataKey={`p${k}`} stackId="s" fill={categories ? c : `var(--${c}-${k % 2 ? 400 : 500})`} isAnimationActive={false} barSize={14} />
+          <Bar key={c} yAxisId={yAxis === "right" && !categories ? "r" : "l"} dataKey={`p${k}`} stackId="s" fill={categories ? c : `var(--${c}-${k % 2 ? 400 : 500})`} isAnimationActive={false} barSize={14} />
         ))}
       </BarChart>
     )
