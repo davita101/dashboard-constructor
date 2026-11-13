@@ -1,6 +1,6 @@
 # Dashboard Constructor — demo
 
-[![CI](https://github.com/davita101/ecormce_webstie/actions/workflows/ci.yml/badge.svg)](https://github.com/davita101/ecormce_webstie/actions/workflows/ci.yml)
+[![CI](https://github.com/davita101/dashboard-constructor/actions/workflows/ci.yml/badge.svg)](https://github.com/davita101/dashboard-constructor/actions/workflows/ci.yml)
 
 > **This is a demo.** It shows a dashboard built from the Commerce Constructor 7.7 Figma design system, with a real
 > backend behind it. The data you see first is **sample data** copied from the Figma file and loaded into the
