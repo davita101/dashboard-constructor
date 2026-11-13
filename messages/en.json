@@ -185,7 +185,11 @@
         "inWork": "In work",
         "done": "Done",
         "failed": "Failed"
-      }
+      },
+      "profit": "Profit",
+      "incomeCost": "Income & cost",
+      "tasksByStatus": "Tasks by status",
+      "last30": "last 30 days"
     }
   },
   "projects": {

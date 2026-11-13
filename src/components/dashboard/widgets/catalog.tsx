@@ -76,6 +76,12 @@ const halfLegend = [
 const liveCartesianKinds = new Set<CartesianKind>(["line", "line-area", "line-step", "line-gradient", "column-1", "column-2", "column-3", "column-6"])
 
 const statusKeys = ["new", "inWork", "done", "failed"] as const
+
+/** Signed percent → ChartCardMetrics trend fields ("" when flat). */
+const trendOf = (pct: number) => ({
+  trend: pct ? `${Math.abs(pct)}%` : "",
+  trendDirection: pct < 0 ? ("down" as const) : ("up" as const),
+})
 // Same colours as the slices / rings in RadialChart (donut and progress: blue green orange sky; pie starts with purple).
 const donutTones = ["blue", "green", "orange", "sky"] as const
 const pieTones = ["purple", "green", "orange", "sky"] as const
@@ -104,15 +110,25 @@ function CartesianCardPreview({
     : legend === "labels"
       ? [...labelLegend]
       : undefined
+  // Real numbers above a real plot: all-time income / cost / profit with the 30-day trends. The Hour/Day/Week/Month
+  // switcher is Figma decoration with no data behind it, so it is hidden on live cards.
+  const finance = live ? data!.finance : null
+  const metrics: React.ComponentProps<typeof ChartCardMetrics>["items"] = finance
+    ? [
+        { tone: "purple", heading: t("income"), value: formatUsd(finance.income), ...trendOf(finance.incomeTrend), additionalText: t("last30") },
+        { tone: "orange", heading: t("cost"), value: formatUsd(finance.cost), trend: "", additionalText: "" },
+        { tone: "green", heading: t("profit"), value: formatUsd(finance.profit), ...trendOf(finance.profitTrend), additionalText: t("last30") },
+      ]
+    : undefined
   return (
     <ChartCard>
       <ChartCardHead>
-        <ChartCardTitle>Chart</ChartCardTitle>
+        <ChartCardTitle>{live ? t("incomeCost") : "Chart"}</ChartCardTitle>
         <ChartCardAction data-soon />
       </ChartCardHead>
       <ChartCardContent className={cn(fluid && "min-h-0 flex-1")}>
-        <ChartCardSwitcher />
-        <ChartCardMetrics />
+        {live ? null : <ChartCardSwitcher />}
+        <ChartCardMetrics items={metrics} />
         <ChartCardPlot inset={wide ? "none" : "md"} className={cn(fluid && "min-h-0 flex-1")}>
           <CartesianChart
             preset="card"
@@ -143,12 +159,17 @@ function RadialCardPreview({ kind }: { kind: "donut" | "pie" | "progress" | "pro
   return (
     <ChartCard>
       <ChartCardHead>
-        <ChartCardTitle>Chart</ChartCardTitle>
+        <ChartCardTitle>{live ? t("tasksByStatus") : "Chart"}</ChartCardTitle>
         <ChartCardAction data-soon />
       </ChartCardHead>
       <ChartCardContent className={cn(fluid && "min-h-0 flex-1")}>
-        <ChartCardSwitcher />
-        <ChartCardMetrics />
+        {/* Live: the plot and legend carry the numbers; the Figma switcher and sample metrics would be fake. */}
+        {live ? null : (
+          <>
+            <ChartCardSwitcher />
+            <ChartCardMetrics />
+          </>
+        )}
         {kind === "progress-half" ? (
           <ChartCardPlot className={cn("py-4", plot)}>
             <RadialChart preset="card" kind="progress-half" text className="h-33 w-66" />
