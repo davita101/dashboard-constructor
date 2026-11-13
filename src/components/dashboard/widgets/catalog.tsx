@@ -409,9 +409,26 @@ function MetricLargePreview({ kind }: { kind: "chart" | "map" }) {
 
 /** Metric-Card: the wide KPI strip. */
 function MetricWidePreview() {
+  const t = useTranslations("widgets.data")
+  const data = useWidgetData()
+  const items = data
+    ? [
+        { heading: t("projects"), value: formatCount(data.totals.projects) },
+        { heading: t("tasks"), value: formatCount(data.totals.tasks) },
+        { heading: t("members"), value: formatCount(data.totals.members) },
+        { heading: t("files"), value: formatCount(data.totals.files) },
+        {
+          heading: t("income"),
+          value: formatUsd(data.finance.income),
+          delta: trendOf(data.finance.incomeTrend).trend,
+          deltaDirection: trendOf(data.finance.incomeTrend).trendDirection,
+          additionalText: t("last30"),
+        },
+      ]
+    : undefined
   return (
     <ChartMetricCard size="wide">
-      <ChartMetricWideBody />
+      <ChartMetricWideBody items={items} />
       <ChartMetricFooter size="wide" link="Heading" />
     </ChartMetricCard>
   )

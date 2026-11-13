@@ -493,6 +493,14 @@ function ChartMetricColorCard({
 
 /* ---------------------------------- Wide card inline content ---------------------------------- */
 
+type ChartMetricWideItem = {
+  heading: string
+  value: string
+  delta?: string
+  deltaDirection?: "up" | "down"
+  additionalText?: string
+}
+
 /** Figma Metric-Card Content (785x128): icon, Head, value row (value, caption, Up, Down), caption. */
 function ChartMetricWideBody({
   className,
@@ -500,8 +508,32 @@ function ChartMetricWideBody({
   value = "72,550",
   up = "Text",
   down = "Text",
+  items,
   ...props
-}: React.ComponentProps<"div"> & { heading?: string; value?: string; up?: string; down?: string }) {
+}: React.ComponentProps<"div"> & { heading?: string; value?: string; up?: string; down?: string; items?: ChartMetricWideItem[] }) {
+  if (items) {
+    return (
+      <div data-slot="chart-metric-wide-body" className={cn("flex flex-wrap gap-y-5", className)} {...props}>
+        {items.map((item) => (
+          <div key={item.heading} className="flex min-w-40 flex-1 gap-5 p-5">
+            <span aria-hidden className={cn("size-5 shrink-0 text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70", maskIcon, "mask-[url(/icons/material-default-icon.svg)]")} />
+            <div className="flex flex-col gap-3 pr-3">
+              <span className="text-10 leading-16 font-bold text-base-700 group-data-[appearance=image]/metric:text-background-0">{item.heading}</span>
+              <div className="flex items-center gap-3.25">
+                <span className="text-20 leading-28 font-semibold text-base-900 group-data-[appearance=image]/metric:text-background-0">{item.value}</span>
+                {item.delta ? (
+                  <ChartTrend direction={item.deltaDirection ?? "up"} size="md">{item.delta}</ChartTrend>
+                ) : null}
+              </div>
+              {item.additionalText ? (
+                <span className="text-10 leading-16 font-bold text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70">{item.additionalText}</span>
+              ) : null}
+            </div>
+          </div>
+        ))}
+      </div>
+    )
+  }
   return (
     <div data-slot="chart-metric-wide-body" className={cn("flex gap-5 p-5", className)} {...props}>
       <span aria-hidden className={cn("size-5 text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70", maskIcon, "mask-[url(/icons/material-default-icon.svg)]")} />
@@ -540,4 +572,4 @@ export {
   chartMetricCardVariants,
   colorCardTones,
 }
-export type { ChartMetricColorTone }
+export type { ChartMetricColorTone, ChartMetricWideItem }

@@ -179,6 +179,8 @@
       "income": "Income",
       "tasks": "Tasks",
       "tasksDone": "Tasks done",
+      "members": "Members",
+      "files": "Files",
       "cost": "Cost",
       "status": {
         "new": "New",

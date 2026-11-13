@@ -23,3 +23,5 @@
 2026-11-13 APPROVED 7c-1 metric-line-2 live
 2026-11-13 PLAN 7c-2 metric-chart live
 2026-11-13 APPROVED 7c-2 metric-chart live
+2026-11-13 PLAN 7c-3 metric-card live KPI strip
+2026-11-13 APPROVED 7c-3 metric-card live KPI strip
