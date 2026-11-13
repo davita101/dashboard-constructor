@@ -1,6 +1,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
+import { Icon } from "@/components/ui/icon"
 import { Progress } from "@/components/ui/progress"
 import type { ProgressColor } from "@/components/ui/progress-colors"
 import { cn } from "@/lib/utils"
@@ -261,12 +262,10 @@ function ChartAmount({
       <div className="flex items-center gap-2 pr-4">
         <ChartDot tone="primary" shade={600} />
         <span className={chartAmountMutedVariants({ style: appearance })}>{heading}</span>
-        <span
-          aria-hidden
-          className={cn(
-            "size-4 shrink-0 mask-[url(/icons/material-keyboard-arrow-down.svg)] mask-contain mask-center mask-no-repeat",
-            appearance === "image" ? "bg-white-alpha-50" : "bg-base-500",
-          )}
+        <Icon
+          size={4}
+          src="/icons/material-keyboard-arrow-down.svg"
+          className={appearance === "image" ? "bg-white-alpha-50" : "bg-base-500"}
         />
       </div>
       <div className="flex flex-col gap-1">
@@ -300,20 +299,17 @@ function ChartTrend({
       )}
       {...props}
     >
-      <span
-        aria-hidden
-        className={cn(
-          "shrink-0 bg-current mask-contain",
-          size === "md" ? "size-5" : size === "stack" ? "size-6" : "size-4",
-          " mask-center mask-no-repeat",
+      <Icon
+        size={size === "md" ? 5 : size === "stack" ? 6 : 4}
+        src={
           icon === "arrow"
             ? direction === "up"
-              ? "mask-[url(/icons/material-arrow-upward.svg)]"
-              : "mask-[url(/icons/material-arrow-downward.svg)]"
+              ? "/icons/material-arrow-upward.svg"
+              : "/icons/material-arrow-downward.svg"
             : direction === "up"
-              ? "mask-[url(/icons/material-trending_up.svg)]"
-              : "mask-[url(/icons/material-trending_down.svg)]",
-        )}
+              ? "/icons/material-trending_up.svg"
+              : "/icons/material-trending_down.svg"
+        }
       />
       {children}
     </span>

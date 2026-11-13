@@ -1,7 +1,26 @@
-# Report 9b-2
-Changed `src/app/globals.css`: shadcn `:root` vars now `var(--token)` refs; `.dark` block removed (tokens flip in color-mode.css). `--radius: var(--r-10)`.
-Mapping: background→background-0, foreground/*-foreground→base-900, card/popover/sidebar→base-0, primary/ring→primary-500, primary-foreground→white, secondary/muted/accent→base-50, muted-foreground→base-500, destructive→danger-500, border/input→base-100, chart1-5→primary-200..600.
-Vars used (all verified in color-mode.css/themes.css): background-0, base-0/50/100/500/900, primary-200..600, white, danger-500, r-10.
-Decision: card = base-0 (white Light, gray-900 Dark, above background-0 gray-960). Clerk shadcn theme will now follow tokens.
-Commands: tsc PASS; lint PASS (0 errors); build PASS; grep oklch/.dark in globals.css: no match.
-CLAUDE.md "Not done yet" line updated.
+# Report: 9c-1 shared Icon
+
+## Changed
+- new `src/components/ui/icon.tsx`: `Icon` (span, `data-slot="icon"`, aria-hidden, `bg-current` + mask classes, inline `maskImage`/`WebkitMaskImage` from `src`), `iconVariants` cva sizes 4/5/6, no default size.
+- `chart-metric.tsx`: all 8 spans -> `Icon`, `maskIcon` const removed.
+- `chart-parts.tsx`: chevron + `ChartTrend` glyph -> `Icon` (class ternaries became `src`/`size` ternaries).
+- `breadcrumb.tsx`: separator + ellipsis -> `Icon`.
+- `native-select.tsx`, `field.tsx` (`FieldLabelIcon`) -> `Icon`.
+- `design/known-gaps.md`: removed 3 lines, added Icon line at end.
+
+## Decisions
+- `breadcrumbSeparatorVariants` (still exported, unused elsewhere) now only holds color/opacity; mask + size moved to `Icon`.
+- `BreadcrumbIcon` uses `mask-(--breadcrumb-icon)` (CSS var, not `mask-[url`), left as is (not in task list).
+- `Icon` spreads `...props` after style, so callers can override `data-slot` (native-select, field keep theirs).
+
+## Commands
+- `pnpm exec tsc --noEmit` PASS
+- `pnpm lint` PASS (0 errors, 1 known command.tsx warning)
+- `pnpm build` PASS
+- grep `mask-[url` in the 5 files: PASS (none)
+- grep hex/space-xy/dark: in icon.tsx: PASS (none)
+- grep `<img` in src: PASS (only notification.tsx, task.tsx)
+- Visual: code-read only.
+
+## Undone
+Nothing.

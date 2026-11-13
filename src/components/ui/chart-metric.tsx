@@ -3,13 +3,12 @@ import { cva, type VariantProps } from "class-variance-authority"
 import Link from "next/link"
 
 import { ChartDot, ChartProgressCard, ChartTrend, type ChartTone } from "@/components/ui/chart-parts"
+import { Icon } from "@/components/ui/icon"
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
 
 // Figma Charts Metrics page (9880:5306): metric cards. Every card is a ChartMetricCard
 // (Type Default / Image) with Head, Body and Footer slots; the chart itself is a part from chart-parts.
-
-const maskIcon = "shrink-0 bg-current mask-contain mask-center mask-no-repeat"
 
 /* ---------------------------------- Card ---------------------------------- */
 
@@ -76,13 +75,10 @@ function ChartMetricHead({ className, size = "compact", title = "Heading", icon,
         </span>
       </div>
       {action ? (
-        <span
-          aria-hidden
-          className={cn(
-            "size-5 text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70",
-            maskIcon,
-            size === "large" ? "mask-[url(/icons/material-more-vert.svg)]" : "mask-[url(/icons/material-more-horiz.svg)]",
-          )}
+        <Icon
+          size={5}
+          src={size === "large" ? "/icons/material-more-vert.svg" : "/icons/material-more-horiz.svg"}
+          className="text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70"
         />
       ) : null}
     </div>
@@ -384,7 +380,7 @@ function ChartMetricActions({
   const viewMoreContent = (
     <>
       View More
-      <span aria-hidden className={cn("size-4 mask-[url(/icons/material-chevron-right.svg)]", maskIcon)} />
+      <Icon size={4} src="/icons/material-chevron-right.svg" />
     </>
   )
   return (
@@ -406,7 +402,7 @@ function ChartMetricActions({
           onClick={onDownload}
           className="flex items-center gap-2 rounded-r4 text-11 leading-20 font-bold text-base-700 outline-none focus-visible:ring-2 focus-visible:ring-primary-500 group-data-[appearance=image]/metric:text-background-0"
         >
-          <span aria-hidden className={cn("size-4 mask-[url(/icons/material-file-download.svg)]", maskIcon)} />
+          <Icon size={4} src="/icons/material-file-download.svg" />
           Download
         </button>
       </div>
@@ -508,10 +504,10 @@ function ChartMetricColorCard({
       {...props}
     >
       <div className="flex gap-5 p-5">
-        <span aria-hidden className={cn("size-6 text-(--mc-head)", maskIcon, "mask-[url(/icons/material-default-icon.svg)]")} />
+        <Icon size={6} src="/icons/material-default-icon.svg" className="text-(--mc-head)" />
         <div className="flex flex-col gap-3 pr-16.5">
           <div className="flex items-center gap-2">
-            <span aria-hidden className={cn("size-5 text-(--mc-head)", maskIcon, "mask-[url(/icons/material-default-icon.svg)]")} />
+            <Icon size={5} src="/icons/material-default-icon.svg" className="text-(--mc-head)" />
             <span className="text-10 leading-16 font-bold text-(--mc-head)">{heading}</span>
           </div>
           <div className="flex items-center gap-3.25">
@@ -558,13 +554,12 @@ function ChartMetricWideBody({
     return (
       <div data-slot="chart-metric-wide-body" className={cn("flex", className)} {...props}>
         {items.map((item) => {
-          const icon = `url(${item.icon ?? "/icons/material-default-icon.svg"})`
           return (
           <div key={item.heading} className="flex min-w-0 flex-1 gap-4 p-4">
-            <span
-              aria-hidden
-              className={cn("size-5 shrink-0 text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70", maskIcon)}
-              style={{ maskImage: icon, WebkitMaskImage: icon }}
+            <Icon
+              size={5}
+              src={item.icon ?? "/icons/material-default-icon.svg"}
+              className="text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70"
             />
             <div className="flex min-w-0 flex-col gap-3">
               <span className="truncate text-10 leading-16 font-bold text-base-700 group-data-[appearance=image]/metric:text-background-0">{item.heading}</span>
@@ -586,10 +581,10 @@ function ChartMetricWideBody({
   }
   return (
     <div data-slot="chart-metric-wide-body" className={cn("flex gap-5 p-5", className)} {...props}>
-      <span aria-hidden className={cn("size-5 text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70", maskIcon, "mask-[url(/icons/material-default-icon.svg)]")} />
+      <Icon size={5} src="/icons/material-default-icon.svg" className="text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70" />
       <div className="flex flex-col gap-3 pr-3">
         <div className="flex items-center gap-2">
-          <span aria-hidden className={cn("size-5 text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70", maskIcon, "mask-[url(/icons/material-default-icon.svg)]")} />
+          <Icon size={5} src="/icons/material-default-icon.svg" className="text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70" />
           <span className="text-10 leading-16 font-bold text-base-700 group-data-[appearance=image]/metric:text-background-0">{heading}</span>
         </div>
         <div className="flex items-center gap-3.25">

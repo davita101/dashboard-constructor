@@ -117,7 +117,8 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
   - [x] 9b Theme wiring: shadcn vars + fonts (split 9b-1 / 9b-2)
     - [x] 9b-1 Fonts: load Inter/Playfair Display/Roboto/Merriweather/Ms Madi/Source Code Pro via next/font onto `--font-family-*` (replace Geist) (no design-system pages exist: skip the font-sans part) — next/font loads all 6 families, `:root` overrides in globals.css, Geist removed, `--font-mono` = Source Code Pro
     - [x] 9b-2 Map shadcn vars (`--background`, `--primary`, `--border`, `--radius`…) to Color Mode tokens in globals.css — `:root` vars are `var(--token)` refs (card=base-0, primary/ring=primary-500, border=base-100, radius=r-10), `.dark` block removed (tokens flip)
-  - [ ] 9c Icon dark mode: shared token-colored mask Icon component replacing hardcoded #808080 `<img>` icons
+  - [x] 9c Icon dark mode: shared token-colored mask Icon component (finding: no `<img>` icons left, all masked already; so dedupe + gaps cleanup)
+    - [x] 9c-1 `ui/icon.tsx` + adopt in chart-metric, chart-parts, breadcrumb, native-select, field; drop stale known-gaps lines — built: shared `Icon` (mask, cva sizes 4/5/6) adopted in 5 files, stale gaps removed
   - [ ] 9d Token/variant fixes: Badge/Button/Textarea/Tooltip/Counter/Link/Double Input small Figma value fixes, shadow/blur constants, date formatting
   - [ ] 9e Dead controls and flows: Night Mode switch, back-to-top, QuickAddCard handlers, project tab panels, logo form area, forgot-password/verify (if not in queue #5)
   - [ ] 9f Missing variants and slots: Avatar ring + counter overlay, size/shape context, Tabs pill slots, Calendar year view, Date-Range/Select in Modal, Dropdown slots, WidgetBoard layout

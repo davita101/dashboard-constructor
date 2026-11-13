@@ -49,3 +49,5 @@
 2026-11-13 APPROVED 9b-1 fonts
 2026-11-13 PLAN 9b-2 map shadcn vars to tokens
 2026-11-13 APPROVED 9b-2 shadcn vars
+2026-11-13 PLAN 9c-1 shared Icon mask component (icons already masked; dedupe 5 files + stale gaps)
+2026-11-13 APPROVED 9c-1 Icon
