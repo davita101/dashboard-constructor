@@ -342,10 +342,19 @@ const chartProgressCardVariants = cva("flex w-27 flex-col", {
   variants: {
     type: {
       progress: "gap-3",
-      head: "gap-0 pb-4 outline-0",
+      // Figma Head: bottom-only 1px stroke, 16px below the labels (15px padding + 1px border = 32px).
+      head: "gap-0 border-b pb-3.75",
+    },
+    appearance: {
+      default: "",
+      image: "",
     },
   },
-  defaultVariants: { type: "progress" },
+  compoundVariants: [
+    { type: "head", appearance: "default", className: "border-background-100" },
+    { type: "head", appearance: "image", className: "border-white-alpha-20" },
+  ],
+  defaultVariants: { type: "progress", appearance: "default" },
 })
 
 type ChartProgressCardProps = Omit<React.ComponentProps<"div">, "style"> &
@@ -379,12 +388,7 @@ function ChartProgressCard({
       <div
         data-slot="chart-progress-card"
         data-type="head"
-        className={cn(
-          chartProgressCardVariants({ type }),
-          "outline -outline-offset-1",
-          image ? "outline-white-alpha-20" : "outline-background-100",
-          className,
-        )}
+        className={cn(chartProgressCardVariants({ type, appearance }), className)}
         {...props}
       >
         <div className="flex items-center justify-between text-10 leading-16 font-bold">

@@ -33,3 +33,5 @@
 2026-11-13 APPROVED 7e bar/stacked axes 7db18cf
 2026-11-13 PLAN 7f metric-card one row + real footer + icons
 2026-11-13 APPROVED 7f metric-card one row
+2026-11-13 PLAN 7g metric-chart list head plain header
+2026-11-13 APPROVED 7g metric-chart list head
