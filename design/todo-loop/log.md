@@ -3,3 +3,5 @@
 2026-11-13 APPROVED 5a chat schema
 2026-11-13 PLAN Phase 5b chat queries + schemas + actions
 2026-11-13 APPROVED 5b chat queries+actions
+2026-11-13 PLAN Phase 5 Realtime subscription hook (useMessageStream) + smoke
+2026-11-13 APPROVED Realtime subscription hook (live delivery unproven)

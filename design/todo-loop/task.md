@@ -1,43 +1,33 @@
 # Task
-Phase 5b: chat queries, Zod schemas, mutations and Server Actions (no UI: no chat Figma frame).
+Add a client hook `useMessageStream` that subscribes to new chat messages via Supabase Realtime (no UI).
 
 ## TODO item
-  - [ ] 5b Queries (`src/lib/chat/queries.ts`) + Zod schemas + Server Actions (start direct conversation, send message, mark read)
+- [ ] Supabase Realtime subscription for new messages
 
 ## Goal
-Server-side chat API on top of migration 0003 tables (`conversations`, `conversation_members`, `messages`), scoped to the Clerk viewer. Drizzle bypasses RLS, so code must do the access check.
+A reusable hook for the future chat UI: given a conversation id, it delivers newly inserted `messages` rows live (RLS applies via the Clerk token), cleans up on unmount. Plus a node smoke test proving realtime delivery and RLS filtering.
 
 ## Files
-Read: `src/db/schema/chat.ts`, `src/db/schema/relations.ts`, `src/lib/projects/actions.ts`, `mutations.ts`, `queries.ts`, `schemas.ts`, `src/lib/auth/viewer.ts`, `scripts/chat-schema-smoke.mjs`.
-Create: `src/lib/chat/{schemas,queries,mutations,actions,types,tags}.ts`, `scripts/chat-actions-smoke.mts` (or .mjs via tsx).
+- read: `src/lib/supabase/client.ts` (`useSupabase`), `src/lib/chat/{types,queries,actions}.ts`, `src/db/migrations/0003_chat.sql` (messages in `supabase_realtime`, RLS), `scripts/chat-schema-smoke.mjs`
+- new: `src/lib/chat/realtime.ts` (client-only, `"use client"`): `useMessageStream(conversationId, onMessage)` + exported pure `parseMessageRow(row)`
+- new: `scripts/chat-realtime-smoke.mjs`
 
 ## Steps
-1. `schemas.ts` (Zod): `startDirectInput {userId}`, `sendMessageInput {conversationId uuid, body trimmed 1..4000}`, `markReadInput {conversationId}`.
-2. `tags.ts`: `userChatTag(userId)`, `conversationTag(id)`. Do NOT cache messages with "use cache" (realtime will read them live); cache only the conversation list per user if simple, otherwise skip caching and read uncached.
-3. `queries.ts` (server-only, take viewer id as arg):
-   - `getConversations(userId)`: visible conversations (direct where member; project where project member) with title (project name, or other participant's name/avatar for direct), last message preview, `lastMessageAt`, unread count (messages by others after `lastReadAt`; null lastReadAt = all by others). Sorted by lastMessageAt desc nulls last.
-   - `getMessages(userId, conversationId, {before?, limit=50})`: access check, newest-first page returned oldest-first, with author name/avatar; empty/NotFound if no access.
-   - `getProjectConversationId`-style helper not needed; project chat is created lazily in `sendMessage`/`ensureProjectConversation(userId, projectId)` (membership check, insert on conflict do nothing on unique project_id).
-4. `mutations.ts` (transactions, `ChatError` like `MutationError`):
-   - `startDirect(userId, otherId)`: other must exist in `users`, not self; reuse existing 2-member direct conversation if present, else create conversation + 2 members. Returns id.
-   - `sendMessage(userId, {conversationId, body})`: access check (direct: member; project: project member, ensure conversation_members row not required), insert message, set `conversations.lastMessageAt`, set sender's `lastReadAt` for direct members row if exists. Returns message.
-   - `markRead(userId, conversationId)`: access check; upsert `conversation_members` row (project chats: insert row for viewer if missing) with `lastReadAt = now()`.
-5. `actions.ts` ("use server"): `startDirectAction`, `sendMessageAction`, `markReadAction` — `getViewerId()` → parse → mutation → `updateTag` for affected users' chat tags; return plain result objects (`{status:"ok", ...}` / error state, reuse `ActionState` from projects).
-6. Smoke test script against Supabase (temp rows with `smoke_<tag>` prefix, remove only those at end), PASS lines for: direct start creates + is idempotent, self/unknown user refused, send by member ok, send by non-member refused, project chat lazily created & non-member refused, unread count 1 for recipient then 0 after markRead, pagination order, body length 0 / 4001 rejected.
-7. Tick 5b in TODO.md is reviewer's job; do not edit TODO.md.
+1. `parseMessageRow(payload.new)`: maps snake_case row (`id, conversation_id, author_id, body, created_at, edited_at`) to `{ id, conversationId, authorId, body, createdAt: Date, editedAt: Date|null }`. Author name/avatar are NOT in the row; the consumer resolves via a members list or refetches (document in a comment). Export type `StreamedMessage`.
+2. `useMessageStream(conversationId: string | null, onMessage: (m: StreamedMessage) => void)`: `useSupabase()`; effect creates channel `messages:<conversationId>` with `postgres_changes` INSERT on `public.messages` filter `conversation_id=eq.<id>`; subscribes; cleanup `supabase.removeChannel`. Keep `onMessage` in a ref so the effect depends only on client + id. Skip when id null. Also handle Clerk token refresh: `supabase.realtime.setAuth()` is handled by `accessToken` option; do not add extra code unless needed.
+3. Smoke script (node, `.env.local` via `process.loadEnvFile`): create temp users/project/conversation with unique `smoke_<tag>` prefix via `postgres` (like chat-schema-smoke). Two supabase-js clients with `accessToken` returning a JWT. Mint the JWT the same way earlier smoke tests did for Phase 4 (Clerk Backend API session token using `CLERK_SECRET_KEY`: create a session + token for a real Clerk user who is a temp member) — if that is impractical for temp `smoke_` users, use a real existing Clerk user and add them as temp conversation member, removed at the end. Assert: member client receives INSERT within 10 s (PASS); a client for a non-member user receives nothing within 3 s (PASS). Clean up only its own rows.
+4. Do not add UI. Do not touch existing chat files except exporting types if needed.
 
 ## Acceptance
-- `pnpm exec tsc --noEmit` clean; `pnpm lint` 0 errors; `pnpm build` ok.
-- Smoke script (`pnpm exec tsx scripts/chat-actions-smoke.mts` or node) prints all PASS lines above and exits 0; leaves no `smoke_` rows.
-- No UI files changed.
+- `pnpm exec tsc --noEmit` clean; `pnpm lint` 0 errors; `pnpm build` ok
+- `node scripts/chat-realtime-smoke.mjs` prints `PASS member receives insert` and `PASS non-member receives nothing`, exits 0, leaves no `smoke_` rows
+- grep new files: no hex colors, `space-[xy]-`, `dark:`
+- If realtime delivery cannot be proven (token minting impossible), report exactly why in report.md and still ship the hook with a `parseMessageRow` unit-style assertion in the script.
 
 ## Decisions
-- One shared conversations table already; project chat lazily created on first send/read (no backfill migration, no new migration).
-- Messages not cached (realtime later); conversation list read uncached to avoid stale unread counts.
-- Unread = messages by others after `lastReadAt`.
-- Any project member may post in project chat (same permission model as the rest).
-- Writes only through the server (no RLS write policies).
+- Hook delivers raw row (no author join): realtime payloads carry only the table row; chat UI will merge author info from the already-loaded members. Chosen over a refetch-per-message for fewer round trips.
+- Filter by conversation_id server-side in the channel; RLS still enforces access.
+- Lives in `src/lib/chat/realtime.ts` (no `src/hooks` dir in repo).
 
 ## Don't
-- No schema/migration changes, no UI, no Realtime subscription (next TODO item), no deleting non-smoke rows.
-- Don't edit `.env.local`.
+- No chat UI, no new Figma-less components, no migration (messages already in `supabase_realtime`), no service-role key in the browser, no edits to `.env.local`.

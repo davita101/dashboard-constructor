@@ -72,7 +72,7 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
 - [ ] `conversations`, `conversation_members`, `messages` (project chat + direct Messenger)
   - [x] 5a Schema: tables + RLS select policies + migration `0003_chat.sql` applied + smoke test — one shared `conversations` (kind project|direct), project chat access via project membership, SELECT-only RLS through SECURITY DEFINER `viewer_conversation_ids()`, `messages` in supabase_realtime, `scripts/chat-schema-smoke.mjs`
   - [x] 5b Queries (`src/lib/chat/queries.ts`) + Zod schemas + Server Actions (start direct conversation, send message, mark read) — built `src/lib/chat/{schemas,tags,types,queries,mutations,actions}.ts` + `scripts/chat-actions-smoke.mts`; uncached reads, project chat lazily created via `ensureProjectConversation`, advisory lock on direct start, access checked in code (Drizzle bypasses RLS)
-- [ ] Supabase Realtime subscription for new messages
+- [x] Supabase Realtime subscription for new messages — `useMessageStream` hook + `parseMessageRow` in `src/lib/chat/realtime.ts`; raw row, no author join. Live delivery/RLS not proven (Clerk token minting denied); smoke asserts parser only
 - [ ] Live task board updates (optional)
 
 ## Phase 6 — User settings (`feat/backend-settings`)
