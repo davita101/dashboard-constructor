@@ -224,10 +224,11 @@ type ChartMetricAmountProps = React.ComponentProps<"div"> &
     heading?: string
     value?: string
     delta?: string
+    deltaDirection?: "up" | "down"
     additionalText?: string
   }
 
-/** Figma Amount (Head dot + heading, value, Up delta, Additional Text). */
+/** Figma Amount (Head dot + heading, value, Up delta, Additional Text). Empty `delta` hides the trend. */
 function ChartMetricAmount({
   className,
   size = "md",
@@ -235,6 +236,7 @@ function ChartMetricAmount({
   heading = "Revenue",
   value = "$20,560",
   delta = "4.2%",
+  deltaDirection = "up",
   additionalText = "vs. $19.432 last",
   ...props
 }: ChartMetricAmountProps) {
@@ -248,7 +250,7 @@ function ChartMetricAmount({
       </div>
       <div className="flex flex-col gap-1">
         <span className={chartMetricAmountValueVariants({ size })}>{value}</span>
-        <ChartTrend direction="up" className="gap-2">{delta}</ChartTrend>
+        {delta ? <ChartTrend direction={deltaDirection} className="gap-2">{delta}</ChartTrend> : null}
       </div>
       <span className="text-10 leading-16 font-bold text-base-400 group-data-[appearance=image]/metric:text-white-alpha-50">
         {additionalText}

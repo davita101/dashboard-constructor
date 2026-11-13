@@ -93,10 +93,13 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
 ## Phase 7 — Finish and harden what exists (`feat/backend-polish`, no new Figma needed)
 - [ ] Remaining demo widgets show real project data (split into 7a-7d):
   - [x] 7a progress-half = overall task completion % — built: `RadialChart` `ratio` prop; live card shows tasksDone÷tasks, "Completed", Done/Remaining legend; picker keeps demo
-  - [ ] 7b bar + stacked bar = tasks per project (stacked by status), column-5 (split 7b-1 data, 7b-2 wiring)
+  - [x] 7b bar + stacked bar = tasks per project (stacked by status), column-5 (split 7b-1 data, 7b-2 wiring)
     - [x] 7b-1 `tasksByProject` (top 6 projects by task count, per-status counts) added to `DashboardCharts` + smoke; no UI change — built: per-project query from project_stats (tasks>0, total desc then name, limit 6) in Promise.all with stats; smoke covers empty, 0-task, counts, non-member, cap and sort
     - [x] 7b-2 data props on bar / bar-stacked / column-5 in `CartesianChart`, wired in `catalog.tsx` — bar = total tasks per project, bar-stacked = status share per project, column-5 = income per month; picker demo unchanged; en.json only
-  - [ ] 7c metric-line-2 / metric-chart / metric-card = real totals (income vs cost, KPI strip)
+  - [ ] 7c metric-line-2 / metric-chart / metric-card = real totals (income vs cost, KPI strip) (split 7c-1..3)
+    - [x] 7c-1 metric-line-2 live: income amount + 30-day trend, income vs cost plot from `charts.months` — built: with provider shows Income amount + trend (hidden when 0) and CartesianChart line (income purple, cost orange, last 9 months); `ChartMetricAmount` got `deltaDirection`, empty delta hides trend; picker demo unchanged
+    - [ ] 7c-2 metric-chart live: Income / Cost amounts + list of tasks by project
+    - [ ] 7c-3 metric-card live: KPI strip (projects, tasks, members, files, income)
   - [ ] 7d candle + metric-map: hide from live picker or note why they keep demo
   Original scope: progress-half (overall task completion %), bar + stacked bar (tasks per project, stacked by status), column-5, metric-line-2 / metric-chart (income vs cost, real totals), metric-card (wide KPI strip: projects, tasks, members, files, income). Candle and metric-map have no meaningful project data: keep demo but hide them from the picker on the live board, or keep and note why
 - [ ] Table widget: replace the product table on the live board with the user's projects (name + logo, progress, deadline, income, cost, members) using the existing Figma table component (`src/components/table/`); picker preview may keep the Figma sample

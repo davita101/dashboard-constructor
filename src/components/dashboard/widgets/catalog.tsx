@@ -308,13 +308,42 @@ const metricTile = (chart: "line" | "area" | "column" | "progress") => ({
 
 /** Metric-Line-2-Chart-Card: amount, two lines with a tooltip, actions. */
 function MetricLine2Preview() {
+  const t = useTranslations("widgets.data")
+  const data = useWidgetData()
+  const trend = data?.finance.incomeTrend ?? 0
+  const months = data?.charts.months.slice(-9)
   return (
     <ChartMetricCard size="lg">
       <div className="flex flex-col gap-4 p-5">
-        <ChartMetricAmount />
+        {data ? (
+          <ChartMetricAmount
+            tone="purple"
+            heading={t("income")}
+            value={formatUsd(data.finance.income)}
+            delta={trend ? `${Math.abs(trend)}%` : ""}
+            deltaDirection={trend < 0 ? "down" : "up"}
+            additionalText={t("last30")}
+          />
+        ) : (
+          <ChartMetricAmount />
+        )}
         <ChartMetricPlot>
-          <ChartLineArea tone="green" type={2} preserveAspectRatio="none" />
-          <ChartLine tone="orange" type={2} preserveAspectRatio="none" />
+          {months ? (
+            <CartesianChart
+              preset="card"
+              kind="line"
+              yAxis="none"
+              lines="none"
+              points={months.map((m) => ({ label: m.label, values: [m.income, m.cost] }))}
+              seriesLabels={[t("income"), t("cost")]}
+              className="h-24 w-70"
+            />
+          ) : (
+            <>
+              <ChartLineArea tone="green" type={2} preserveAspectRatio="none" />
+              <ChartLine tone="orange" type={2} preserveAspectRatio="none" />
+            </>
+          )}
         </ChartMetricPlot>
       </div>
       <ChartMetricActions />

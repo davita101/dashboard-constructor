@@ -1,41 +1,37 @@
 # Task
-7b-2: live data for bar, bar-stacked and column-5 widgets (tasks per project / income per month).
+7c-1: make the live `metric-line-2` widget show real income/cost data.
 
 ## TODO item
-    - [ ] 7b-2 data props on bar / bar-stacked / column-5 in `CartesianChart`, wired in `catalog.tsx`
+- [ ] 7c-1 metric-line-2 live: income amount + 30-day trend, income vs cost plot from `charts.months`
 
 ## Goal
-On the live dashboard board (when `useWidgetData()` is present) `stacked-bar-chart` shows tasks per project stacked by status, `bar-chart` shows total tasks per project, `column-type-5-chart` shows income per month (thin bars). Picker previews (no provider data) keep the Figma demo exactly as now.
+On the live board (WidgetDataProvider present) `MetricLine2Preview` in `src/components/dashboard/widgets/catalog.tsx` shows: `ChartMetricAmount` heading "Income", value `formatUsd(finance.income)`, delta = income 30-day trend (same helper `trendOf` as CartesianCardPreview), additionalText "last 30 days" (existing i18n `widgets.data.last30`); plot = income vs cost per month (last 9 months) from `data.charts.months`. Picker preview (no provider) stays the Figma demo, unchanged.
 
 ## Files
-- `src/components/charts/cartesian-chart.tsx` (add props, live branches for `bar`, `bar-stacked`, `column-5`)
-- `src/components/charts/chart-data.ts` (helpers if needed) + `scripts/chart-data-smoke.mts`
-- `src/components/dashboard/widgets/catalog.tsx` (wire in `CartesianCardPreview`; `liveCartesianKinds`)
-- `src/messages/en.json` (`widgets.data.*` labels; en only, like earlier tasks)
-- Read: `src/lib/projects/types.ts` (`DashboardCharts.tasksByProject`: `{name,new,inWork,done,failed,total}[]`, top 6), `src/components/dashboard/widgets/` provider.
+- src/components/dashboard/widgets/catalog.tsx (MetricLine2Preview, `trendOf`, `useWidgetData`, `formatUsd`)
+- src/components/charts/cartesian-chart.tsx (reuse `points` / `seriesLabels` props, kind "line" or "line-area", preset "card"; check that it fits the 280x96 `ChartMetricPlot`)
+- src/components/ui/chart-metric.tsx (only if a prop is needed on ChartMetricAmount, e.g. hide delta when trend is 0)
+- messages/en.json (only if a new label key is needed; other locales have no `widgets` keys)
 
 ## Steps
-1. Add optional prop `categories?: { name: string; values: number[] }[]` to `CartesianChart` (horizontal kinds) plus reuse `seriesLabels`. When given:
-   - `bar`: single series = `values[0]`, rows `{name, v}`; X axis domain `[0, niceMax(max)]` with `niceTicks`; keep gradient Cells (hues cycle by index), bar label on right shows value. Keep demo path untouched when absent.
-   - `bar-stacked`: rows `{name, p0..p3}` from the 4 status values (new, inWork, done, failed), absolute counts, `stackOffset="expand"` kept (percent share per project, axis `%`). Colors fixed per status, same tones as donut: blue, green, orange, sky (use `var(--blue-500)` etc. via palette tokens). Tooltip: add `tip` with config labels from `seriesLabels`; do not change demo tooltip behavior.
-   - Empty `categories` (user has no tasks): render the chart with no rows, no crash.
-2. `column-5` live: use existing `points` (single series, income). Treat column-5 like other live columns: `live` must include colT 5, dataKeys `["v"]` (columnKeys[5] = ["v"]), data = `liveRows`, Y axis from data, thin bars keep `barSize={2}`; keep `thin` demo when `points` absent. Add tooltip (`tip`) for column-5 only when live.
-3. `catalog.tsx`: `liveCartesianKinds` add `column-5`. For `bar` and `bar-stacked` use `data.charts.tasksByProject`; titles `t("tasksByProject")`; legend: bar → none; bar-stacked → legend items with status labels (`t("status.new")` etc, tones blue green orange sky) instead of "none". column-5 title `t("income")`-based: legend items income only (purple tone) and metrics: reuse the finance metrics only for the income+cost kinds; for column-5 and bar kinds pass no metrics strip (`ChartCardMetrics` not rendered when live and kind is bar/bar-stacked/column-5), switcher hidden when live.
-4. en.json: add `widgets.data.tasksByProject` ("Tasks by project"), `incomePerMonth` ("Income per month"). Reuse existing keys otherwise (check `widgets.data` for status.*, income).
-5. Extend `scripts/chart-data-smoke.mts` for any new pure helper (e.g. `categoriesMax`, `toStackRows`). Keep pure logic in `chart-data.ts` so it is testable.
+1. Read MetricLine2Preview, `trendOf`, CartesianChart props.
+2. In live mode (data present) replace the static `ChartLineArea`/`ChartLine` art inside `ChartMetricPlot` with `CartesianChart` fed from `data.charts.months` (series income, cost; tones purple/orange like the other live cards), sized to the plot (h-24 w-70, or fluid if the plot allows). Axis labels/legend only if they fit; otherwise none.
+3. Amount values from `data.finance`; no delta text when trend is 0 (no fake "+0%").
+4. Leave the `ChartMetricActions` footer as is (7-phase item "footers" handles dead controls later).
+5. Picker preview: no provider => identical to today.
 
 ## Acceptance
-- `pnpm exec tsc --noEmit` clean; `pnpm lint` 0 errors; `pnpm build` OK.
-- `pnpm exec tsx scripts/chart-data-smoke.mts` prints PASS lines only (includes new helpers), exit 0.
-- `pnpm exec tsx --conditions=react-server scripts/dashboard-charts-smoke.mts` still PASS.
-- Grep new/changed lines: no hex colors, no `space-[xy]-`, no `dark:`.
-- Picker preview JSX for bar/bar-stacked/column-5 unchanged in demo output (no props passed when `data` null).
-- Report: say whether browser-checked (optional; dev server `/dashboard` with the three widgets added).
+- `pnpm exec tsc --noEmit` clean; `pnpm lint` 0 errors; `pnpm build` ok.
+- grep new code: no hex colors, `space-[xy]-`, `dark:`.
+- Code review: with provider, metric-line-2 reads only `data.finance` / `data.charts.months`; without provider the old JSX is rendered.
+- Report says whether browser check was done (not mandatory; dev server may be unavailable).
 
 ## Decisions
-- bar = total tasks per project (single series); bar-stacked = share by status per project (keeps Figma percent axis); column-5 = income per month (9 months, single series): tasks-per-project does not suit 30 thin columns, monthly income does and reuses `charts.months`.
-- Only en.json labels (other locales have no `widgets` keys).
-- bar-double, bar-negative, candle untouched (not in catalog / demo).
+- Reuse CartesianChart (real data) instead of the static Figma SVG lines, which cannot take data.
+- Amount = all-time income with the 30-day trend, consistent with the other live cards.
+- No new Figma UI; no new components.
 
 ## Don't
-- No new Figma UI, no changes to data queries or DB, no changes to demo data constants, no other widgets (7c/7d).
+- Don't touch metric-chart / metric-card / candle / metric-map.
+- Don't change the picker preview or Figma component defaults.
+- No DB or schema changes. No hand-written SVG.

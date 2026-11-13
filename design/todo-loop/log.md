@@ -19,3 +19,5 @@
 2026-11-13 APPROVED 7b-1 tasksByProject
 2026-11-13 PLAN 7b-2 bar/bar-stacked/column-5 live wiring
 2026-11-13 APPROVED 7b-2 bar/bar-stacked/column-5 live wiring
+2026-11-13 PLAN ticked 7b; split 7c into 7c-1..3; planned 7c-1 metric-line-2 live
+2026-11-13 APPROVED 7c-1 metric-line-2 live
