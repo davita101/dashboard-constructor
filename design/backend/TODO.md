@@ -143,7 +143,7 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
 - [ ] Integration smoke script for the whole backend (projects CRUD, members, stages, tasks, files register/delete, settings upsert, chat send/read) against Supabase with cleanup; one command, PASS/FAIL lines
 - [ ] Re-check every `(blocked: needs Figma …)` item against the Figma file through TalkToFigma (`curl http://127.0.0.1:3055/figma-channel` must return a channel; if not, mark this item `(blocked: TalkToFigma plugin not running)`); for any page that does exist, unblock its item with the Figma node ids — (blocked: TalkToFigma plugin not running, 2026-11-13)
 
-- [ ] Two-factor Authentication page `/two-factor` (Figma 14056:126400 / 14056:126358): handle Clerk `needs_second_factor` on sign-in with OtpCodeField
+- [x] Two-factor Authentication page `/two-factor` (Figma 14056:126400 / 14056:126358): handle Clerk `needs_second_factor` on sign-in with OtpCodeField — skipped: not needed (user, 2026-11-13)
 
 ## Later — unbuilt sections (need Figma pages first)
 - [ ] Notes · Mail · Calendar (events) · Knowledge Base (articles) · Clients page · Users page (blocked: needs Figma pages for each)
