@@ -65,7 +65,7 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
 - [x] Logos: Project form "Project logo" / "Client logo" (FileUpload images, posted through the Server Action, `bodySizeLimit` 5 MB) → `logos/projects|clients/<id>/<uuid>.<ext>`; replaced/pruned logos deleted when no row uses them; `images.remotePatterns` allows the bucket
 - [x] Project delete removes its storage objects (inside the tx, while the storage policy still sees the member)
 - [x] Verified: storage policy smoke test with a real Clerk session JWT (member upload/download/remove, non-member + wrong mime refused, logo public read), tsc/lint/build
-- [ ] Browser check of the upload dialog + logo fields (needs a signed-in session)
+- [x] Browser check: Quick Add → upload (row + object + "file" event), download link (signed URL, original content), remove (row + object gone), project logo upload in Save Project (stored, shown in head + sidebar via next/image)
 - [ ] Files list UI (project "files" tab, task attachments) once designed
 
 ## Phase 5 — Chat & realtime (`feat/backend-chat`)
