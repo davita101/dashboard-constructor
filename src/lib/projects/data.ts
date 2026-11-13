@@ -1,5 +1,7 @@
 import "server-only"
 
+import { cacheLife } from "next/cache"
+
 import { getViewerId } from "@/lib/auth/viewer"
 import {
   queryAllProjectSlugs,
@@ -46,8 +48,15 @@ export async function getProjectSlugs(): Promise<string[]> {
 }
 
 /** Blank project for the "Add New Project" editor (/dashboard/projects/new). */
+/** "Now" for the blank project's default deadline, cached for an hour (cacheComponents rejects a bare new Date()). */
+async function cachedNow() {
+  "use cache"
+  cacheLife("hours")
+  return new Date().toISOString()
+}
+
 export async function getNewProjectDetail(): Promise<ProjectDetail> {
-  const now = new Date().toISOString()
+  const now = await cachedNow()
   return {
     project: { id: "new", slug: "new", name: "", logo: "/icons/material-default-icon.svg", members: [], progress: 0, stages: 0, tasks: 0, income: 0, cost: 0, deadline: now, updatedAt: now },
     company: { name: "", logo: "/icons/material-default-icon.svg", description: "" },

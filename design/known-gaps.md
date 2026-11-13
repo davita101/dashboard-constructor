@@ -104,3 +104,4 @@ One line per component: what could not be matched to Figma. Update when fixed.
 - QuickAddCard: Message (Phase 5) still "Coming soon".
 - UploadFilesDialog: no Figma frame; Modal-* dialog parts + Add-Files-Card pieces (FileUpload, FileUploadListLabel/List, FileUploadItem). No upload progress (supabase-js upload has no progress events): rows show "Uploading…" text instead of the Figma progress bar. The Add-Files-Card "Or" + URL input is left out (no import-from-URL). Uploaded file names link to /api/files/<id> with a plain hover underline.
 - ProjectFormDialog logos: two Form-Upload-Files-Images drop areas (200px each) make the dialog scroll; no preview of the current logo, no "remove logo".
+- Dashboard metric tiles: values and trend are real (project totals/finance); the mini sparkline/columns art stays the Figma placeholder (no time series per metric). Head "…" is decorative (no menu).

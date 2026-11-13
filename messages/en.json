@@ -173,7 +173,13 @@
     "remove": "Remove {name}",
     "duplicate": "Duplicate {name}",
     "removed": "Removed {name}",
-    "undo": "Undo"
+    "undo": "Undo",
+    "data": {
+      "projects": "Projects",
+      "income": "Income",
+      "tasks": "Tasks",
+      "tasksDone": "Tasks done"
+    }
   },
   "projects": {
     "greeting": "Hi, {name}",

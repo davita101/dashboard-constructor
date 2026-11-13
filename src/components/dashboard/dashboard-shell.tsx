@@ -5,6 +5,8 @@ import * as React from "react"
 
 import { DashboardFooter } from "@/components/dashboard/dashboard-footer"
 import { LanguageProvider } from "@/components/dashboard/language"
+import { SettingsSync } from "@/components/dashboard/settings-sync"
+import type { UserSettings } from "@/lib/settings/schemas"
 import { DashboardNavbar } from "@/components/dashboard/dashboard-navbar"
 import { DashboardSkeleton } from "@/components/dashboard/dashboard-skeleton"
 import { DashboardSidebar, type SidebarProject } from "@/components/dashboard/dashboard-sidebar"
@@ -22,9 +24,19 @@ import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/s
  */
 const COLLAPSED_KEY = "dashboard-sidebar-collapsed"
 
-function DashboardShell({ children, projects = [] }: { children: React.ReactNode; projects?: SidebarProject[] }) {
+function DashboardShell({
+  children,
+  projects = [],
+  settings,
+}: {
+  children: React.ReactNode
+  projects?: SidebarProject[]
+  /** The signed-in user's saved settings, applied to this device by SettingsSync. */
+  settings?: UserSettings
+}) {
   return (
     <LanguageProvider>
+      {settings ? <SettingsSync settings={settings} /> : null}
       <WidgetPickerProvider>
         <DashboardShellInner projects={projects}>{children}</DashboardShellInner>
       </WidgetPickerProvider>

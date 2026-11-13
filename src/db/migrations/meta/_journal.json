@@ -15,6 +15,13 @@
       "when": 1794557255689,
       "tag": "0001_storage_buckets",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794558857919,
+      "tag": "0002_user_settings",
+      "breakpoints": true
     }
   ]
 }

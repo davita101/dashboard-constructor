@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import * as React from "react"
 
 import { CartesianChart, type CartesianKind } from "@/components/charts/cartesian-chart"
@@ -32,6 +33,7 @@ import {
   ChartMetricStats,
   ChartMetricWideBody,
 } from "@/components/ui/chart-metric"
+import { useWidgetData, type WidgetData } from "@/components/dashboard/widgets/widget-data"
 import { useWidgetFluid } from "@/components/dashboard/widgets/widget-fluid"
 import { ProgressCircle } from "@/components/ui/progress-circle"
 import { cn } from "@/lib/utils"
@@ -139,19 +141,56 @@ function RadialCardPreview({ kind }: { kind: "donut" | "pie" | "progress" | "pro
   )
 }
 
+type MetricChart = "line" | "area" | "column" | "progress"
+
+const formatCount = (n: number) => new Intl.NumberFormat("en-US").format(n)
+const formatUsd = (n: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n)
+
+/** The real metric behind each tile (user's projects): Projects, Income (30-day trend), Tasks, Tasks done. */
+function liveMetric(chart: MetricChart, { totals, finance }: WidgetData) {
+  const donePercent = totals.tasks ? Math.round((totals.tasksDone / totals.tasks) * 100) : 0
+  const trend = finance.incomeTrend
+  switch (chart) {
+    case "line":
+      return { key: "projects", value: formatCount(totals.projects), up: "", down: "", percent: 0 } as const
+    case "area":
+      return {
+        key: "income",
+        value: formatUsd(finance.income),
+        up: trend > 0 ? `+${trend}%` : "",
+        down: trend < 0 ? `${Math.abs(trend)}%` : "",
+        percent: 0,
+      } as const
+    case "column":
+      return { key: "tasks", value: formatCount(totals.tasks), up: "", down: "", percent: 0 } as const
+    case "progress":
+      return { key: "tasksDone", value: formatCount(totals.tasksDone), up: "", down: "", percent: donePercent } as const
+  }
+}
+
 /** Figma dashboard metric cards (264 x 164): head and a 128px content row, footer clipped by the row height. */
-function MetricTile({ chart }: { chart: "line" | "area" | "column" | "progress" }) {
+function MetricTile({ chart }: { chart: MetricChart }) {
+  const t = useTranslations("widgets.data")
+  const data = useWidgetData()
+  const live = data ? liveMetric(chart, data) : null
+  const percent = live ? live.percent : 64
   const body = {
     line: { value: "87", up: "+20%", down: "", node: <ChartLine tone="purple" type={1} className="h-27 w-23.25" preserveAspectRatio="none" /> },
     area: { value: "72,550", up: "+6,11%", down: "", node: <ChartLineArea tone="blue" type={1} className="h-24 w-23.25" preserveAspectRatio="none" /> },
     column: { value: "425", up: "+2.45%", down: "", node: <ChartColumnsMini tone="blue" type={4} /> },
-    progress: { value: "72,550", up: "", down: "21,33%", node: <ProgressCircle size="56" value={64} color="blue" aria-label="64%" /> },
+    progress: { value: "72,550", up: "", down: "21,33%", node: <ProgressCircle size="56" value={percent} color="blue" aria-label={`${percent}%`} /> },
   }[chart]
   return (
     <ChartMetricCard size="tile" className="lg:max-w-none">
-      <ChartMetricHead />
+      <ChartMetricHead title={live ? t(live.key) : undefined} />
       <ChartMetricBody layout="tile">
-        <ChartMetricStats value={body.value} heading="" up={body.up} down={body.down} className="h-auto" />
+        <ChartMetricStats
+          value={live?.value ?? body.value}
+          heading=""
+          up={live ? live.up : body.up}
+          down={live ? live.down : body.down}
+          className="h-auto"
+        />
         <ChartMetricChart>{body.node}</ChartMetricChart>
       </ChartMetricBody>
     </ChartMetricCard>

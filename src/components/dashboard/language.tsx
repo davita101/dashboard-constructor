@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { isLocale, LOCALE_COOKIE, locales, type Locale } from "@/i18n/config"
+import { updateSettingsAction } from "@/lib/settings/actions"
 
 const LANGUAGE_KEY = "dashboard-language"
 
@@ -34,6 +35,7 @@ type LanguageContextValue = { language: Language; setLanguage: (code: Locale) =>
 
 const LanguageContext = React.createContext<LanguageContextValue | null>(null)
 
+/** Saves the locale on this device (cookie read by src/i18n/request.ts + localStorage copy). */
 function saveLocale(code: Locale) {
   window.localStorage.setItem(LANGUAGE_KEY, code)
   document.cookie = `${LOCALE_COOKIE}=${code}; path=/; max-age=31536000; samesite=lax`
@@ -61,6 +63,7 @@ function LanguageProvider({ children }: { children: React.ReactNode }) {
   const setLanguage = React.useCallback(
     (code: Locale) => {
       saveLocale(code)
+      void updateSettingsAction({ locale: code })
       router.refresh()
     },
     [router]
@@ -125,4 +128,4 @@ function LanguageMenu({
   )
 }
 
-export { LanguageFlag, LanguageMenu, LanguageProvider, useLanguage }
+export { LanguageFlag, LanguageMenu, LanguageProvider, saveLocale, useLanguage }

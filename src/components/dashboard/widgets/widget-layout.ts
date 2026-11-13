@@ -2,7 +2,10 @@
 
 import * as React from "react"
 
-// The dashboard layout, saved in localStorage: a flat ordered list of widgets.
+import { updateSettingsAction } from "@/lib/settings/actions"
+
+// The dashboard layout: a flat ordered list of widgets, kept in localStorage and saved to user_settings
+// (SettingsSync brings the saved one to a new device).
 // The board renders it as a 5-column CSS grid; each widget's size (1x1, 2x3, full row) comes from the catalog.
 
 type WidgetItem = { id: string; type: string }
@@ -56,14 +59,31 @@ function subscribe(listener: () => void) {
   }
 }
 
-function write(next: WidgetLayout) {
+function writeLocal(next: WidgetLayout) {
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
   listeners.forEach((l) => l())
 }
 
+// Edits come in bursts (drag, add, duplicate): save the last layout to user_settings once things settle.
+let saveTimer: ReturnType<typeof setTimeout> | undefined
+function saveSoon(next: WidgetLayout) {
+  clearTimeout(saveTimer)
+  saveTimer = setTimeout(() => void updateSettingsAction({ widgetLayout: next }), 800)
+}
+
 type SetLayout = (next: WidgetLayout | ((prev: WidgetLayout) => WidgetLayout)) => void
 
-const setLayout: SetLayout = (next) => write(typeof next === "function" ? next(getSnapshot()) : next)
+const setLayout: SetLayout = (next) => {
+  const layout = typeof next === "function" ? next(getSnapshot()) : next
+  writeLocal(layout)
+  saveSoon(layout)
+}
+
+/** Replaces this device's copy only (the saved user_settings layout coming in from another device). */
+const replaceLocalLayout = (layout: WidgetLayout) => writeLocal(layout)
+
+/** This device's layout, or null if it never saved one. */
+const localLayout = (): WidgetLayout | null => (window.localStorage.getItem(STORAGE_KEY) === null ? null : getSnapshot())
 
 /** The saved layout (empty on the server and until the client has read it) and its setter. */
 function useWidgetLayout() {
@@ -93,5 +113,5 @@ function duplicateWidget(layout: WidgetLayout, itemId: string): WidgetLayout {
 
 const removeWidget = (layout: WidgetLayout, itemId: string): WidgetLayout => layout.filter((i) => i.id !== itemId)
 
-export { addWidget, duplicateWidget, removeWidget, useHydrated, useWidgetLayout }
+export { addWidget, duplicateWidget, localLayout, removeWidget, replaceLocalLayout, useHydrated, useWidgetLayout }
 export type { SetLayout, WidgetItem, WidgetLayout }
