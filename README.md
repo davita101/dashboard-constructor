@@ -126,6 +126,9 @@ pnpm db:seed                 # load the demo data
 pnpm dev                     # http://localhost:3000
 ```
 
+Agent skills live in `.agents/skills/` (locked in `skills-lock.json`). On a fresh clone, run `npx skills add shadcn/ui`
+to link them into `.claude/skills/` for Claude Code.
+
 Other commands: `pnpm build`, `pnpm lint`, `pnpm typecheck`, `pnpm tokens` (rebuild tokens after a Figma export),
 `pnpm db:studio`.
 

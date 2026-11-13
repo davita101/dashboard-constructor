@@ -56,3 +56,6 @@ next-env.d.ts
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Claude Code skill links: the skills CLI links them from .agents/skills (canonical copy + skills-lock.json)
+/.claude/skills/
