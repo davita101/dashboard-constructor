@@ -5,15 +5,12 @@ import { cacheLife, cacheTag } from "next/cache"
 
 import { db } from "@/db"
 import { clients, projectEvents, projectMembers, projects, projectStages, projectStats, stageStats, users } from "@/db/schema"
-import type { Member, Project, ProjectOption, ProjectDetail, ProjectEvent, ProjectFinance, ProjectTotals } from "@/lib/projects/types"
+import { DEFAULT_LOGO, type DashboardCharts, type Member, type Project, type ProjectOption, type ProjectDetail, type ProjectEvent, type ProjectFinance, type ProjectTotals } from "@/lib/projects/types"
 import { projectTag, userProjectsTag } from "@/lib/projects/tags"
 
 // Cached Drizzle reads. Every function takes the Clerk user id as an argument (it is part of the cache key) and
 // only returns projects that user is a member of. Drizzle bypasses RLS, so this scoping is the access check.
 // Callers get the id from auth() (./data.ts); never pass an id that came from the client.
-
-/** Placeholder for projects / clients without a logo yet (upload comes with Storage, Phase 4). */
-const DEFAULT_LOGO = "/icons/material-default-icon.svg"
 
 /** Project ids the user belongs to. */
 const memberProjectIds = (userId: string) =>
@@ -162,6 +159,72 @@ export async function queryProjectFinance(userId: string): Promise<ProjectFinanc
     incomeTrend: trend(row.incomeCur, row.incomePrev),
     profitTrend: trend(row.profitCur, row.profitPrev),
   }
+}
+
+const CHART_MONTHS = 9
+const TASKS_BY_PROJECT_LIMIT = 6
+const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+/** Uncached SQL behind queryDashboardCharts (exported so the smoke script can run it outside Next). */
+export async function loadDashboardCharts(userId: string): Promise<DashboardCharts> {
+  const mine = memberProjectIds(userId)
+  const monthRows = await db.execute<{ month: string; income: number; cost: number }>(sql`
+    select to_char(m.month, 'YYYY-MM') as month,
+      coalesce(sum(p.income), 0)::float8 as income,
+      coalesce(sum(p.cost), 0)::float8 as cost
+    from generate_series(
+      date_trunc('month', now()) - make_interval(months => ${CHART_MONTHS - 1}),
+      date_trunc('month', now()),
+      interval '1 month'
+    ) as m(month)
+    left join ${projects} p
+      on date_trunc('month', p.created_at) = m.month and p.id in (${mine})
+    group by m.month
+    order by m.month
+  `)
+  const [[stats], byProject] = await Promise.all([
+    db
+      .select({
+        new: sql<number>`coalesce(sum(${projectStats.tasksNew}), 0)::int`,
+        inWork: sql<number>`coalesce(sum(${projectStats.tasksInWork}), 0)::int`,
+        done: sql<number>`coalesce(sum(${projectStats.tasksDone}), 0)::int`,
+        failed: sql<number>`coalesce(sum(${projectStats.tasksFailed}), 0)::int`,
+      })
+      .from(projectStats)
+      .where(inArray(projectStats.projectId, mine)),
+    db
+      .select({
+        name: projects.name,
+        new: sql<number>`${projectStats.tasksNew}::int`,
+        inWork: sql<number>`${projectStats.tasksInWork}::int`,
+        done: sql<number>`${projectStats.tasksDone}::int`,
+        failed: sql<number>`${projectStats.tasksFailed}::int`,
+        total: sql<number>`${projectStats.tasks}::int`,
+      })
+      .from(projectStats)
+      .innerJoin(projects, eq(projects.id, projectStats.projectId))
+      .where(and(inArray(projectStats.projectId, mine), sql`${projectStats.tasks} > 0`))
+      .orderBy(desc(projectStats.tasks), asc(projects.name))
+      .limit(TASKS_BY_PROJECT_LIMIT),
+  ])
+  return {
+    tasksByProject: byProject,
+    months: Array.from(monthRows).map((r) => ({
+      month: r.month,
+      label: MONTH_LABELS[Number(r.month.slice(5, 7)) - 1],
+      income: Number(r.income),
+      cost: Number(r.cost),
+    })),
+    tasksByStatus: stats,
+  }
+}
+
+/** Monthly income / cost (by project start month) and tasks by status over the user's projects. */
+export async function queryDashboardCharts(userId: string): Promise<DashboardCharts> {
+  "use cache"
+  cacheLife("hours")
+  cacheTag(userProjectsTag(userId))
+  return loadDashboardCharts(userId)
 }
 
 export async function queryProjectDetail(userId: string, slug: string): Promise<ProjectDetail | undefined> {

@@ -1,14 +1,14 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
+import Link from "next/link"
 
 import { ChartDot, ChartProgressCard, ChartTrend, type ChartTone } from "@/components/ui/chart-parts"
+import { Icon } from "@/components/ui/icon"
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
 
 // Figma Charts Metrics page (9880:5306): metric cards. Every card is a ChartMetricCard
 // (Type Default / Image) with Head, Body and Footer slots; the chart itself is a part from chart-parts.
-
-const maskIcon = "shrink-0 bg-current mask-contain mask-center mask-no-repeat"
 
 /* ---------------------------------- Card ---------------------------------- */
 
@@ -22,6 +22,8 @@ const chartMetricCardVariants = cva("group/metric relative flex flex-col overflo
       sm: "w-57.5 rounded-r20",
       md: "w-60 rounded-r20",
       lg: "w-80 rounded-r20",
+      // Dashboard board slot: takes the cell width, the caller sets the height.
+      fluid: "w-full min-w-0 rounded-r20",
       // Sign-In "New Features" tiles: 250x164, footer clipped by the fixed height.
       tile: "h-41 w-full min-w-0 rounded-r20 lg:max-w-62.5",
       wide: "w-196.25 rounded-r16 data-[appearance=image]:outline-white-alpha-20",
@@ -57,10 +59,13 @@ const chartMetricHeadVariants = cva("flex items-start justify-between", {
 })
 
 type ChartMetricHeadProps = Omit<React.ComponentProps<"div">, "title"> &
-  VariantProps<typeof chartMetricHeadVariants> & { title?: React.ReactNode; icon?: React.ReactNode }
+  VariantProps<typeof chartMetricHeadVariants> & { title?: React.ReactNode; icon?: React.ReactNode; action?: boolean }
 
-/** Figma Head: icon + title and the more button (more_horiz in compact cards, more_vert in large ones). */
-function ChartMetricHead({ className, size = "compact", title = "Heading", icon, ...props }: ChartMetricHeadProps) {
+/**
+ * Figma Head: icon + title and the more button (more_horiz in compact cards, more_vert in large ones).
+ * `action` (default true) shows the decorative more icon; pass false on live cards that have no menu.
+ */
+function ChartMetricHead({ className, size = "compact", title = "Heading", icon, action = true, ...props }: ChartMetricHeadProps) {
   return (
     <div data-slot="chart-metric-head" className={cn(chartMetricHeadVariants({ size }), className)} {...props}>
       <div className="flex items-center gap-2">
@@ -69,14 +74,13 @@ function ChartMetricHead({ className, size = "compact", title = "Heading", icon,
           {title}
         </span>
       </div>
-      <span
-        aria-hidden
-        className={cn(
-          "size-5 text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70",
-          maskIcon,
-          size === "large" ? "mask-[url(/icons/material-more-vert.svg)]" : "mask-[url(/icons/material-more-horiz.svg)]",
-        )}
-      />
+      {action ? (
+        <Icon
+          size={5}
+          src={size === "large" ? "/icons/material-more-vert.svg" : "/icons/material-more-horiz.svg"}
+          className="text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70"
+        />
+      ) : null}
     </div>
   )
 }
@@ -168,6 +172,10 @@ type ChartMetricFooterProps = React.ComponentProps<"div"> &
     up?: string
     down?: string
     link?: string
+    /** Makes `link` a real route link. */
+    linkHref?: string
+    /** Live value after the label; empty `up` / `down` hide that trend. */
+    amount?: string
   }
 
 /** Figma Footer: two headings and the Up / Down trends; `wide` adds the blue Link on the right. */
@@ -179,6 +187,8 @@ function ChartMetricFooter({
   up = "Text",
   down = "Text",
   link,
+  linkHref,
+  amount,
   ...props
 }: ChartMetricFooterProps) {
   const wide = size === "wide"
@@ -199,9 +209,14 @@ function ChartMetricFooter({
           {secondary ?? "Heading"}
         </span>
       )}
-      <ChartTrend direction="up" className="gap-2 font-semibold">{up}</ChartTrend>
-      <ChartTrend direction="down" className="gap-2 font-semibold">{down}</ChartTrend>
-      {link ? <span className="ml-auto text-10 leading-16 font-bold text-blue-600">{link}</span> : null}
+      {amount ? <span className="text-10 leading-16 font-bold text-base-900 group-data-[appearance=image]/metric:text-background-0">{amount}</span> : null}
+      {up ? <ChartTrend direction="up" className="gap-2 font-semibold">{up}</ChartTrend> : null}
+      {down ? <ChartTrend direction="down" className="gap-2 font-semibold">{down}</ChartTrend> : null}
+      {link && linkHref ? (
+        <Link href={linkHref} className="ml-auto text-10 leading-16 font-bold text-blue-600">{link}</Link>
+      ) : link ? (
+        <span className="ml-auto text-10 leading-16 font-bold text-blue-600">{link}</span>
+      ) : null}
     </div>
   )
 }
@@ -224,10 +239,11 @@ type ChartMetricAmountProps = React.ComponentProps<"div"> &
     heading?: string
     value?: string
     delta?: string
+    deltaDirection?: "up" | "down"
     additionalText?: string
   }
 
-/** Figma Amount (Head dot + heading, value, Up delta, Additional Text). */
+/** Figma Amount (Head dot + heading, value, Up delta, Additional Text). Empty `delta` hides the trend. */
 function ChartMetricAmount({
   className,
   size = "md",
@@ -235,6 +251,7 @@ function ChartMetricAmount({
   heading = "Revenue",
   value = "$20,560",
   delta = "4.2%",
+  deltaDirection = "up",
   additionalText = "vs. $19.432 last",
   ...props
 }: ChartMetricAmountProps) {
@@ -248,7 +265,7 @@ function ChartMetricAmount({
       </div>
       <div className="flex flex-col gap-1">
         <span className={chartMetricAmountValueVariants({ size })}>{value}</span>
-        <ChartTrend direction="up" className="gap-2">{delta}</ChartTrend>
+        {delta ? <ChartTrend direction={deltaDirection} className="gap-2">{delta}</ChartTrend> : null}
       </div>
       <span className="text-10 leading-16 font-bold text-base-400 group-data-[appearance=image]/metric:text-white-alpha-50">
         {additionalText}
@@ -293,13 +310,38 @@ function ChartMetricTooltip({ className, children = "$345", ...props }: React.Co
 const listColors = ["blue", "rose", "green", "amber", "fuchsia", "lime", "cyan", "purple"] as const
 
 /** Figma Head row + Item 1…8 (Progress-Card with a colored Progress-Line). */
-function ChartMetricList({ className, appearance = "default", ...props }: React.ComponentProps<"div"> & { appearance?: "default" | "image" }) {
+function ChartMetricList({
+  className,
+  appearance = "default",
+  items,
+  heading,
+  countHeading,
+  ...props
+}: React.ComponentProps<"div"> & {
+  appearance?: "default" | "image"
+  /** Real rows (value 0-100 = bar, label = count text); colors cycle. Without it the Figma demo rows render. */
+  items?: { name: string; value: number; label?: string }[]
+  heading?: string
+  countHeading?: string
+}) {
   return (
     <div data-slot="chart-metric-list" className={cn("flex flex-col gap-4", className)} {...props}>
-      <ChartProgressCard type="head" appearance={appearance} className="w-full" />
-      {listColors.map((color, i) => (
-        <ChartProgressCard key={color} className="w-full" appearance={appearance} color={color} heading={`Name Item ${i + 1}`} value={[92, 76, 64, 48, 28, 16, 12, 6][i]} />
-      ))}
+      <ChartProgressCard type="head" appearance={appearance} className="w-full" heading={heading} countHeading={countHeading} />
+      {items
+        ? items.map((item, i) => (
+            <ChartProgressCard
+              key={`${item.name}-${i}`}
+              className="w-full"
+              appearance={appearance}
+              color={listColors[i % listColors.length]}
+              heading={item.name}
+              count={item.label ?? String(item.value)}
+              value={item.value}
+            />
+          ))
+        : listColors.map((color, i) => (
+            <ChartProgressCard key={color} className="w-full" appearance={appearance} color={color} heading={`Name Item ${i + 1}`} value={[92, 76, 64, 48, 28, 16, 12, 6][i]} />
+          ))}
     </div>
   )
 }
@@ -317,28 +359,50 @@ const chartMetricActionsVariants = cva("flex items-center justify-between", {
 })
 
 type ChartMetricActionsProps = React.ComponentProps<"div"> &
-  VariantProps<typeof chartMetricActionsVariants> & { divider?: boolean }
+  VariantProps<typeof chartMetricActionsVariants> & {
+    divider?: boolean
+    viewMoreHref?: string
+    onDownload?: () => void
+  }
+
+const chartMetricViewMoreClass =
+  "flex items-center gap-4 rounded-r4 text-11 leading-20 font-bold text-base-700 outline-none focus-visible:ring-2 focus-visible:ring-primary-500 group-data-[appearance=image]/metric:text-white-alpha-50"
 
 /** Figma Footer with View More (chevron) and Download (icon) actions. */
-function ChartMetricActions({ className, size = "md", divider = true, ...props }: ChartMetricActionsProps) {
+function ChartMetricActions({
+  className,
+  size = "md",
+  divider = true,
+  viewMoreHref,
+  onDownload,
+  ...props
+}: ChartMetricActionsProps) {
+  const viewMoreContent = (
+    <>
+      View More
+      <Icon size={4} src="/icons/material-chevron-right.svg" />
+    </>
+  )
   return (
     <div data-slot="chart-metric-actions" className="flex flex-col">
       {divider ? <Separator className="group-data-[appearance=image]/metric:bg-white-alpha-10" /> : null}
       <div className={cn(chartMetricActionsVariants({ size }), className)} {...props}>
+        {viewMoreHref ? (
+          <Link href={viewMoreHref} className={chartMetricViewMoreClass}>
+            {viewMoreContent}
+          </Link>
+        ) : (
+          <button type="button" data-soon className={chartMetricViewMoreClass}>
+            {viewMoreContent}
+          </button>
+        )}
         <button
           type="button"
-          data-soon
-          className="flex items-center gap-4 rounded-r4 text-11 leading-20 font-bold text-base-700 outline-none focus-visible:ring-2 focus-visible:ring-primary-500 group-data-[appearance=image]/metric:text-white-alpha-50"
-        >
-          View More
-          <span aria-hidden className={cn("size-4 mask-[url(/icons/material-chevron-right.svg)]", maskIcon)} />
-        </button>
-        <button
-          type="button"
-          data-soon
+          data-soon={onDownload ? undefined : true}
+          onClick={onDownload}
           className="flex items-center gap-2 rounded-r4 text-11 leading-20 font-bold text-base-700 outline-none focus-visible:ring-2 focus-visible:ring-primary-500 group-data-[appearance=image]/metric:text-background-0"
         >
-          <span aria-hidden className={cn("size-4 mask-[url(/icons/material-file-download.svg)]", maskIcon)} />
+          <Icon size={4} src="/icons/material-file-download.svg" />
           Download
         </button>
       </div>
@@ -440,10 +504,10 @@ function ChartMetricColorCard({
       {...props}
     >
       <div className="flex gap-5 p-5">
-        <span aria-hidden className={cn("size-6 text-(--mc-head)", maskIcon, "mask-[url(/icons/material-default-icon.svg)]")} />
+        <Icon size={6} src="/icons/material-default-icon.svg" className="text-(--mc-head)" />
         <div className="flex flex-col gap-3 pr-16.5">
           <div className="flex items-center gap-2">
-            <span aria-hidden className={cn("size-5 text-(--mc-head)", maskIcon, "mask-[url(/icons/material-default-icon.svg)]")} />
+            <Icon size={5} src="/icons/material-default-icon.svg" className="text-(--mc-head)" />
             <span className="text-10 leading-16 font-bold text-(--mc-head)">{heading}</span>
           </div>
           <div className="flex items-center gap-3.25">
@@ -466,6 +530,16 @@ function ChartMetricColorCard({
 
 /* ---------------------------------- Wide card inline content ---------------------------------- */
 
+type ChartMetricWideItem = {
+  heading: string
+  value: string
+  delta?: string
+  deltaDirection?: "up" | "down"
+  additionalText?: string
+  /** Mask icon path in public/icons. */
+  icon?: string
+}
+
 /** Figma Metric-Card Content (785x128): icon, Head, value row (value, caption, Up, Down), caption. */
 function ChartMetricWideBody({
   className,
@@ -473,14 +547,44 @@ function ChartMetricWideBody({
   value = "72,550",
   up = "Text",
   down = "Text",
+  items,
   ...props
-}: React.ComponentProps<"div"> & { heading?: string; value?: string; up?: string; down?: string }) {
+}: React.ComponentProps<"div"> & { heading?: string; value?: string; up?: string; down?: string; items?: ChartMetricWideItem[] }) {
+  if (items) {
+    return (
+      <div data-slot="chart-metric-wide-body" className={cn("flex", className)} {...props}>
+        {items.map((item) => {
+          return (
+          <div key={item.heading} className="flex min-w-0 flex-1 gap-4 p-4">
+            <Icon
+              size={5}
+              src={item.icon ?? "/icons/material-default-icon.svg"}
+              className="text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70"
+            />
+            <div className="flex min-w-0 flex-col gap-3">
+              <span className="truncate text-10 leading-16 font-bold text-base-700 group-data-[appearance=image]/metric:text-background-0">{item.heading}</span>
+              <div className="flex items-center gap-3 whitespace-nowrap">
+                <span className="text-20 leading-28 font-semibold text-base-900 group-data-[appearance=image]/metric:text-background-0">{item.value}</span>
+                {item.delta ? (
+                  <ChartTrend direction={item.deltaDirection ?? "up"} size="md">{item.delta}</ChartTrend>
+                ) : null}
+              </div>
+              {item.additionalText ? (
+                <span className="truncate text-10 leading-16 font-bold text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70">{item.additionalText}</span>
+              ) : null}
+            </div>
+          </div>
+          )
+        })}
+      </div>
+    )
+  }
   return (
     <div data-slot="chart-metric-wide-body" className={cn("flex gap-5 p-5", className)} {...props}>
-      <span aria-hidden className={cn("size-5 text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70", maskIcon, "mask-[url(/icons/material-default-icon.svg)]")} />
+      <Icon size={5} src="/icons/material-default-icon.svg" className="text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70" />
       <div className="flex flex-col gap-3 pr-3">
         <div className="flex items-center gap-2">
-          <span aria-hidden className={cn("size-5 text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70", maskIcon, "mask-[url(/icons/material-default-icon.svg)]")} />
+          <Icon size={5} src="/icons/material-default-icon.svg" className="text-base-500 group-data-[appearance=image]/metric:text-white-alpha-70" />
           <span className="text-10 leading-16 font-bold text-base-700 group-data-[appearance=image]/metric:text-background-0">{heading}</span>
         </div>
         <div className="flex items-center gap-3.25">
@@ -513,4 +617,4 @@ export {
   chartMetricCardVariants,
   colorCardTones,
 }
-export type { ChartMetricColorTone }
+export type { ChartMetricColorTone, ChartMetricWideItem }

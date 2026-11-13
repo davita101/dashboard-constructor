@@ -4,6 +4,8 @@ import * as React from "react"
 import { Tabs as TabsPrimitive } from "@base-ui/react/tabs"
 import { cva, type VariantProps } from "class-variance-authority"
 
+import { Badge } from "@/components/ui/badge"
+import { Icon } from "@/components/ui/icon"
 import { cn } from "@/lib/utils"
 
 function Tabs({
@@ -112,7 +114,7 @@ function TabsList({
 }
 
 const tabsTriggerVariants = cva(
-  "relative inline-flex flex-1 items-center justify-center whitespace-nowrap transition-all group-data-vertical/tabs:w-full group-data-vertical/tabs:justify-start disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "relative inline-flex flex-1 items-center justify-center whitespace-nowrap transition-all group-data-vertical/tabs:w-full group-data-vertical/tabs:justify-start disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_[data-slot=icon]:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -139,16 +141,16 @@ const tabsTriggerVariants = cva(
       },
       // Item inside a group of the same size (Figma items 60 / 48 / 40 / 32 / 24 / 20 / 16)
       size: {
-        "2xl": "h-15 px-6 text-12 leading-20 [&_svg:not([class*='size-'])]:size-6",
-        xl: "h-12 px-5 text-10 leading-16 [&_svg:not([class*='size-'])]:size-5",
-        lg: "h-10 px-4 text-10 leading-16 [&_svg:not([class*='size-'])]:size-5",
+        "2xl": "h-15 px-6 text-12 leading-20 [&_svg:not([class*='size-'])]:size-6 [&_[data-slot=icon]:not([class*='size-'])]:size-6",
+        xl: "h-12 px-5 text-10 leading-16 [&_svg:not([class*='size-'])]:size-5 [&_[data-slot=icon]:not([class*='size-'])]:size-5",
+        lg: "h-10 px-4 text-10 leading-16 [&_svg:not([class*='size-'])]:size-5 [&_[data-slot=icon]:not([class*='size-'])]:size-5",
         default: "h-8 px-3 text-10 leading-16",
         sm: "h-6 px-3 text-10 leading-16",
-        xs: "h-5 rounded-r4 px-1.5 text-8 leading-12 [&_svg:not([class*='size-'])]:size-3",
-        micro: "h-4 rounded-r4 px-1.5 text-8 leading-12 [&_svg:not([class*='size-'])]:size-3",
-        "28": "h-7 px-2.5 text-10 leading-16",
+        xs: "h-5 rounded-r4 px-1.5 text-8 leading-12 [&_svg:not([class*='size-'])]:size-3 [&_[data-slot=icon]:not([class*='size-'])]:size-3",
+        micro: "h-4 rounded-r4 px-1.5 text-8 leading-12 [&_svg:not([class*='size-'])]:size-3 [&_[data-slot=icon]:not([class*='size-'])]:size-3",
+        "28": "h-7 px-2.5 text-10 leading-16 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5",
         // Tab-Group-Pilled (project page): item 32, 11px text, 20px side padding (8 text + 12 item)
-        "32": "h-8 px-5 text-11 leading-20",
+        "32": "h-8 px-5 text-11 leading-20 has-data-[icon=inline-end]:pr-4 has-data-[icon=inline-start]:pl-4",
       },
       iconOnly: {
         true: "aspect-square flex-none",
@@ -209,6 +211,34 @@ function TabsTrigger({
   )
 }
 
+/** Left/right icon of a tab (Figma Tab-Group-Pilled). Size follows the trigger size. */
+function TabsIcon({
+  src,
+  position = "start",
+  ...props
+}: Omit<React.ComponentProps<typeof Icon>, "src"> & { src: string; position?: "start" | "end" }) {
+  return <Icon src={src} data-slot="tabs-icon" data-icon={`inline-${position}`} {...props} />
+}
+
+/** Figma Badge-Square-Pilled counter after the label. */
+function TabsCounter({
+  className,
+  size = "square-16",
+  variant = "gray",
+  ...props
+}: React.ComponentProps<typeof Badge>) {
+  return (
+    <Badge
+      data-slot="tabs-counter"
+      size={size}
+      variant={variant}
+      shape="pill"
+      className={className}
+      {...props}
+    />
+  )
+}
+
 function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
   return (
     <TabsPrimitive.Panel
@@ -219,4 +249,4 @@ function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
   )
 }
 
-export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants, tabsTriggerVariants }
+export { Tabs, TabsList, TabsTrigger, TabsContent, TabsIcon, TabsCounter, tabsListVariants, tabsTriggerVariants }

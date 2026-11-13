@@ -4,6 +4,7 @@ import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { Badge } from "@/components/ui/badge"
+import { Icon } from "@/components/ui/icon"
 import { cn } from "@/lib/utils"
 
 // Figma Breadcrumbs page (5522:25332): Breadcrumb-Group (list), Breadcrumb-Component (item),
@@ -148,21 +149,18 @@ function BreadcrumbIcon({
   )
 }
 
-const breadcrumbSeparatorVariants = cva(
-  "size-4 shrink-0 mask-[url(/icons/material-chevron-right.svg)] mask-contain mask-center mask-no-repeat",
-  {
-    variants: {
-      variant: {
-        default: "bg-base-500",
-        active: "bg-primary-600",
-        disabled: "bg-base-200 opacity-50",
-      },
+const breadcrumbSeparatorVariants = cva("", {
+  variants: {
+    variant: {
+      default: "bg-base-500",
+      active: "bg-primary-600",
+      disabled: "bg-base-200 opacity-50",
     },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-)
+  },
+  defaultVariants: {
+    variant: "default",
+  },
+})
 
 function BreadcrumbSeparator({
   children,
@@ -178,7 +176,7 @@ function BreadcrumbSeparator({
       className={cn("inline-flex items-center", className)}
       {...props}
     >
-      {children ?? <span className={breadcrumbSeparatorVariants({ variant })} />}
+      {children ?? <Icon size={4} src="/icons/material-chevron-right.svg" className={breadcrumbSeparatorVariants({ variant })} />}
     </li>
   )
 }
@@ -195,7 +193,7 @@ function BreadcrumbEllipsis({
       className={cn("flex size-5 items-center justify-center", className)}
       {...props}
     >
-      <span className="size-4 bg-base-500 mask-[url(/icons/material-more-horiz.svg)] mask-contain mask-center mask-no-repeat" />
+      <Icon size={4} src="/icons/material-more-horiz.svg" className="bg-base-500" />
       <span className="sr-only">More</span>
     </span>
   )

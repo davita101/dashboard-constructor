@@ -1,6 +1,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
+import { Icon } from "@/components/ui/icon"
 import { Progress } from "@/components/ui/progress"
 import type { ProgressColor } from "@/components/ui/progress-colors"
 import { cn } from "@/lib/utils"
@@ -261,12 +262,10 @@ function ChartAmount({
       <div className="flex items-center gap-2 pr-4">
         <ChartDot tone="primary" shade={600} />
         <span className={chartAmountMutedVariants({ style: appearance })}>{heading}</span>
-        <span
-          aria-hidden
-          className={cn(
-            "size-4 shrink-0 mask-[url(/icons/material-keyboard-arrow-down.svg)] mask-contain mask-center mask-no-repeat",
-            appearance === "image" ? "bg-white-alpha-50" : "bg-base-500",
-          )}
+        <Icon
+          size={4}
+          src="/icons/material-keyboard-arrow-down.svg"
+          className={appearance === "image" ? "bg-white-alpha-50" : "bg-base-500"}
         />
       </div>
       <div className="flex flex-col gap-1">
@@ -300,20 +299,17 @@ function ChartTrend({
       )}
       {...props}
     >
-      <span
-        aria-hidden
-        className={cn(
-          "shrink-0 bg-current mask-contain",
-          size === "md" ? "size-5" : size === "stack" ? "size-6" : "size-4",
-          " mask-center mask-no-repeat",
+      <Icon
+        size={size === "md" ? 5 : size === "stack" ? 6 : 4}
+        src={
           icon === "arrow"
             ? direction === "up"
-              ? "mask-[url(/icons/material-arrow-upward.svg)]"
-              : "mask-[url(/icons/material-arrow-downward.svg)]"
+              ? "/icons/material-arrow-upward.svg"
+              : "/icons/material-arrow-downward.svg"
             : direction === "up"
-              ? "mask-[url(/icons/material-trending_up.svg)]"
-              : "mask-[url(/icons/material-trending_down.svg)]",
-        )}
+              ? "/icons/material-trending_up.svg"
+              : "/icons/material-trending_down.svg"
+        }
       />
       {children}
     </span>
@@ -342,10 +338,19 @@ const chartProgressCardVariants = cva("flex w-27 flex-col", {
   variants: {
     type: {
       progress: "gap-3",
-      head: "gap-0 pb-4 outline-0",
+      // Figma Head: bottom-only 1px stroke, 16px below the labels (15px padding + 1px border = 32px).
+      head: "gap-0 border-b pb-3.75",
+    },
+    appearance: {
+      default: "",
+      image: "",
     },
   },
-  defaultVariants: { type: "progress" },
+  compoundVariants: [
+    { type: "head", appearance: "default", className: "border-background-100" },
+    { type: "head", appearance: "image", className: "border-white-alpha-20" },
+  ],
+  defaultVariants: { type: "progress", appearance: "default" },
 })
 
 type ChartProgressCardProps = Omit<React.ComponentProps<"div">, "style"> &
@@ -353,6 +358,8 @@ type ChartProgressCardProps = Omit<React.ComponentProps<"div">, "style"> &
     appearance?: "default" | "image"
     heading?: string
     count?: string
+    /** Right label of the Head row (Figma default "Views"). */
+    countHeading?: string
     trend?: "up" | "down"
     value?: number
     color?: ProgressColor
@@ -365,6 +372,7 @@ function ChartProgressCard({
   appearance = "default",
   heading,
   count = "256",
+  countHeading = "Views",
   trend,
   value = 100,
   color = "blue",
@@ -376,17 +384,12 @@ function ChartProgressCard({
       <div
         data-slot="chart-progress-card"
         data-type="head"
-        className={cn(
-          chartProgressCardVariants({ type }),
-          "outline -outline-offset-1",
-          image ? "outline-white-alpha-20" : "outline-background-100",
-          className,
-        )}
+        className={cn(chartProgressCardVariants({ type, appearance }), className)}
         {...props}
       >
         <div className="flex items-center justify-between text-10 leading-16 font-bold">
           <span className={image ? "text-white-alpha-70" : "text-base-700"}>{heading ?? "Head"}</span>
-          <span className={image ? "text-white-alpha-50" : "text-base-500"}>Views</span>
+          <span className={image ? "text-white-alpha-50" : "text-base-500"}>{countHeading}</span>
         </div>
       </div>
     )

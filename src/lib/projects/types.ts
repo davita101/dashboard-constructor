@@ -63,6 +63,9 @@ export type ProjectStage = {
   end: string
 }
 
+/** Placeholder for projects / clients without a logo yet. */
+export const DEFAULT_LOGO = "/icons/material-default-icon.svg"
+
 export type TeamMember = Member & { role: string }
 
 export type ProjectDetail = {
@@ -74,6 +77,14 @@ export type ProjectDetail = {
   tasks: { new: number; inWork: number; done: number; failed: number }
   stages: ProjectStage[]
   team: TeamMember[]
+}
+
+export type DashboardCharts = {
+  /** Last 9 months, oldest first, ending with the current month. */
+  months: { month: string; label: string; income: number; cost: number }[]
+  tasksByStatus: { new: number; inWork: number; done: number; failed: number }
+  /** Member projects with at least one task: most tasks first, then name; capped (see TASKS_BY_PROJECT_LIMIT). */
+  tasksByProject: { name: string; new: number; inWork: number; done: number; failed: number; total: number }[]
 }
 
 export type ProjectFinance = {

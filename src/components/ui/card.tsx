@@ -204,7 +204,10 @@ type ChartCardMetricData = {
   shade?: ChartShade
   heading: string
   value: string
+  /** "" hides the trend row. */
   trend: string
+  /** Arrow and color of the trend; default up. */
+  trendDirection?: "up" | "down"
   additionalText: string
 }
 
@@ -233,7 +236,7 @@ function ChartCardMetrics({
             <span className="text-20 leading-28 font-semibold text-base-800 group-data-[appearance=dark]/chart-card:text-background-0">
               {item.value}
             </span>
-            <ChartTrend direction="up">{item.trend}</ChartTrend>
+            {item.trend ? <ChartTrend direction={item.trendDirection ?? "up"}>{item.trend}</ChartTrend> : null}
           </div>
           <span className="text-10 leading-16 font-bold text-base-400 group-data-[appearance=dark]/chart-card:text-white-alpha-50">
             {item.additionalText}
@@ -301,7 +304,12 @@ function ChartCardLegend({
   )
 }
 
-function ChartCardFooter({ className, ...props }: React.ComponentProps<"div">) {
+function ChartCardFooter({
+  className,
+  viewMoreHref,
+  onDownload,
+  ...props
+}: React.ComponentProps<"div"> & { viewMoreHref?: string; onDownload?: () => void }) {
   return (
     <div
       data-slot="chart-card-footer"
@@ -311,11 +319,23 @@ function ChartCardFooter({ className, ...props }: React.ComponentProps<"div">) {
       )}
       {...props}
     >
-      <Link href="#" variant="700" size="11" className="group-data-[appearance=dark]/chart-card:text-white-alpha-70">
+      <Link
+        href={viewMoreHref ?? "#"}
+        variant="700"
+        size="11"
+        className="group-data-[appearance=dark]/chart-card:text-white-alpha-70"
+      >
         View More
         <LinkIcon icon="/icons/material-chevron-right.svg" />
       </Link>
-      <Link href="#" variant="blue" size="11" className="group-data-[appearance=dark]/chart-card:text-background-0">
+      <Link
+        {...(onDownload
+          ? { render: <button type="button" onClick={onDownload} /> }
+          : { href: "#" })}
+        variant="blue"
+        size="11"
+        className="group-data-[appearance=dark]/chart-card:text-background-0"
+      >
         <LinkIcon icon="/icons/material-file-download.svg" />
         Download
       </Link>

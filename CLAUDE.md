@@ -67,7 +67,7 @@ Collections in the export (W3C-style `$value` / `$type`, aliases as `{name}`):
 Mapping rules for code:
 - Primitives → CSS vars on `:root`; semantic Color Mode → `:root` (Light) and `.dark` (Dark).
 - Theme modes (Primary Colors, Gray Theme, Radius, fonts) → `data-*` attributes on `<html>` (e.g. `data-primary="indigo"`, `data-gray="blue"`, `data-radius="sharp"`).
-- Map shadcn's expected vars (`--background`, `--foreground`, `--primary`, `--border`, `--radius`, …) onto the semantic tokens so shadcn components pick them up. **Not done yet** — shadcn's defaults in `globals.css` are still active, so stock shadcn classes (`bg-primary`, `border-border`, `ring-ring`) don't follow the design yet. Until mapped, style components with design-token utilities (`bg-primary-500`, `text-base-800`, `outline-base-100`).
+- Map shadcn's expected vars (`--background`, `--foreground`, `--primary`, `--border`, `--radius`, …) onto the semantic tokens so shadcn components pick them up. **Done** (`globals.css`): shadcn vars reference the semantic tokens, so stock classes (`bg-primary`, `border-border`, `ring-ring`) follow the design, Light/Dark and `data-*` themes.
 - Expose tokens to Tailwind via `@theme inline` so utilities like `bg-primary-500`, `text-base-900`, `rounded-r12` work.
 
 ## Component rule: shadcn/ui first (mandatory)

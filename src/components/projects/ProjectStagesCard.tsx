@@ -1,4 +1,4 @@
-import { getTranslations } from "next-intl/server"
+import { getLocale, getTranslations } from "next-intl/server"
 
 import { ProjectCardHead } from "@/components/projects/ProjectCardHead"
 import { ProjectStagesMenu } from "@/components/projects/ProjectStagesMenu"
@@ -8,12 +8,11 @@ import { Card } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { TableCellIcon } from "@/components/ui/table-cell"
+import { formatIsoDate } from "@/lib/projects/dates"
 import type { ProjectStage } from "@/lib/projects/types"
 
 const tones: BadgeColor[] = ["blue", "green", "purple", "sky", "orange"]
 
-/** ISO date -> dd.MM */
-const short = (iso: string) => `${iso.slice(8, 10)}.${iso.slice(5, 7)}`
 
 function Stat({ icon, label, children }: { icon: string; label: string; children: React.ReactNode }) {
   return (
@@ -27,7 +26,8 @@ function Stat({ icon, label, children }: { icon: string; label: string; children
 
 /** One 80px stage item: number badge + name | task/member/file counts and start/end dates. */
 async function StageItem({ stage }: { stage: ProjectStage }) {
-  const t = await getTranslations("projectPage.stages")
+  const [t, locale] = await Promise.all([getTranslations("projectPage.stages"), getLocale()])
+  const short = (iso: string) => formatIsoDate(iso, locale)
 
   return (
     <Card variant="item" className="h-20 p-0">

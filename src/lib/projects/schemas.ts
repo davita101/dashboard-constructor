@@ -34,6 +34,12 @@ const logoFile = z
   .refine((f) => !f || f.size <= MAX_LOGO_BYTES, "Max 2 MB")
   .refine((f) => !f || f.type in LOGO_TYPES, "PNG, JPG, WEBP or GIF")
 
+/** Checkbox / flag from a form: "on" | "true" | "1" → true, anything else or absent → false. */
+const flag = z
+  .union([z.string(), z.boolean()])
+  .optional()
+  .transform((v) => v === true || v === "on" || v === "true" || v === "1")
+
 // --- Projects ---
 
 export const projectFields = z.object({
@@ -45,6 +51,8 @@ export const projectFields = z.object({
   cost: money,
   logo: logoFile,
   clientLogo: logoFile,
+  removeLogo: flag,
+  removeClientLogo: flag,
 })
 export const createProjectInput = projectFields
 export const updateProjectInput = projectFields.extend({ projectId: id })

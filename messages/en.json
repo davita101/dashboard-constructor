@@ -178,7 +178,33 @@
       "projects": "Projects",
       "income": "Income",
       "tasks": "Tasks",
-      "tasksDone": "Tasks done"
+      "tasksDone": "Tasks done",
+      "members": "Members",
+      "files": "Files",
+      "cost": "Cost",
+      "status": {
+        "new": "New",
+        "inWork": "In work",
+        "done": "Done",
+        "failed": "Failed"
+      },
+      "profit": "Profit",
+      "incomeCost": "Income & cost",
+      "tasksByStatus": "Tasks by status",
+      "tasksByProject": "Tasks by project",
+      "incomePerMonth": "Income per month",
+      "last30": "last 30 days",
+      "viewProjects": "View projects",
+      "taskCompletion": "Task completion",
+      "completed": "Completed",
+      "done": "Done",
+      "remaining": "Remaining",
+      "project": "Project",
+      "progress": "Progress",
+      "deadline": "Deadline",
+      "noProjects": "No projects yet",
+      "selectAll": "Select all",
+      "selectRow": "Select {name}"
     }
   },
   "projects": {
@@ -350,7 +376,9 @@
       "logo": "Project logo",
       "clientLogo": "Client logo",
       "logoHint": "PNG, JPG, WEBP or GIF up to 2MB",
-      "logoChosen": "{name} selected"
+      "logoChosen": "{name} selected",
+      "currentLogo": "Current logo",
+      "removeLogo": "Remove logo"
     },
     "stage": {
       "createTitle": "Add stage",
@@ -411,6 +439,16 @@
       "added": "Member added",
       "roleOf": "Role of {name}",
       "remove": "Remove {name}"
+    },
+    "message": {
+      "title": "Send message",
+      "description": "Posts to the project chat, visible to every member.",
+      "project": "Project",
+      "projectPlaceholder": "Choose a project",
+      "body": "Message",
+      "bodyPlaceholder": "Write a message…",
+      "send": "Send",
+      "sent": "Message sent"
     },
     "files": {
       "title": "Upload files",

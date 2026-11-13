@@ -543,8 +543,11 @@ export function deleteTask(userId: string, input: z.output<typeof deleteTaskInpu
  * Upload the project / client logo picked in the project form. Runs after create/update committed, so the storage
  * policy sees the user as a member and the project's current client. Replaced logos are deleted when unused.
  */
-export async function setLogos(userId: string, projectId: string, input: Pick<z.output<typeof projectFields>, "logo" | "clientLogo">) {
-  if (!input.logo && !input.clientLogo) return
+export async function setLogos(userId: string, projectId: string, input: Partial<Pick<z.output<typeof projectFields>, "logo" | "clientLogo" | "removeLogo" | "removeClientLogo">>) {
+  // A new upload for a slot wins over its remove flag.
+  const dropLogo = !!input.removeLogo && !input.logo
+  const dropClientLogo = !!input.removeClientLogo && !input.clientLogo
+  if (!input.logo && !input.clientLogo && !dropLogo && !dropClientLogo) return
   const [current] = await db
     .select({ logo: projects.logo, clientId: projects.clientId, clientLogo: clients.logo })
     .from(projects)
@@ -560,8 +563,11 @@ export async function setLogos(userId: string, projectId: string, input: Pick<z.
   await db.transaction(async (tx) => {
     if (logo) await tx.update(projects).set({ logo }).where(eq(projects.id, projectId))
     if (clientLogo && current.clientId) await tx.update(clients).set({ logo: clientLogo }).where(eq(clients.id, current.clientId))
-    if (logo) await removeLogoIfUnused(tx, current.logo)
-    if (clientLogo) await removeLogoIfUnused(tx, current.clientLogo)
+    if (dropLogo && current.logo) await tx.update(projects).set({ logo: null }).where(eq(projects.id, projectId))
+    // No client → nothing to clear, ignored silently.
+    if (dropClientLogo && current.clientId && current.clientLogo) await tx.update(clients).set({ logo: null }).where(eq(clients.id, current.clientId))
+    if (logo || dropLogo) await removeLogoIfUnused(tx, current.logo)
+    if (clientLogo || (dropClientLogo && current.clientId)) await removeLogoIfUnused(tx, current.clientLogo)
   })
 }
 

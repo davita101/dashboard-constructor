@@ -1,7 +1,7 @@
 import * as React from "react"
 import type { VariantProps } from "class-variance-authority"
 
-import { inputSizeVariants, inputVariants } from "@/components/ui/input"
+import { inputSizeVariants, inputVariants } from "@/components/ui/input-variants"
 import { cn } from "@/lib/utils"
 
 // shadcn textarea with the Figma Input box: same size × shape scale and states as Input, auto height

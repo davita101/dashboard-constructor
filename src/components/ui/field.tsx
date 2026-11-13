@@ -1,6 +1,8 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
+import { FieldProvider, useFieldContext } from "@/components/ui/field-context"
+import { Icon } from "@/components/ui/icon"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 
@@ -52,13 +54,15 @@ function Field({
   ...props
 }: React.ComponentProps<"div"> & VariantProps<typeof fieldVariants>) {
   return (
-    <div
-      role="group"
-      data-slot="field"
-      data-size={size}
-      className={cn(fieldVariants({ size, shape, tone }), className)}
-      {...props}
-    />
+    <FieldProvider size={size ?? "40"} shape={shape ?? "rounded"}>
+      <div
+        role="group"
+        data-slot="field"
+        data-size={size}
+        className={cn(fieldVariants({ size, shape, tone }), className)}
+        {...props}
+      />
+    </FieldProvider>
   )
 }
 
@@ -83,13 +87,10 @@ function FieldLabel({ className, ...props }: React.ComponentProps<typeof Label>)
 /** Figma material-help next to the label. */
 function FieldLabelIcon({ className, ...props }: React.ComponentProps<"span">) {
   return (
-    <span
+    <Icon
       data-slot="field-label-icon"
-      aria-hidden
-      className={cn(
-        "size-(--field-icon) shrink-0 bg-[color:var(--field-icon-fg,var(--base-500))] mask-[url(/icons/material-help.svg)] mask-contain mask-center mask-no-repeat",
-        className
-      )}
+      src="/icons/material-help.svg"
+      className={cn("size-(--field-icon) bg-[color:var(--field-icon-fg,var(--base-500))]", className)}
       {...props}
     />
   )
@@ -153,4 +154,4 @@ function FieldLegend({ className, ...props }: React.ComponentProps<"legend">) {
   )
 }
 
-export { Field, FieldGroup, FieldLegend, FieldSet, FieldDescription, FieldError, FieldHeader, FieldHint, FieldLabel, FieldLabelIcon, fieldVariants, type FieldSize }
+export { Field, useFieldContext, FieldGroup, FieldLegend, FieldSet, FieldDescription, FieldError, FieldHeader, FieldHint, FieldLabel, FieldLabelIcon, fieldVariants, type FieldSize }

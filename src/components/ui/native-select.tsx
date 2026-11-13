@@ -1,7 +1,8 @@
 import * as React from "react"
 import type { VariantProps } from "class-variance-authority"
 
-import { inputSizeVariants, inputVariants } from "@/components/ui/input"
+import { Icon } from "@/components/ui/icon"
+import { inputSizeVariants, inputVariants } from "@/components/ui/input-variants"
 import { cn } from "@/lib/utils"
 
 // shadcn native-select, drawn with the Figma Input box (same size × shape scale and states as Input) and
@@ -27,10 +28,10 @@ function NativeSelect({ className, size = "40", shape = "rounded", ...props }: N
         )}
         {...props}
       />
-      <span
-        aria-hidden
+      <Icon
         data-slot="native-select-icon"
-        className="pointer-events-none absolute top-1/2 right-(--input-px) size-(--input-icon) -translate-y-1/2 bg-base-500 mask-[url(/icons/material-keyboard-arrow-down.svg)] mask-contain mask-center mask-no-repeat"
+        src="/icons/material-keyboard-arrow-down.svg"
+        className="pointer-events-none absolute top-1/2 right-(--input-px) size-(--input-icon) -translate-y-1/2 bg-base-500"
       />
     </div>
   )

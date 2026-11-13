@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-13T08:16:08.993Z",
+  "generatedAt": "2026-11-13T10:11:38.824Z",
   "entities": [
     {
       "name": "StageValues",
@@ -108,6 +108,287 @@
           "comment": "",
           "sql": "numeric(12,2)",
           "note": "formatted string in UI → store number, format on render"
+        }
+      ]
+    },
+    {
+      "name": "StreamedMessage",
+      "table": "streamed_messages",
+      "file": "src/lib/chat/realtime.ts",
+      "line": 7,
+      "comment": "",
+      "extends": [],
+      "fields": [
+        {
+          "name": "id",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "uuid primary key"
+        },
+        {
+          "name": "conversationId",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "uuid",
+          "relation": {
+            "kind": "fk",
+            "target": "Conversation"
+          }
+        },
+        {
+          "name": "authorId",
+          "ts": "string | null",
+          "optional": false,
+          "comment": "",
+          "sql": "uuid",
+          "relation": {
+            "kind": "fk",
+            "target": "Author"
+          }
+        },
+        {
+          "name": "body",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "text"
+        },
+        {
+          "name": "createdAt",
+          "ts": "Date",
+          "optional": false,
+          "comment": "",
+          "sql": "text",
+          "note": "unmapped TS type: Date"
+        },
+        {
+          "name": "editedAt",
+          "ts": "Date | null",
+          "optional": false,
+          "comment": "",
+          "sql": "text",
+          "note": "unmapped TS type: Date | null"
+        }
+      ]
+    },
+    {
+      "name": "MessageRow",
+      "table": "message_rows",
+      "file": "src/lib/chat/realtime.ts",
+      "line": 16,
+      "comment": "",
+      "extends": [],
+      "fields": [
+        {
+          "name": "id",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "uuid primary key"
+        },
+        {
+          "name": "conversation_id",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "text"
+        },
+        {
+          "name": "author_id",
+          "ts": "string | null",
+          "optional": false,
+          "comment": "",
+          "sql": "text",
+          "note": "unmapped TS type: string | null"
+        },
+        {
+          "name": "body",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "text"
+        },
+        {
+          "name": "created_at",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "text"
+        },
+        {
+          "name": "edited_at",
+          "ts": "string | null",
+          "optional": false,
+          "comment": "",
+          "sql": "text",
+          "note": "unmapped TS type: string | null"
+        }
+      ]
+    },
+    {
+      "name": "ChatAuthor",
+      "table": "chat_authors",
+      "file": "src/lib/chat/types.ts",
+      "line": 1,
+      "comment": "",
+      "extends": [],
+      "fields": [
+        {
+          "name": "id",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "uuid primary key"
+        },
+        {
+          "name": "name",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "text"
+        },
+        {
+          "name": "avatar",
+          "ts": "string | null",
+          "optional": false,
+          "comment": "",
+          "sql": "text",
+          "note": "unmapped TS type: string | null"
+        }
+      ]
+    },
+    {
+      "name": "ConversationSummary",
+      "table": "conversation_summarys",
+      "file": "src/lib/chat/types.ts",
+      "line": 3,
+      "comment": "",
+      "extends": [],
+      "fields": [
+        {
+          "name": "id",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "uuid primary key"
+        },
+        {
+          "name": "kind",
+          "ts": "\"project\" | \"direct\"",
+          "optional": false,
+          "comment": "",
+          "sql": "enum",
+          "note": "\"project\" | \"direct\""
+        },
+        {
+          "name": "projectId",
+          "ts": "string | null",
+          "optional": false,
+          "comment": "",
+          "sql": "uuid",
+          "relation": {
+            "kind": "fk",
+            "target": "Project"
+          }
+        },
+        {
+          "name": "title",
+          "ts": "string",
+          "optional": false,
+          "comment": "Project name, or the other participant's name for direct chats.",
+          "sql": "text"
+        },
+        {
+          "name": "peer",
+          "ts": "ChatAuthor | null",
+          "optional": false,
+          "comment": "Other participant (direct only).",
+          "sql": "text",
+          "note": "unmapped TS type: ChatAuthor | null"
+        },
+        {
+          "name": "lastMessage",
+          "ts": "{ body: string; authorId: string | null; createdAt: Date } | null",
+          "optional": false,
+          "comment": "",
+          "sql": "jsonb",
+          "note": "inline object (table or computed?)"
+        },
+        {
+          "name": "lastMessageAt",
+          "ts": "Date | null",
+          "optional": false,
+          "comment": "",
+          "sql": "text",
+          "note": "unmapped TS type: Date | null"
+        },
+        {
+          "name": "unreadCount",
+          "ts": "number",
+          "optional": false,
+          "comment": "",
+          "sql": "integer"
+        }
+      ]
+    },
+    {
+      "name": "ChatMessage",
+      "table": "chat_messages",
+      "file": "src/lib/chat/types.ts",
+      "line": 16,
+      "comment": "",
+      "extends": [],
+      "fields": [
+        {
+          "name": "id",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "uuid primary key"
+        },
+        {
+          "name": "conversationId",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "uuid",
+          "relation": {
+            "kind": "fk",
+            "target": "Conversation"
+          }
+        },
+        {
+          "name": "body",
+          "ts": "string",
+          "optional": false,
+          "comment": "",
+          "sql": "text"
+        },
+        {
+          "name": "createdAt",
+          "ts": "Date",
+          "optional": false,
+          "comment": "",
+          "sql": "text",
+          "note": "unmapped TS type: Date"
+        },
+        {
+          "name": "editedAt",
+          "ts": "Date | null",
+          "optional": false,
+          "comment": "",
+          "sql": "text",
+          "note": "unmapped TS type: Date | null"
+        },
+        {
+          "name": "author",
+          "ts": "ChatAuthor | null",
+          "optional": false,
+          "comment": "",
+          "sql": "text",
+          "note": "unmapped TS type: ChatAuthor | null"
         }
       ]
     },
@@ -299,7 +580,7 @@
       "name": "ProjectStage",
       "table": "project_stages",
       "file": "src/lib/projects/types.ts",
-      "line": 51,
+      "line": 53,
       "comment": "--- Project page (Figma Projects (1600) 14061:76419: per-project dashboard) ---",
       "extends": [],
       "fields": [
@@ -369,7 +650,7 @@
       "name": "TeamMember",
       "table": "team_members",
       "file": "src/lib/projects/types.ts",
-      "line": 64,
+      "line": 66,
       "comment": "",
       "extends": [
         "Member"
@@ -410,7 +691,7 @@
       "name": "ProjectOption",
       "table": "project_options",
       "file": "src/lib/projects/types.ts",
-      "line": 87,
+      "line": 95,
       "comment": "Pickers for the create dialogs (Quick Add): the user's projects with their stages and members.",
       "extends": [],
       "fields": [
@@ -452,10 +733,10 @@
   ],
   "valueTypes": [
     {
-      "name": "ActionState",
+      "name": "ChatActionState",
       "kind": "object",
-      "file": "src/lib/projects/action-state.ts",
-      "line": 4,
+      "file": "src/lib/chat/actions.ts",
+      "line": 16,
       "fields": [
         {
           "name": "status",
@@ -470,6 +751,16 @@
         {
           "name": "fieldErrors",
           "ts": "Record<string, string[] | undefined>",
+          "comment": ""
+        },
+        {
+          "name": "conversationId",
+          "ts": "string",
+          "comment": ""
+        },
+        {
+          "name": "sent",
+          "ts": "ChatMessage",
           "comment": ""
         }
       ],
@@ -510,6 +801,30 @@
       "usedBy": []
     },
     {
+      "name": "ActionState",
+      "kind": "object",
+      "file": "src/lib/projects/action-state.ts",
+      "line": 4,
+      "fields": [
+        {
+          "name": "status",
+          "ts": "\"idle\" | \"ok\" | \"error\"",
+          "comment": ""
+        },
+        {
+          "name": "message",
+          "ts": "string",
+          "comment": ""
+        },
+        {
+          "name": "fieldErrors",
+          "ts": "Record<string, string[] | undefined>",
+          "comment": ""
+        }
+      ],
+      "usedBy": []
+    },
+    {
       "name": "ProjectEventKind",
       "kind": "enum",
       "file": "src/lib/projects/types.ts",
@@ -542,6 +857,11 @@
           "comment": ""
         },
         {
+          "name": "tasksDone",
+          "ts": "number",
+          "comment": "Tasks with status done (dashboard \"Tasks done\" metric)."
+        },
+        {
           "name": "members",
           "ts": "number",
           "comment": ""
@@ -552,13 +872,15 @@
           "comment": ""
         }
       ],
-      "usedBy": []
+      "usedBy": [
+        "WidgetData"
+      ]
     },
     {
       "name": "ProjectDetail",
       "kind": "object",
       "file": "src/lib/projects/types.ts",
-      "line": 66,
+      "line": 68,
       "fields": [
         {
           "name": "project",
@@ -599,10 +921,31 @@
       "usedBy": []
     },
     {
+      "name": "DashboardCharts",
+      "kind": "object",
+      "file": "src/lib/projects/types.ts",
+      "line": 79,
+      "fields": [
+        {
+          "name": "months",
+          "ts": "{ month: string; label: string; income: number; cost: number }[]",
+          "comment": "Last 9 months, oldest first, ending with the current month."
+        },
+        {
+          "name": "tasksByStatus",
+          "ts": "{ new: number; inWork: number; done: number; failed: number }",
+          "comment": ""
+        }
+      ],
+      "usedBy": [
+        "WidgetData"
+      ]
+    },
+    {
       "name": "ProjectFinance",
       "kind": "object",
       "file": "src/lib/projects/types.ts",
-      "line": 77,
+      "line": 85,
       "fields": [
         {
           "name": "income",
@@ -631,11 +974,64 @@
         }
       ],
       "usedBy": [
+        "WidgetData",
         "FinancialStatsCardProps"
       ]
+    },
+    {
+      "name": "UserSettings",
+      "kind": "object",
+      "file": "src/lib/settings/schemas.ts",
+      "line": 21,
+      "fields": [
+        {
+          "name": "theme",
+          "ts": "Theme | null",
+          "comment": ""
+        },
+        {
+          "name": "locale",
+          "ts": "(typeof locales)[number] | null",
+          "comment": ""
+        },
+        {
+          "name": "widgetLayout",
+          "ts": "z.output<typeof widgetLayoutSchema> | null",
+          "comment": ""
+        }
+      ],
+      "usedBy": []
     }
   ],
   "relations": [
+    {
+      "from": "StreamedMessage",
+      "field": "conversationId",
+      "to": "Conversation",
+      "kind": "fk",
+      "suggestion": "StreamedMessage.conversationId → Conversation.id (FK)"
+    },
+    {
+      "from": "StreamedMessage",
+      "field": "authorId",
+      "to": "Author",
+      "kind": "fk",
+      "suggestion": "StreamedMessage.authorId → Author.id (FK)"
+    },
+    {
+      "from": "ConversationSummary",
+      "field": "projectId",
+      "to": "Project",
+      "kind": "fk",
+      "suggestion": "ConversationSummary.projectId → Project.id (FK)"
+    },
+    {
+      "from": "ChatMessage",
+      "field": "conversationId",
+      "to": "Conversation",
+      "kind": "fk",
+      "suggestion": "ChatMessage.conversationId → Conversation.id (FK)"
+    },
     {
       "from": "Project",
       "field": "members",
@@ -662,7 +1058,7 @@
     {
       "name": "getProjects",
       "file": "src/lib/projects/data.ts",
-      "line": 18,
+      "line": 21,
       "params": "",
       "returns": "Promise<Project[]>",
       "usedBy": [
@@ -675,7 +1071,7 @@
     {
       "name": "getProjectDetail",
       "file": "src/lib/projects/data.ts",
-      "line": 22,
+      "line": 25,
       "params": "slug: string",
       "returns": "Promise<ProjectDetail | undefined>",
       "usedBy": [
@@ -685,7 +1081,7 @@
     {
       "name": "getProjectEvents",
       "file": "src/lib/projects/data.ts",
-      "line": 26,
+      "line": 29,
       "params": "",
       "returns": "Promise<ProjectEvent[]>",
       "usedBy": [
@@ -696,27 +1092,39 @@
     {
       "name": "getProjectTotals",
       "file": "src/lib/projects/data.ts",
-      "line": 30,
+      "line": 33,
       "params": "",
       "returns": "Promise<ProjectTotals>",
       "usedBy": [
+        "src/app/dashboard/page.tsx",
         "src/app/dashboard/projects/page.tsx"
       ]
     },
     {
       "name": "getProjectFinance",
       "file": "src/lib/projects/data.ts",
-      "line": 34,
+      "line": 37,
       "params": "",
       "returns": "Promise<ProjectFinance>",
       "usedBy": [
+        "src/app/dashboard/page.tsx",
         "src/app/dashboard/projects/page.tsx"
+      ]
+    },
+    {
+      "name": "getDashboardCharts",
+      "file": "src/lib/projects/data.ts",
+      "line": 41,
+      "params": "",
+      "returns": "Promise<DashboardCharts>",
+      "usedBy": [
+        "src/app/dashboard/page.tsx"
       ]
     },
     {
       "name": "getProjectOptions",
       "file": "src/lib/projects/data.ts",
-      "line": 39,
+      "line": 46,
       "params": "",
       "returns": "Promise<ProjectOption[]>",
       "usedBy": [
@@ -726,7 +1134,7 @@
     {
       "name": "getProjectSlugs",
       "file": "src/lib/projects/data.ts",
-      "line": 44,
+      "line": 51,
       "params": "",
       "returns": "Promise<string[]>",
       "usedBy": [
@@ -736,7 +1144,7 @@
     {
       "name": "getNewProjectDetail",
       "file": "src/lib/projects/data.ts",
-      "line": 49,
+      "line": 63,
       "params": "",
       "returns": "Promise<ProjectDetail>",
       "usedBy": [
@@ -835,7 +1243,7 @@
       "name": "items",
       "file": "src/components/projects/ProjectStats.tsx",
       "line": 8,
-      "type": "{ key: keyof ProjectTotals; color: BadgeColor; icon: string }[]",
+      "type": "{ key: Exclude<keyof ProjectTotals, \"tasksDone\">; color: BadgeColor; icon: string }[]",
       "rows": 4,
       "keys": [
         "key",

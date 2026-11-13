@@ -5,6 +5,7 @@ import { Avatar as AvatarPrimitive } from "@base-ui/react/avatar"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
 import { Status } from "@/components/ui/status"
 
 // Figma Avatar-Text / Avatar-Image / Profile / Avatar-Logo / Brand-Logo (Avatars page 4313:42252).
@@ -63,21 +64,70 @@ const avatarVariants = cva(
 
 type AvatarSize = NonNullable<VariantProps<typeof avatarVariants>["size"]>
 
+const AvatarSizeContext = React.createContext<AvatarSize>("48")
+
+// Figma "Progress": 66px box on the 60px avatar (2px stroke, 1px gap = 3px outside the avatar),
+// track primary-alpha-20, arc primary-600 from 12 o'clock, clockwise.
+// One conic-gradient painted on the ring, masked to the 2px padding box edge.
+const avatarProgressRing =
+  "pointer-events-none absolute -inset-0.75 p-0.5 [background:conic-gradient(var(--primary-600)_calc(var(--avatar-progress)*1%),var(--primary-alpha-20)_0)] [mask:linear-gradient(black_0_0)_content-box_exclude,linear-gradient(black_0_0)] group-data-[shape=circle]/avatar:rounded-full group-data-[shape=rounded]/avatar:rounded-[calc(var(--avatar-r)+--spacing(0.75))]"
+
+/**
+ * `progress` (0-100) draws the Figma Progress ring. Story and Progress share the 66px box
+ * and are alternatives in Figma, so progress wins when both are set.
+ */
 function Avatar({
   className,
   size = "48",
   shape = "circle",
   story = false,
   frame = "none",
+  progress,
+  children,
   ...props
-}: AvatarPrimitive.Root.Props & VariantProps<typeof avatarVariants>) {
+}: AvatarPrimitive.Root.Props & VariantProps<typeof avatarVariants> & { progress?: number }) {
+  const hasProgress = typeof progress === "number" && Number.isFinite(progress)
+  const value = hasProgress ? Math.min(100, Math.max(0, progress)) : 0
   return (
-    <AvatarPrimitive.Root
-      data-slot="avatar"
-      data-size={size}
-      data-shape={shape}
-      data-frame={frame}
-      className={cn(avatarVariants({ size, shape, story, frame }), className)}
+    <AvatarSizeContext.Provider value={size ?? "48"}>
+      <AvatarPrimitive.Root
+        data-slot="avatar"
+        data-size={size}
+        data-shape={shape}
+        data-frame={frame}
+        data-progress={hasProgress ? value : undefined}
+        className={cn(avatarVariants({ size, shape, story: hasProgress ? false : story, frame }), className)}
+        {...props}
+      >
+        {children}
+        {hasProgress ? (
+          <span
+            data-slot="avatar-progress"
+            aria-hidden
+            className={avatarProgressRing}
+            style={{ "--avatar-progress": value } as React.CSSProperties}
+          />
+        ) : null}
+      </AvatarPrimitive.Root>
+    </AvatarSizeContext.Provider>
+  )
+}
+
+/** Figma "Badge-Square-Pilled" counter (16px, 12px on avatars <= 32), top-right; corner position assumed. */
+function AvatarCounter({
+  className,
+  color = "red",
+  ...props
+}: Omit<React.ComponentProps<typeof Badge>, "size" | "shape">) {
+  const size = React.useContext(AvatarSizeContext)
+  const small = Number(size) <= 32
+  return (
+    <Badge
+      data-slot="avatar-counter"
+      color={color}
+      size={small ? "square-12" : "square-16"}
+      shape="pill"
+      className={cn("absolute -top-1 -right-1 z-10", className)}
       {...props}
     />
   )
@@ -241,6 +291,7 @@ export {
   AvatarGroup,
   AvatarGroupCount,
   AvatarBadge,
+  AvatarCounter,
   avatarVariants,
   avatarFallbackVariants,
   type AvatarSize,

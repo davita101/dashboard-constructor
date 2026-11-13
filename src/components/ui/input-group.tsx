@@ -7,7 +7,8 @@ import { Avatar } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ColorSwatch } from "@/components/ui/color-swatch"
-import { inputSizeVariants, type InputShape, type InputSize } from "@/components/ui/input"
+import { inputSizeVariants, type InputShape, type InputSize } from "@/components/ui/input-variants"
+import { useFieldContext } from "@/components/ui/field-context"
 import { Kbd } from "@/components/ui/kbd"
 import { cn } from "@/lib/utils"
 
@@ -213,6 +214,11 @@ function InputGroupSegment({
   )
 }
 
+type InputGroupContextValue = { size: InputSize; shape: InputShape }
+
+// Size / shape of the enclosing InputGroup; slots default their shape from it.
+const InputGroupContext = React.createContext<InputGroupContextValue | null>(null)
+
 function InputGroup({
   className,
   size: sizeProp,
@@ -225,11 +231,14 @@ function InputGroup({
   Omit<VariantProps<typeof inputGroupVariants>, "joined">) {
   // Inside an InputGroupJoin, size / shape / Success default to the join's
   const join = React.useContext(InputGroupJoinContext)
-  const size = sizeProp ?? join?.size ?? "40"
-  const shape = shapeProp ?? join?.shape ?? "rounded"
+  // Precedence: explicit prop > InputGroupJoin > Field > default
+  const field = useFieldContext()
+  const size = sizeProp ?? join?.size ?? field?.size ?? "40"
+  const shape = shapeProp ?? join?.shape ?? field?.shape ?? "rounded"
   const status = statusProp ?? join?.status ?? "default"
   const joined = join !== null
   return (
+    <InputGroupContext.Provider value={{ size, shape }}>
     <div
       data-slot="input-group"
       data-size={size}
@@ -239,6 +248,7 @@ function InputGroup({
       className={cn(inputSizeVariants({ size, shape }), inputGroupVariants({ status, tone, joined }), className)}
       {...props}
     />
+    </InputGroupContext.Provider>
   )
 }
 
@@ -326,19 +336,23 @@ function InputGroupButton({
   type = "button",
   variant = "outline",
   size = "24",
-  shape = "rounded",
+  shape: shapeProp,
   ...props
 }: React.ComponentProps<typeof Button>) {
+  const group = React.useContext(InputGroupContext)
+  const shape = shapeProp ?? group?.shape ?? "rounded"
   return <Button data-slot="input-group-button" type={type} variant={variant} size={size} shape={shape} {...props} />
 }
 
 /** Figma Tags: Badge-Default-Rounded chips before the text. */
 function InputGroupTag({
   variant = "base",
-  shape = "rounded",
+  shape: shapeProp,
   size = "24",
   ...props
 }: React.ComponentProps<typeof Badge>) {
+  const group = React.useContext(InputGroupContext)
+  const shape = shapeProp ?? group?.shape ?? "rounded"
   return <Badge data-slot="input-group-tag" variant={variant} shape={shape} size={size} {...props} />
 }
 
@@ -348,12 +362,16 @@ function InputGroupKbd(props: React.ComponentProps<typeof Kbd>) {
 }
 
 /** Figma Avatar slot: an Avatar-Image before the text. */
-function InputGroupAvatar({ size = "24", shape = "rounded", ...props }: React.ComponentProps<typeof Avatar>) {
+function InputGroupAvatar({ size = "24", shape: shapeProp, ...props }: React.ComponentProps<typeof Avatar>) {
+  const group = React.useContext(InputGroupContext)
+  const shape = shapeProp ?? (group?.shape === "pill" ? "circle" : "rounded")
   return <Avatar data-slot="input-group-avatar" size={size} shape={shape} {...props} />
 }
 
-/** Figma Colors swatch slot: the Forms: Color `Color` chip; pass the input's shape. */
-function InputGroupSwatch({ shape = "rounded", ...props }: React.ComponentProps<typeof ColorSwatch>) {
+/** Figma Colors swatch slot: the Forms: Color `Color` chip; inherits the group's shape. */
+function InputGroupSwatch({ shape: shapeProp, ...props }: React.ComponentProps<typeof ColorSwatch>) {
+  const group = React.useContext(InputGroupContext)
+  const shape = shapeProp ?? group?.shape ?? "rounded"
   return <ColorSwatch data-slot="input-group-swatch" shape={shape} {...props} />
 }
 

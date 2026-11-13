@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils"
 // stroke), Error (aria-invalid on the input), Disabled (disabled input). Hover / Drag / Focused can
 // be pinned with `status` for previews. Colors are vars on the root, read by the parts.
 const fileUploadVariants = cva(
-  "group/file-upload relative flex h-50 w-full cursor-pointer flex-col items-center justify-center gap-6 rounded-r12 bg-(--file-upload-bg) px-4 font-default tracking-default outline outline-dashed outline-(--file-upload-stroke) -outline-offset-1 transition-[background-color,outline-color,opacity] [--file-upload-bg:var(--background-0)] [--file-upload-stroke:var(--base-200)] " +
+  "group/file-upload relative flex w-full cursor-pointer flex-col items-center justify-center rounded-r12 bg-(--file-upload-bg) px-4 font-default tracking-default outline outline-dashed outline-(--file-upload-stroke) -outline-offset-1 transition-[background-color,outline-color,opacity] [--file-upload-bg:var(--background-0)] [--file-upload-stroke:var(--base-200)] " +
     // Hover
     "not-has-disabled:hover:[--file-upload-bg:var(--background-30)] not-has-disabled:hover:[--file-upload-stroke:var(--base-300)] " +
     // Drag (data-dragging is set while files are over the area)
@@ -26,6 +26,11 @@ const fileUploadVariants = cva(
     "has-disabled:cursor-not-allowed has-disabled:opacity-50 has-disabled:[--file-upload-bg:var(--background-0)] has-disabled:[--file-upload-stroke:var(--base-100)]",
   {
     variants: {
+      // default is the Figma 200px area; compact is a short area for forms with several drop areas
+      size: {
+        default: "h-50 gap-6",
+        compact: "h-auto gap-2 py-4",
+      },
       // Pinned Figma State for previews; pointer, drag and keyboard focus apply them live
       status: {
         default: "",
@@ -35,6 +40,7 @@ const fileUploadVariants = cva(
       },
     },
     defaultVariants: {
+      size: "default",
       status: "default",
     },
   }
@@ -151,16 +157,18 @@ function FileUpload({
   className,
   kind = "files",
   status = "default",
+  size = "default",
   hint,
   title = "Drag & Drop Files or",
   browseText = "browse files",
   onFilesChange,
   onChange,
   ...props
-}: Omit<React.ComponentProps<"input">, "type" | "title"> & {
+}: Omit<React.ComponentProps<"input">, "type" | "title" | "size"> & {
   /** Figma set: Form-Upload-Files (`files`) or Form-Upload-Files-Images (`images`). */
   kind?: keyof typeof kinds
   status?: FileUploadStatus
+  size?: "default" | "compact"
   hint?: React.ReactNode
   title?: React.ReactNode
   browseText?: React.ReactNode
@@ -176,8 +184,9 @@ function FileUpload({
       data-slot="file-upload"
       data-kind={kind}
       data-status={status}
+      data-size={size}
       data-dragging={dragging || undefined}
-      className={cn(fileUploadVariants({ status }), className)}
+      className={cn(fileUploadVariants({ size, status }), className)}
       onDragOver={(event) => {
         if (props.disabled) return
         event.preventDefault()
@@ -206,7 +215,7 @@ function FileUpload({
         }}
         {...props}
       />
-      <FileUploadBadge icon={config.icon} tone={invalid ? "danger" : config.tone} />
+      <FileUploadBadge icon={config.icon} tone={invalid ? "danger" : config.tone} size={size === "compact" ? "32" : "40"} />
       <span className="flex flex-col items-center gap-2">
         <FileUploadTitle>
           {title} <FileUploadBrowse>{browseText}</FileUploadBrowse>

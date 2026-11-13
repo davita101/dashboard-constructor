@@ -1,4 +1,4 @@
-import { getFormatter, getTranslations } from "next-intl/server"
+import { getFormatter, getLocale, getTranslations } from "next-intl/server"
 
 import { CompanyCard } from "@/components/projects/CompanyCard"
 import { ProjectEventsCard } from "@/components/projects/ProjectEventsCard"
@@ -8,6 +8,7 @@ import { ProjectStatTile } from "@/components/projects/ProjectStatTile"
 import { Card } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { ProjectTabs } from "@/components/projects/ProjectTabs"
+import { formatIsoDate } from "@/lib/projects/dates"
 import { projectTabKeys, type ProjectTabKey } from "@/lib/projects/tabs"
 import { Empty, EmptyDescription, EmptyHeader, EmptyIcon, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import type { Project, ProjectDetail, ProjectEvent } from "@/lib/projects/types"
@@ -26,14 +27,14 @@ async function ProjectDashboardCard({
   projects: Project[]
   tab?: ProjectTabKey
 }) {
-  const [t, tTabs, tEvents, format] = await Promise.all([
+  const [t, tTabs, tEvents, format, locale] = await Promise.all([
     getTranslations("projectPage.stats"),
     getTranslations("projectPage.tabs"),
     getTranslations("projectPage.events"),
     getFormatter(),
+    getLocale(),
   ])
   const { project, counts, tasks } = detail
-  const [y, m, d] = project.deadline.slice(0, 10).split("-")
   // The blank editor (/dashboard/projects/new) has no project to add stages or members to yet.
   const projectId = project.id === "new" ? undefined : project.id
 
@@ -61,7 +62,7 @@ async function ProjectDashboardCard({
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-[--spacing(85)_1fr]">
           <div className="flex flex-col gap-3">
             <ProjectStatTile wide title={t("implementation")} value={format.number(detail.implementation / 100, { style: "percent" })} />
-            <ProjectStatTile wide title={t("deadline")} value={project.deadline ? `${d}.${m}.${y}` : "–"} />
+            <ProjectStatTile wide title={t("deadline")} value={project.deadline ? formatIsoDate(project.deadline, locale, true) : "–"} />
           </div>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <ProjectStatTile title={t("messages")} icon={icon("message")} value={format.number(counts.messages)} />
