@@ -353,6 +353,39 @@ function MetricLine2Preview() {
 
 /** Metric-Chart-Card (amounts and list) and Metric-Map-Card (map and list). */
 function MetricLargePreview({ kind }: { kind: "chart" | "map" }) {
+  const t = useTranslations("widgets.data")
+  const data = useWidgetData()
+  if (kind === "chart" && data) {
+    const { finance, charts } = data
+    const income = trendOf(finance.incomeTrend)
+    const max = Math.max(0, ...charts.tasksByProject.map((p) => p.total))
+    const items = charts.tasksByProject.map((p) => ({
+      name: p.name,
+      value: max ? Math.round((p.total / max) * 100) : 0,
+      label: formatCount(p.total),
+    }))
+    return (
+      <ChartMetricCard size="lg">
+        <ChartMetricHead size="large" title={t("incomeCost")} />
+        <ChartMetricBody layout="stack" className="pt-5">
+          <ChartMetricAmounts>
+            <ChartMetricAmount
+              size="lg"
+              tone="purple"
+              heading={t("income")}
+              value={formatUsd(finance.income)}
+              delta={income.trend}
+              deltaDirection={income.trendDirection}
+              additionalText={t("last30")}
+            />
+            <ChartMetricAmount size="lg" tone="orange" heading={t("cost")} value={formatUsd(finance.cost)} delta="" additionalText="" />
+          </ChartMetricAmounts>
+          {items.length ? <ChartMetricList items={items} heading={t("tasksByProject")} countHeading={t("tasks")} /> : null}
+        </ChartMetricBody>
+        <ChartMetricActions size="lg" divider={false} />
+      </ChartMetricCard>
+    )
+  }
   return (
     <ChartMetricCard size="lg">
       <ChartMetricHead size="large" title={kind === "chart" ? "Line Chart Sample" : "Map"} />

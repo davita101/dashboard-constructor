@@ -295,13 +295,38 @@ function ChartMetricTooltip({ className, children = "$345", ...props }: React.Co
 const listColors = ["blue", "rose", "green", "amber", "fuchsia", "lime", "cyan", "purple"] as const
 
 /** Figma Head row + Item 1…8 (Progress-Card with a colored Progress-Line). */
-function ChartMetricList({ className, appearance = "default", ...props }: React.ComponentProps<"div"> & { appearance?: "default" | "image" }) {
+function ChartMetricList({
+  className,
+  appearance = "default",
+  items,
+  heading,
+  countHeading,
+  ...props
+}: React.ComponentProps<"div"> & {
+  appearance?: "default" | "image"
+  /** Real rows (value 0-100 = bar, label = count text); colors cycle. Without it the Figma demo rows render. */
+  items?: { name: string; value: number; label?: string }[]
+  heading?: string
+  countHeading?: string
+}) {
   return (
     <div data-slot="chart-metric-list" className={cn("flex flex-col gap-4", className)} {...props}>
-      <ChartProgressCard type="head" appearance={appearance} className="w-full" />
-      {listColors.map((color, i) => (
-        <ChartProgressCard key={color} className="w-full" appearance={appearance} color={color} heading={`Name Item ${i + 1}`} value={[92, 76, 64, 48, 28, 16, 12, 6][i]} />
-      ))}
+      <ChartProgressCard type="head" appearance={appearance} className="w-full" heading={heading} countHeading={countHeading} />
+      {items
+        ? items.map((item, i) => (
+            <ChartProgressCard
+              key={`${item.name}-${i}`}
+              className="w-full"
+              appearance={appearance}
+              color={listColors[i % listColors.length]}
+              heading={item.name}
+              count={item.label ?? String(item.value)}
+              value={item.value}
+            />
+          ))
+        : listColors.map((color, i) => (
+            <ChartProgressCard key={color} className="w-full" appearance={appearance} color={color} heading={`Name Item ${i + 1}`} value={[92, 76, 64, 48, 28, 16, 12, 6][i]} />
+          ))}
     </div>
   )
 }

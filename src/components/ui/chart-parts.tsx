@@ -353,6 +353,8 @@ type ChartProgressCardProps = Omit<React.ComponentProps<"div">, "style"> &
     appearance?: "default" | "image"
     heading?: string
     count?: string
+    /** Right label of the Head row (Figma default "Views"). */
+    countHeading?: string
     trend?: "up" | "down"
     value?: number
     color?: ProgressColor
@@ -365,6 +367,7 @@ function ChartProgressCard({
   appearance = "default",
   heading,
   count = "256",
+  countHeading = "Views",
   trend,
   value = 100,
   color = "blue",
@@ -386,7 +389,7 @@ function ChartProgressCard({
       >
         <div className="flex items-center justify-between text-10 leading-16 font-bold">
           <span className={image ? "text-white-alpha-70" : "text-base-700"}>{heading ?? "Head"}</span>
-          <span className={image ? "text-white-alpha-50" : "text-base-500"}>Views</span>
+          <span className={image ? "text-white-alpha-50" : "text-base-500"}>{countHeading}</span>
         </div>
       </div>
     )
