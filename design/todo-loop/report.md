@@ -1,25 +1,28 @@
-# Report 9f-4 Dropdown lead/trail slots
+# Report 9f-5 WidgetBoard layout fixes
 
 ## Changed
-- `src/components/ui/dropdown-menu.tsx`: added exported `DropdownMenuItemAvatar`, `Flag`, `Checkbox`, `Radio`, `Switch`, `Payment`. Each wraps `DropdownMenuItemAddon` (`side` default "start").
-  - Avatar: `Avatar` size 24 (32 in double layout), shape circle in pilled menu else rounded; props pass through.
-  - Flag: `Avatar` 24 circle, overflow-hidden, caller gives image children.
-  - Checkbox/Switch/Radio: existing `Checkbox`, `Switch`, `RadioGroupItem` with `tabIndex={-1}`, `aria-hidden`, `pointer-events-none`.
-  - Payment: 32x20 tile, bg-background-0, outline base-100, rounded-r6, children = logo.
-- `src/components/ui/radio-group.tsx` (new): shadcn base added with `pnpm exec shadcn add radio-group`, then rewritten to tokens (20px, primary-600, 10px white dot, no `dark:`, `cn` from `@/lib/utils`). Base UI Radio works without a group (context optional), so slot needs only `checked`/`value`.
-- `design/known-gaps.md`: Dropdown line updated.
+- `src/components/dashboard/widgets/widget-board.tsx`: mobile 1-track chart-to-chart gap 24 (`chartGap` prop, `@max-xl:mt-3` on chart/wide-chart cells following another chart; tiles keep 12). Already in working tree from an earlier pass; verified, no change at @xl and up.
+- `design/known-gaps.md` (WidgetBoard line): dropped the "mobile done" sentence; only remaining gaps listed.
+- `design/known-gaps-triage.md` (line 212): dropped "(mobile gap 24 done)".
 
 ## Decisions
-- End frames add `pl-2` (Addon end variant unchanged) so widths match spec (Avatar/Flag 32x24, Checkbox/Radio 28x20, Switcher 44x20). Guess, noted in gaps.
-- `language.tsx` untouched (adoption optional).
-- Skill tool unavailable in this run, so shadcn skill not invoked; used CLI directly.
-- No smoke script: no pure logic.
+- 540 vs 528: 540 is `row-span-3` in `SPAN` (3x164 + 2x24), shared by all wide charts and charts; not a single constant, left and noted. catalog.tsx untouched.
+- Odd chart count: no simple `placements()` fix (a lone chart beside tiles has no Figma width to fill the gap); left, noted.
+- 5-tile rows, 768 rail: left per task.
+- No DnD changes.
 
 ## Commands
-- `pnpm exec tsc --noEmit`: PASS
-- `pnpm lint`: PASS (0 errors, 1 pre-existing warning in command.tsx)
+- `pnpm exec tsc --noEmit`: PASS (0 errors)
+- `pnpm lint`: PASS (0 errors; 1 existing warning in ui/command.tsx)
 - `pnpm build`: PASS
-- grep `space-[xy]-|dark:|hex` on dropdown-menu.tsx and radio-group.tsx: PASS (no hits)
+- grep widget-board.tsx for `space-[xy]-`, `dark:`, hex: PASS (none)
 
 ## Undone
-- Not rendered in browser (no preview route per task).
+- 528 height, odd-chart gap, 5-tile rows, 768 rail (need design decision).
+- Re-verified in final pass: tsc, lint, build, grep all PASS.
+
+## Final re-verify (this pass)
+- `pnpm exec tsc --noEmit`: PASS
+- `pnpm lint`: PASS (0 errors, 1 existing warning ui/command.tsx)
+- `pnpm build`: PASS
+- grep widget-board.tsx hex/space-[xy]-/dark:: PASS (none)

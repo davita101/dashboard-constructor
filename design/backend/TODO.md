@@ -136,7 +136,7 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
     - [x] 9f-2 Avatar progress ring + counter overlay: `Avatar progress` (0-100 conic ring, wins over story) + `AvatarCounter` slot (Badge red, square-16/12); no ContentCard in src/, nothing to adopt
     - [x] 9f-3 Size/shape context: `FieldProvider`/`useFieldContext` (field-context.tsx), InputGroup + Input inherit size/shape (prop > Join > Field > default), group slots Button/Tag/Avatar/Swatch inherit shape; cva split to input-variants.ts; ButtonGroup not in repo, skipped
 - [x] 9f-4 Dropdown lead/trail slots (DropdownMenuItemAvatar/Flag/Checkbox/Radio/Switch/Payment wrap Addon; added ui/radio-group; end frames +8px guess)
-    - [ ] 9f-5 WidgetBoard layout fixes
+- [x] 9f-5 WidgetBoard layout: mobile 1-track chart-to-chart gap 24 (`@max-xl:mt-3`, tiles keep 12); 528 height, odd-chart gap, 5-tile rows, 768 rail left in known-gaps (no simple code fix)
     - [ ] 9f-6 Calendar year view; Date-Range calendar + Select in Modal
   - [ ] 9g Previews and browser checks: project-stats and member-row previews, Input OTP / File Input / RadialChart browser checks
 - [ ] `design/pages-queue.md` statuses are stale (auth pages 3-8 marked todo but routes exist): verify each route renders and fix the statuses

@@ -209,7 +209,7 @@ Source: `design/known-gaps.md` (L = line number there). Classes: **code** = code
 | Dashboard (L87) | Night Mode switch not wired to theme | code | B4 done (stale, verified wired) | `next-themes` or `.dark` toggle |
 | Table (L88) | Product photos not in public/images (banner placeholder) | asset | - | |
 | Table (L88) | Header sort built beyond Figma | none | - | |
-| WidgetBoard (L89) | 5-tile rows not reproduced; odd chart leaves gap; chart 540 vs 528; 768 rail narrows board; mobile gap 12 vs 24 | code | B5 | `WidgetBoard` layout |
+| WidgetBoard (L89) | 5-tile rows not reproduced; odd chart leaves gap; chart 540 vs 528 (shared row-span); 768 rail narrows board | code | B5 | `WidgetBoard` layout |
 | ProjectStats (L90) | No design-system preview page; `stat` variant not previewed | code | B6 | add `/design-system/project-stats` |
 | ProjectStats (L90) | KPI 2 columns below xl | none | - | decision |
 | ProjectEventsCard (L91) | Task kind color (purple assumed) not read | figma | - | |

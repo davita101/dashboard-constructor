@@ -59,6 +59,9 @@ const PLACE = { beside: "@5xl:col-span-9", third: "@5xl:col-span-8", tileColumn:
 
 const isChart = (size: WidgetSize) => size === "lg" || size === "md"
 
+/** Chart-like cells (charts and wide charts): on one track Figma puts 24 between two of them, tiles keep 12. */
+const isTall = (type: WidgetItem["type"]) => isChart(widgetSize(type)) || widgetSize(type) === "wide"
+
 /**
  * Picks each widget's desktop placement. The board splits into sections at every whole-row widget; in a section, each run
  * of up to 3 tiles pairs with 2 charts (408 + 408 + 264 column), and the charts left over go 3 to a row (360 each).
@@ -269,11 +272,12 @@ function WidgetBoard() {
         <SortableContext items={layout.map((i) => i.id)} strategy={reflowStrategy}>
           <div data-slot="widget-grid" className="@container">
             <div className="grid auto-rows-[minmax(164px,auto)] grid-flow-dense grid-cols-1 gap-3 @xl:grid-cols-2 @xl:gap-6 @5xl:grid-cols-24">
-            {layout.map((item) => (
+            {layout.map((item, index) => (
               <BoardWidget
                 key={item.id}
                 item={item}
                 span={spans.get(item.id)}
+                chartGap={index > 0 && isTall(layout[index - 1].type) && isTall(item.type)}
                 customizing={customizing}
                 isNew={known !== null && !known.has(item.id)}
                 onRemove={() => remove(item)}
@@ -310,6 +314,7 @@ const EXIT_MS = 200
 function BoardWidget({
   item,
   span,
+  chartGap,
   customizing,
   isNew,
   onRemove,
@@ -318,6 +323,8 @@ function BoardWidget({
   item: WidgetItem
   /** Desktop column placement, from `placements`. */
   span?: string
+  /** Follows another chart: 24 above on the 1-track layout instead of the grid's 12. */
+  chartGap?: boolean
   customizing: boolean
   isNew: boolean
   onRemove: () => void
@@ -337,7 +344,7 @@ function BoardWidget({
     window.setTimeout(onRemove, EXIT_MS)
   }
   return (
-    <div ref={setNodeRef} style={{ transform: CSS.Translate.toString(transform), transition }} className={cn("min-w-0", SPAN[widgetSize(item.type)], span)}>
+    <div ref={setNodeRef} style={{ transform: CSS.Translate.toString(transform), transition }} className={cn("min-w-0", chartGap && "@max-xl:mt-3", SPAN[widgetSize(item.type)], span)}>
       {/* Animation lives on an inner wrapper so it never fights the sortable transform above. */}
       <div
         className={cn(
