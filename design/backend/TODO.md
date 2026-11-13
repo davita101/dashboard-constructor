@@ -56,7 +56,7 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
 - [x] Verified: mutation smoke test against Supabase (auth, slugs, reorder, move, events, cleanup) + browser (task create, project edit/create/delete, stage reorder, member errors)
 - [x] Seed shifts the Figma 2078 dates so the newest mock event is one day ago (deadlines/stages keep their spacing); re-seeded
 - [x] ProjectSummaryCard "+" opens Add Member for that project (no project picker)
-- [ ] Task board actions once the Tasks tab is designed
+- [ ] Task board actions once the Tasks tab is designed (blocked: needs Figma Tasks tab/board)
 
 ## Phase 4 — Files (`feat/backend-files`)
 - [x] Custom migration `0001_storage_buckets.sql`: buckets `project-files` (private, 50 MB) and `logos` (public read, 2 MB, png/jpeg/webp/gif) + storage.objects RLS (select/insert/delete for project members via `viewer_project_ids()` / `viewer_client_ids()`, Clerk JWT `sub`). No service-role key needed
@@ -66,11 +66,13 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
 - [x] Project delete removes its storage objects (inside the tx, while the storage policy still sees the member)
 - [x] Verified: storage policy smoke test with a real Clerk session JWT (member upload/download/remove, non-member + wrong mime refused, logo public read), tsc/lint/build
 - [x] Browser check: Quick Add → upload (row + object + "file" event), download link (signed URL, original content), remove (row + object gone), project logo upload in Save Project (stored, shown in head + sidebar via next/image)
-- [ ] Files list UI (project "files" tab, task attachments) once designed
+- [ ] Files list UI (project "files" tab, task attachments) once designed (blocked: needs Figma project files tab)
 
 ## Phase 5 — Chat & realtime (`feat/backend-chat`)
 - [ ] `conversations`, `conversation_members`, `messages` (project chat + direct Messenger)
-- [ ] Supabase Realtime subscription for new messages
+  - [x] 5a Schema: tables + RLS select policies + migration `0003_chat.sql` applied + smoke test — one shared `conversations` (kind project|direct), project chat access via project membership, SELECT-only RLS through SECURITY DEFINER `viewer_conversation_ids()`, `messages` in supabase_realtime, `scripts/chat-schema-smoke.mjs`
+  - [x] 5b Queries (`src/lib/chat/queries.ts`) + Zod schemas + Server Actions (start direct conversation, send message, mark read) — built `src/lib/chat/{schemas,tags,types,queries,mutations,actions}.ts` + `scripts/chat-actions-smoke.mts`; uncached reads, project chat lazily created via `ensureProjectConversation`, advisory lock on direct start, access checked in code (Drizzle bypasses RLS)
+- [x] Supabase Realtime subscription for new messages — `useMessageStream` hook + `parseMessageRow` in `src/lib/chat/realtime.ts`; raw row, no author join. Live delivery/RLS not proven (Clerk token minting denied); smoke asserts parser only
 - [ ] Live task board updates (optional)
 
 ## Phase 6 — User settings (`feat/backend-settings`)

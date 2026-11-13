@@ -11,3 +11,10 @@ export const clerkUserId = sql`(select auth.jwt() ->> 'sub')`
 /** True when the signed-in user is a member of the project in `projectId`. */
 export const isProjectMember = (projectId: AnyPgColumn): SQL =>
   sql`${projectId} in (select project_id from project_members where user_id = ${clerkUserId})`
+
+/**
+ * True when the signed-in user can see the conversation in `conversationId`. Uses the SECURITY DEFINER helper
+ * `public.viewer_conversation_ids()` (migration 0003) so conversation_members policies don't recurse.
+ */
+export const isConversationViewer = (conversationId: AnyPgColumn): SQL =>
+  sql`${conversationId} in (select public.viewer_conversation_ids())`
