@@ -82,7 +82,7 @@ Source: `design/known-gaps.md` (L = line number there). Classes: **code** = code
 | Command Key (L30) | Modifier glyphs fallback font until Inter loads | code | B1 | solved by font wiring |
 | Command Key (L30) | Ignored Figma inconsistencies | none | - | |
 | Input OTP (L31) | Hex-matched; disabled-with-value text assumed; separator not in Figma | figma | - | |
-| Input OTP (L31) | Caret is bar, not "|" glyph; typing/focus not browser-tested | code | B6 | browser check |
+| Input OTP (L31) | Caret is bar, not "|" glyph; typing/focus not browser-tested | open | B6 | step-guarded: only reachable after Clerk sends a real code (signed out); not checked |
 | Counter (L32) | Hex-matched; hover shadow estimated; Error stroke danger-500 vs -600; ring outside; Micro Pilled icon 12 vs 16 | code | B3 | `counter.tsx` — read exports to decide; Micro icon 16 is code-fixable |
 | Counter (L32) | `material-remove.svg` Material, not Figma vector | asset | - | |
 | Status (L33) | Hex-matched; stroke weights inferred; half-pixel offsets at 125% zoom | figma | - | |
@@ -104,7 +104,7 @@ Source: `design/known-gaps.md` (L = line number there). Classes: **code** = code
 | Input Custom (L39) | Slot layers keep light colors inside glass inputs | code | B3 | color inheritance |
 | File Input (L40) | Hex-matched; ring/opacity unread; Playground frames not read | figma | - | |
 | File Input (L40) | `material-help` Material | asset | - | |
-| File Input (L40) | Console errors not inspected live | code | B6 | browser check |
+| File Input (L40) | Console errors not inspected live | moot | — | `ui/file-input.tsx` removed in a9183ee; live `FileUpload` (ProjectFormDialog) checked in Chrome 2026-11-13, no console errors |
 | File Upload (L41) | Icons redrawn from Material paths, not Figma | asset | - | |
 | File Upload (L41) | Dash pattern, stroke, disabled opacity, hover/focus rings, shadows, Playground unread | figma | - | |
 | File Upload (L41) | Retry icon 14 vs Figma 20; close icon 16 | code | B3 | |
@@ -210,14 +210,14 @@ Source: `design/known-gaps.md` (L = line number there). Classes: **code** = code
 | Table (L88) | Product photos not in public/images (banner placeholder) | asset | - | |
 | Table (L88) | Header sort built beyond Figma | none | - | |
 | WidgetBoard (L89) | 5-tile rows not reproduced; odd chart leaves gap; chart 540 vs 528 (shared row-span); 768 rail narrows board | code | B5 | `WidgetBoard` layout |
-| ProjectStats (L90) | No design-system preview page; `stat` variant not previewed | code | B6 | add `/design-system/project-stats` |
+| ProjectStats (L90) | No design-system preview page; `stat` variant not previewed | moot | — | design-system previews dropped in a9183ee |
 | ProjectStats (L90) | KPI 2 columns below xl | none | - | decision |
 | ProjectEventsCard (L91) | Task kind color (purple assumed) not read | figma | - | |
 | QuickAddCard (L92) | No click handlers except Project | code | B4 done (stale, verified wired) | dead controls |
 | FinanceMetricCard (L92) | Amounts rounded, locale currency vs Figma grouping | none | - | decision |
 | ProjectSummaryCard (L93) | none open | none | - | |
 | ProjectMembersCard (L94) | Row gap 6px not measured; avatar overlays omitted | figma | - | |
-| ProjectMembersCard (L94) | `ui/member-row.tsx` no preview page | code | B6 | |
+| ProjectMembersCard (L94) | `ui/member-row.tsx` no preview page | moot | — | design-system previews dropped in a9183ee |
 | ProjectPage (L95) | No 360 frame (stacks below lg) | figma | - | |
 | ProjectPage (L95) | Non-Dashboard tabs have no panels | code | B4 | placeholder/empty state or real panels |
 | ProjectPage (L95) | Dates dd.MM(.yyyy) not locale formatted | code | B3 done | `Intl`/date-fns via next-intl |
@@ -236,7 +236,7 @@ Source: `design/known-gaps.md` (L = line number there). Classes: **code** = code
 | UploadFilesDialog (L105) | Uploaded file link plain hover underline | code | B3 done | use `Link` |
 | ProjectFormDialog logos (L106) | Two 200px drop areas make dialog scroll; no current-logo preview; no remove logo | code | B4 | |
 | Dashboard metric tiles (L107) | Sparkline placeholder art; Head "…" decorative | none | - | |
-| RadialChart (L108) | progress-half browser check not run (auth) | code | B6 | smoke/browser check |
+| RadialChart (L108) | progress-half browser check not run (auth) | done | B6 | Chrome 2026-11-13: Task completion widget renders 60%, no console errors |
 | Widgets (L109) | Candle/map demo data hidden from picker | none | - | |
 | Projects table widget (L110) | No Figma frame for projects columns | figma | - | |
 
