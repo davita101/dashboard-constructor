@@ -96,7 +96,7 @@ export async function createProjectAction(_: ActionState, form: FormData): Promi
     requireClientForLogo(input)
     const result = await m.createProject(userId, input)
     // The project exists now: a failed logo upload must not turn into an error that invites a duplicate create.
-    await m.setLogos(userId, result.projectId, input).catch((error) => console.error("[projects action] logo upload", error))
+    await m.setLogos(userId, result.projectId, { logo: input.logo, clientLogo: input.clientLogo }).catch((error) => console.error("[projects action] logo upload", error))
     return result
   })
   if (!r.ok) return r.state

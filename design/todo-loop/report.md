@@ -1,17 +1,21 @@
-# Report 9e-1
-Verified by reading code: all wired, only docs stale.
-- Night Mode: `useNightMode` toggles `.dark` + localStorage + user_settings; sidebar Switch/row call setDark.
-- Back-to-top: footer onClick scrolls ScrollArea viewport (or window on mobile).
-- QuickAddCard: stages/task/member/message/file open dialogs, project links to /projects/new (to /new when no projects).
-- Forgot password: /forgot-password, /check-email, /set-new-password, /password-reset pages exist; sign-in link targets /forgot-password.
-- /verify: no route and none needed; reset-code and sign-up-code steps live in check-email form. Stale claim removed.
-- 2FA (second factor) truly unwired: kept as gap.
+# Report 9e-3a
+
 ## Changed
-- design/known-gaps.md: removed 4 stale claims (Night Mode, back-to-top, QuickAddCard handlers, /verify), reworded Sign In and Check Your Email lines.
-- design/known-gaps-triage.md: 6 B4 rows marked "B4 done (stale, verified wired)".
-No code changes. Left: chat screen, DM picker, 2FA gap, project tab panels (untouched, out of scope).
+- `src/lib/projects/schemas.ts`: `flag` helper ("on"/"true"/"1"/true → true, else false); `removeLogo`, `removeClientLogo` in `projectFields`.
+- `src/lib/projects/mutations.ts` `setLogos`: input now Partial; remove flag per slot only when no upload for that slot (upload wins). Early return only when no upload and no flag. Sets column null, then `removeLogoIfUnused(tx, old)` in same tx. Client remove without client: ignored silently.
+- `src/lib/projects/actions.ts`: create passes only `{logo, clientLogo}` to `setLogos` (flags ignored). Update unchanged.
+- `scripts/logo-remove-smoke.mts`: new.
+
+## Decisions
+- Smoke stubs `@clerk/nextjs/server` in require.cache: it pulls next/navigation, which crashes under `react-server` condition. Storage never called (fake URLs).
+- Smoke has catch → exitCode 1 so failures are not swallowed by `process.exit` in finally.
+- Upload+remove conflict covered by code logic (`!input.logo`), not smoke (needs storage).
+
 ## Commands
-- tsc --noEmit: PASS
-- pnpm lint: PASS (0 errors, warnings only)
-- pnpm build: PASS
-- 3 grep acceptance checks: PASS (no match)
+- `pnpm exec tsx --conditions=react-server scripts/logo-remove-smoke.mts` — PASS x8 lines, exit 0 (flag parse, project cleared, client untouched, client cleared, project untouched, no-op, non-member refused, no-client ignored)
+- `pnpm exec tsc --noEmit` — PASS
+- `pnpm lint` — PASS (0 errors, 1 pre-existing warning in command.tsx)
+- `pnpm build` — PASS
+
+## Undone
+Nothing.

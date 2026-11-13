@@ -1,36 +1,33 @@
 # Task
-Verify "dead control" gaps are already fixed in code, remove stale lines from known-gaps.md, fix any still dead.
+9e-3a: backend flags to remove a project / client logo (no UI).
 
 ## TODO item
-    - [ ] 9e-1 Verify Night Mode switch, footer back-to-top, QuickAddCard tiles, forgot-password/verify routes are already wired in code; drop stale lines from known-gaps.md; fix whatever is still dead
+      - [ ] 9e-3a `removeLogo` / `removeClientLogo` flags in `projectFields` + `setLogos` clears the column and deletes the unused object; smoke `scripts/logo-remove-smoke.mts`; no UI
 
 ## Goal
-Planner's read: Night Mode (`src/components/dashboard/theme.ts`, sidebar row), back-to-top (`dashboard-footer.tsx` onClick), QuickAddCard (all 5 tiles open dialogs), `/forgot-password` + `/check-email` pages exist. known-gaps.md still lists them as gaps (L84, L89, L97 area, L81-83). Confirm each by reading code, then correct known-gaps.md. Fix real remaining dead ends only if small (≤ 3 files).
+Update project action can clear `projects.logo` and/or `clients.logo`. Old storage object removed when no row uses it (existing `removeLogoIfUnused`).
 
 ## Files
-- design/known-gaps.md (lines mentioning Night Mode, back-to-top, QuickAddCard "no click handlers", Forgot password link, /verify)
-- src/components/dashboard/{theme.ts,dashboard-sidebar.tsx,dashboard-footer.tsx}
-- src/components/projects/QuickAddCard.tsx
-- src/app/(auth)/* (forgot-password, check-email, password-reset, set-new-password, sign-up)
-- design/known-gaps-triage.md (mark B4 rows done/stale)
+- `src/lib/projects/schemas.ts` (projectFields; read `fromForm` in `actions.ts` for how checkbox/boolean strings arrive)
+- `src/lib/projects/mutations.ts` (`setLogos`, ~line 546)
+- `src/lib/projects/actions.ts` (create/update actions)
+- new `scripts/logo-remove-smoke.mts` (pattern: `scripts/chat-actions-smoke.mts`)
 
 ## Steps
-1. Read each file; confirm Night Mode switch toggles `.dark`, back-to-top scrolls, tiles open dialogs, forgot-password link target exists.
-2. Check `/verify` : does sign-up email-code step redirect to an existing route? Check what route it uses; if it points at a missing page, note it (do not build auth pages here; queue #5 owns that).
-3. Edit known-gaps.md: remove or rewrite only lines now false. Keep true remainders (chat screen, DM picker, 2FA if truly unwired, /verify if truly missing).
-4. Report what stayed dead.
+1. Schema: add `removeLogo` and `removeClientLogo` optional booleans to `projectFields` (form value "on"/"true"/"1" → true, absent → false). A new upload for the same slot wins over remove.
+2. `setLogos`: early return only when no upload and no remove flag. Remove flag sets column to null (client: only if project has a client; else ignore silently or MutationError "invalid" on field `clientLogo` — pick ignore). Call `removeLogoIfUnused(tx, old)` for the old URL after the update, same tx.
+3. Update action passes input through unchanged (already does). Create action: flags ignored (nothing to remove).
+4. Smoke script: temp `smoke_<tag>` user/project/client with fake logo URLs (non-storage URL so no storage call), call `setLogos` with remove flags, assert columns are null; assert upload+remove conflict keeps upload not testable without storage → only test schema parse for that. Cleanup rows at end. Print `PASS <name>` lines.
 
 ## Acceptance
-- `pnpm exec tsc --noEmit` passes; `pnpm lint` 0 errors; `pnpm build` passes.
-- `grep -n "Night Mode switch in Sidebar-01 is not wired" design/known-gaps.md` → no match.
-- `grep -n "back-to-top button still has no action" design/known-gaps.md` → no match.
-- `grep -n "no click handlers except Project" design/known-gaps.md` → no match.
-- Any remaining "page not built" claim in known-gaps matches reality (route absent in src/app).
+- `pnpm exec tsc --noEmit` clean; `pnpm lint` 0 errors; `pnpm build` ok.
+- `pnpm exec tsx --conditions=react-server scripts/logo-remove-smoke.mts` prints only PASS lines, exit 0, covers: flag parse (absent=false, "on"=true), project logo cleared, client logo cleared, other logo untouched, non-member refused, no-client + removeClientLogo ignored.
+- No hex colors / `space-[xy]-` / `dark:` in changed files.
 
 ## Decisions
-Pure verification/doc task: the code was fixed in earlier phases, only docs lag. Auth flow pages are out of scope.
+- Remove via boolean flags (not empty-file magic): explicit, works with the existing FormData action.
+- Client remove without client = ignored (no error): UI only shows the control when a client logo exists.
+- Split from UI (9e-3b) to keep sessions small.
 
 ## Don't
-- No new UI, no new SVGs, no Figma invention.
-- Don't touch DB or migrations.
-- Don't rewrite known-gaps lines about unrelated components.
+- No UI, no i18n changes, no migrations. Don't touch other tables. Never delete non-smoke rows; smoke cleans only its own `smoke_` rows.
