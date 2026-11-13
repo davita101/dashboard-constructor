@@ -61,3 +61,5 @@
 2026-11-13 APPROVED 9e-3a logo remove flags 9c05284
 2026-11-13 PLAN 9e-3b logo field compact + preview + remove
 2026-11-13 APPROVED 9e-3b logo field compact
+2026-11-13 PLAN ticked 9e; planned shared fieldMessage for chat actions
+2026-11-13 APPROVED shared fieldMessage for chat actions

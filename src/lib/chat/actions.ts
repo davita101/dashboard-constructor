@@ -4,6 +4,7 @@ import { updateTag } from "next/cache"
 import { z } from "zod"
 
 import { getViewerId } from "@/lib/auth/viewer"
+import { FORM_ERROR_MESSAGE, fieldMessage } from "@/lib/forms/field-message"
 import * as m from "@/lib/chat/mutations"
 import * as s from "@/lib/chat/schemas"
 import { conversationTag, userChatTag } from "@/lib/chat/tags"
@@ -26,9 +27,9 @@ async function run<S extends z.ZodType>(
   write: (userId: string, input: z.output<S>) => Promise<WriteResult>,
 ): Promise<ChatActionState> {
   const userId = await getViewerId()
-  const parsed = schema.safeParse(raw)
+  const parsed = schema.safeParse(raw, { reportInput: true })
   if (!parsed.success) {
-    return { status: "error", message: "Invalid input", fieldErrors: z.flattenError(parsed.error).fieldErrors }
+    return { status: "error", message: FORM_ERROR_MESSAGE, fieldErrors: z.flattenError(parsed.error, fieldMessage).fieldErrors }
   }
   try {
     const result = await write(userId, parsed.data)
@@ -55,9 +56,9 @@ export async function sendMessageAction(input: z.input<typeof s.sendMessageInput
 
 export async function sendProjectMessageAction(_state: ActionState, form: FormData): Promise<ActionState> {
   const userId = await getViewerId()
-  const parsed = s.sendProjectMessageForm.safeParse(Object.fromEntries(form))
+  const parsed = s.sendProjectMessageForm.safeParse(Object.fromEntries(form), { reportInput: true })
   if (!parsed.success) {
-    return { status: "error", message: "Invalid input", fieldErrors: z.flattenError(parsed.error).fieldErrors }
+    return { status: "error", message: FORM_ERROR_MESSAGE, fieldErrors: z.flattenError(parsed.error, fieldMessage).fieldErrors }
   }
   try {
     // Both mutations check project membership.

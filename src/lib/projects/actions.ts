@@ -5,6 +5,7 @@ import { redirect } from "next/navigation"
 import { z } from "zod"
 
 import { getViewerId } from "@/lib/auth/viewer"
+import { FORM_ERROR_MESSAGE, fieldMessage } from "@/lib/forms/field-message"
 import type { ActionState } from "@/lib/projects/action-state"
 import * as m from "@/lib/projects/mutations"
 import * as s from "@/lib/projects/schemas"
@@ -34,25 +35,6 @@ function expire(r: m.WriteResult) {
   if (r.slugsChanged) updateTag("project-slugs")
 }
 
-/** Short, human messages for the form fields (Zod's defaults read like type errors). */
-function fieldMessage(issue: z.core.$ZodIssue): string {
-  if (issue.input === "" || issue.input === undefined) return "Required"
-  switch (issue.code) {
-    case "invalid_type":
-      return "Required"
-    case "too_small":
-      return issue.origin === "string" && issue.minimum === 1 ? "Required" : issue.origin === "number" ? "Can't be negative" : "Too short"
-    case "too_big":
-      return issue.origin === "number" ? "Too large" : "Too long"
-    case "invalid_format":
-      return issue.format === "email" ? "Enter a valid email" : issue.format === "date" ? "Enter a valid date" : "Invalid value"
-    case "invalid_union":
-      return "Invalid value"
-    default:
-      return issue.message
-  }
-}
-
 type Run = { ok: true; result: m.WriteResult } | { ok: false; state: ActionState }
 
 /** Parse + write + expire. Never throws for expected failures: they come back as an error state. */
@@ -64,7 +46,7 @@ async function run<S extends z.ZodType>(
   const userId = await getViewerId()
   const parsed = schema.safeParse(raw, { reportInput: true })
   if (!parsed.success) {
-    return { ok: false, state: { status: "error", message: "Check the highlighted fields", fieldErrors: z.flattenError(parsed.error, fieldMessage).fieldErrors } }
+    return { ok: false, state: { status: "error", message: FORM_ERROR_MESSAGE, fieldErrors: z.flattenError(parsed.error, fieldMessage).fieldErrors } }
   }
   try {
     const result = await write(userId, parsed.data)
