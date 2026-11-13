@@ -11,7 +11,6 @@ import { rememberMe } from "@/components/auth/remember-me"
 import {
   Auth,
   AuthContent,
-  AuthDescription,
   AuthFields,
   AuthHead,
   AuthRow,
@@ -23,6 +22,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { CheckboxField, CheckboxFieldContent, CheckboxFieldTitle } from "@/components/ui/checkbox-field"
 import { FieldError } from "@/components/ui/field"
 import { Link } from "@/components/ui/link"
+import { startDemoSignIn } from "@/lib/auth/demo"
 
 const strategies = {
   google: "oauth_google",
@@ -31,13 +31,15 @@ const strategies = {
 } as const
 
 // Figma Sign-In-01 (open form on the panel, social buttons), wired to Clerk's custom flow (password + OAuth).
-function SignInForm({ redirectUrl = "/dashboard" }: { redirectUrl?: string }) {
+// `demo`: show "Try the demo account" (the page sets it when DEMO_EMAIL / DEMO_PASSWORD are configured on the server).
+function SignInForm({ redirectUrl = "/dashboard", demo = false }: { redirectUrl?: string; demo?: boolean }) {
   const { signIn, errors, fetchStatus } = useSignIn()
   const clerk = useClerk()
   const router = useRouter()
   const busy = fetchStatus === "fetching"
   const [failed, setFailed] = React.useState<string>()
   const [remember, setRemember] = React.useState(false)
+  const [demoPending, startDemo] = React.useTransition()
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -54,6 +56,21 @@ function SignInForm({ redirectUrl = "/dashboard" }: { redirectUrl?: string }) {
     } else {
       setFailed("Additional verification is required. This step is not available yet.")
     }
+  }
+
+  function onDemo() {
+    setFailed(undefined)
+    startDemo(async () => {
+      const result = await startDemoSignIn()
+      if ("error" in result) return setFailed(result.error)
+      const { error } = await signIn.ticket({ ticket: result.ticket })
+      if (error) return setFailed(error.message)
+      if (signIn.status === "complete") {
+        await signIn.finalize({ navigate: () => router.push(redirectUrl) })
+      } else {
+        setFailed("Could not sign in to the demo account, try again.")
+      }
+    })
   }
 
   async function onProvider(provider: keyof typeof strategies) {
@@ -77,7 +94,6 @@ function SignInForm({ redirectUrl = "/dashboard" }: { redirectUrl?: string }) {
       <Auth gap="5">
         <AuthHead align="center" gap="compact">
           <AuthTitle>Sign in to Account</AuthTitle>
-          <AuthDescription tone="accent">Start Your 14 day free trial</AuthDescription>
         </AuthHead>
         <AuthContent>
       <AuthFields>
@@ -114,10 +130,15 @@ function SignInForm({ redirectUrl = "/dashboard" }: { redirectUrl?: string }) {
         </Link>
       </AuthRow>
       {(failed || errors.global?.[0]) && <FieldError>{failed ?? errors.global?.[0]?.message}</FieldError>}
-      <Button type="submit" size="40" className="w-full" disabled={busy}>
+      <Button type="submit" size="40" className="w-full" disabled={busy || demoPending}>
         Sign In
       </Button>
-      <AuthSocialButtons providers={["google", "facebook", "apple"]} onProvider={onProvider} disabled={busy} />
+      {demo && (
+        <Button type="button" variant="outline" size="40" className="w-full" disabled={busy || demoPending} onClick={onDemo}>
+          Try the demo account
+        </Button>
+      )}
+      <AuthSocialButtons providers={["google", "facebook", "apple"]} onProvider={onProvider} disabled={busy || demoPending} />
         </AuthContent>
         <AuthFooter>
           Not a member?

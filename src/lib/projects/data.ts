@@ -47,9 +47,17 @@ export async function getProjectOptions(): Promise<ProjectOption[]> {
   return queryProjectOptions(await getViewerId())
 }
 
-/** All slugs, unscoped, for generateStaticParams only (no auth at build time). */
+/**
+ * All slugs, unscoped, for generateStaticParams only (no auth at build time). Without a reachable database (CI builds
+ * with dummy env vars) it returns [] and every project page renders on request instead.
+ */
 export async function getProjectSlugs(): Promise<string[]> {
-  return queryAllProjectSlugs()
+  try {
+    return await queryAllProjectSlugs()
+  } catch (error) {
+    console.warn("getProjectSlugs: database unreachable, skipping prerendered project shells.", error)
+    return []
+  }
 }
 
 /** Blank project for the "Add New Project" editor (/dashboard/projects/new). */

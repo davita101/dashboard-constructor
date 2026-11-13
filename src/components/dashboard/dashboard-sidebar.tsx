@@ -42,6 +42,7 @@ import { LanguageFlag, LanguageMenu, useLanguage } from "@/components/dashboard/
 import { useNightMode } from "@/components/dashboard/theme"
 import { dashboardNav } from "@/components/dashboard/nav"
 import { cn } from "@/lib/utils"
+import { isBuiltProjectTab } from "@/lib/projects/tabs"
 import type { Project } from "@/lib/projects/types"
 
 export type SidebarProject = Pick<Project, "id" | "slug" | "name" | "logo">
@@ -64,11 +65,13 @@ function ProjectSubItems({ projectHref, tab, onNavigate }: { projectHref: string
   const t = useTranslations("sidebarProjects")
   return projectSubItems.map((sub) => {
     const active = sub.key === tab
+    // Unbuilt tabs: a plain button with `data-soon` (Coming soon toast) instead of a link.
+    const link = isBuiltProjectTab(sub.key) ? { render: <Link href={`${projectHref}/${sub.path}`} onClick={onNavigate} /> } : { "data-soon": true }
     return (
       <SidebarTreeRow key={sub.key}>
         <SidebarTreeGuide level="2" />
         <SidebarTreeGuide level="3" active={active} />
-        <SidebarItem tone={active ? "text" : "none"} render={<Link href={`${projectHref}/${sub.path}`} onClick={onNavigate} />}>
+        <SidebarItem tone={active ? "text" : "none"} {...link}>
           <SidebarItemIndent level="3" marker="none" />
           <SidebarIcon name={sub.icon} className={active ? "text-base-800" : "text-base-500"} />
           <SidebarItemLabel>{t(sub.key)}</SidebarItemLabel>
@@ -215,7 +218,12 @@ function DashboardSidebar({
                     )
                   }
                   return (
-                    <SidebarItem key={n.slug} active={active} {...hint(tNav((n.slug || "dashboard") as NavKey))} render={<Link href={n.href} onClick={onNavigate} />}>
+                    <SidebarItem
+                      key={n.slug}
+                      active={active}
+                      {...hint(tNav((n.slug || "dashboard") as NavKey))}
+                      {...(n.soon ? { "data-soon": true } : { render: <Link href={n.href} onClick={onNavigate} /> })}
+                    >
                       <SidebarIcon name={n.icon} className={active ? "text-base-800" : "text-base-500"} />
                       <SidebarItemLabel>{tNav((n.slug || "dashboard") as NavKey)}</SidebarItemLabel>
                       <SidebarItemEnd>

@@ -49,10 +49,10 @@ const TASK_TITLES = [
   "QA Regression Pass",
 ]
 const LABELS = [
-  { name: "Label 1", color: "blue" },
-  { name: "Label 2", color: "green" },
-  { name: "Label 3", color: "orange" },
-  { name: "Label 4", color: "purple" },
+  { name: "Design", color: "blue" },
+  { name: "Frontend", color: "green" },
+  { name: "Backend", color: "orange" },
+  { name: "Urgent", color: "purple" },
 ]
 const FILE_TYPES = [
   { ext: "pdf", mime: "application/pdf", size: 1_240_000 },

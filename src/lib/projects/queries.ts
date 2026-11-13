@@ -6,6 +6,7 @@ import { cacheLife, cacheTag } from "next/cache"
 import { db } from "@/db"
 import { clients, projectEvents, projectMembers, projects, projectStages, projectStats, stageStats, users } from "@/db/schema"
 import { DEFAULT_LOGO, type DashboardCharts, type Member, type Project, type ProjectOption, type ProjectDetail, type ProjectEvent, type ProjectFinance, type ProjectTotals } from "@/lib/projects/types"
+import { percentTrend } from "@/lib/projects/finance"
 import { projectTag, userProjectsTag } from "@/lib/projects/tags"
 
 // Cached Drizzle reads. Every function takes the Clerk user id as an argument (it is part of the cache key) and
@@ -127,9 +128,6 @@ export async function queryProjectTotals(userId: string): Promise<ProjectTotals>
   return row
 }
 
-/** Signed percent change from `prev` to `cur`, rounded. Nothing before → +100% if something now, else 0. */
-const trend = (cur: number, prev: number) => (prev === 0 ? (cur > 0 ? 100 : 0) : Math.round(((cur - prev) / Math.abs(prev)) * 100))
-
 /**
  * Totals over all the user's projects. Trends compare the projects started (created_at) in the last 30 days
  * with the 30 days before: income and profit booked by new work, month over month.
@@ -156,8 +154,8 @@ export async function queryProjectFinance(userId: string): Promise<ProjectFinanc
     income: row.income,
     cost: row.cost,
     profit: row.income - row.cost,
-    incomeTrend: trend(row.incomeCur, row.incomePrev),
-    profitTrend: trend(row.profitCur, row.profitPrev),
+    incomeTrend: percentTrend(row.incomeCur, row.incomePrev),
+    profitTrend: percentTrend(row.profitCur, row.profitPrev),
   }
 }
 

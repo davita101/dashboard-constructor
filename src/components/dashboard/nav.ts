@@ -7,6 +7,8 @@ export type DashboardNavItem = {
   badge?: string
   /** Figma draws a trailing chevron on items that open a sub-list. */
   chevron?: boolean
+  /** No page yet: the row shows the "Coming soon" toast instead of linking to a 404. */
+  soon?: boolean
 }
 
 const item = (slug: string, label: string, icon: string, extra: Partial<DashboardNavItem> = {}): DashboardNavItem => ({
@@ -20,15 +22,15 @@ const item = (slug: string, label: string, icon: string, extra: Partial<Dashboar
 export const dashboardNav: DashboardNavItem[] = [
   item("", "Dashboard", "dashboard", { chevron: true }),
   item("projects", "Projects", "apps", { chevron: true }),
-  item("notes", "Notes", "note", { chevron: true }),
-  item("files", "Files", "cloud", { chevron: true }),
-  item("chats", "Chats", "chat-bubble", { chevron: true }),
-  item("mail", "Mail", "mail-outline", { badge: "2", chevron: true }),
-  item("users", "Users", "supervisor-account"),
-  item("calendar", "Calendar", "today", { chevron: true }),
-  item("knowledge-base", "Knowledge Base", "info2"),
-  item("clients", "Clients", "account-box"),
-  item("messenger", "Messenger", "forum"),
+  item("notes", "Notes", "note", { chevron: true, soon: true }),
+  item("files", "Files", "cloud", { chevron: true, soon: true }),
+  item("chats", "Chats", "chat-bubble", { chevron: true, soon: true }),
+  item("mail", "Mail", "mail-outline", { badge: "2", chevron: true, soon: true }),
+  item("users", "Users", "supervisor-account", { soon: true }),
+  item("calendar", "Calendar", "today", { chevron: true, soon: true }),
+  item("knowledge-base", "Knowledge Base", "info2", { soon: true }),
+  item("clients", "Clients", "account-box", { soon: true }),
+  item("messenger", "Messenger", "forum", { soon: true }),
 ]
 
 export function dashboardTitle(pathname: string): string {

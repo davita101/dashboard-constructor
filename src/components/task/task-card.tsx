@@ -4,10 +4,10 @@ import { Button, ButtonIcon } from "@/components/ui/button"
 import { Task, TaskCover, TaskDates, TaskLabels, TaskRow, TaskStat, TaskStats, TaskTitle } from "@/components/ui/task"
 
 const labels = [
-  { color: "blue", text: "Label 1" },
-  { color: "green", text: "Label 2" },
-  { color: "orange", text: "Label 3" },
-  { color: "purple", text: "Label 4" },
+  { color: "blue", text: "Design" },
+  { color: "green", text: "Frontend" },
+  { color: "orange", text: "Backend" },
+  { color: "purple", text: "Urgent" },
 ] as const satisfies { color: BadgeColor; text: string }[]
 
 const photos = [1, 2, 3, 4, 5, 6].map((n) => `/images/avatars/avatar-${n}.png`)

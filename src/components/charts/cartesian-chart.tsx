@@ -53,7 +53,7 @@ export type ChartYAxis = "left" | "right" | "both" | "none"
 export type ChartLines = "grid" | "line" | "none"
 
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"]
-const countries = ["Germany", "USA", "Japan", "France", "Italy", "Netherl.", "UK", "Canada", "Sh Korea"]
+const countries = ["Germany", "USA", "Japan", "France", "Italy", "Netherl.", "UK", "Canada", "S. Korea"]
 const ticks = [0, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000]
 const formatK = (v: number) => (v ? `${v / 1000}k` : "0")
 
