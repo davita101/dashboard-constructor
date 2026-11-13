@@ -1,38 +1,41 @@
 # Task
-9f-3: Field → InputGroup/Input → slots inherit size/shape from context (no more repeating them).
+9f-4 Dropdown typed lead/trail slots (Avatar, Flag, Checkbox, Radio, Switcher, Payment) in `ui/dropdown-menu.tsx`.
 
 ## TODO item
-    - [ ] 9f-3 Size/shape context for Field / InputGroup / ButtonGroup / InputGroupSwatch
+    - [ ] 9f-4 Dropdown lead/trail slots
 
 ## Goal
-`<Field size="48" shape="pill"><InputGroup>…<InputGroupButton/><InputGroupSwatch/></InputGroup></Field>` gets size/shape everywhere with no repeated props. Explicit props still win. Existing usages render identically (no visual change).
+`DropdownMenuItemAddon` (generic start/end frame) already exists. Add thin typed slot parts so domain code composes Figma's slots without hand-styling: lead frames (`side="start"`, +8px after control) and trail frames (`side="end"`). Compose existing primitives only; sizes from `design/handoff/dropdown/spec.md` lines 72-93.
 
 ## Files
-- `src/components/ui/field.tsx` (add `FieldContext` {size, shape}; Field provides; export `useFieldContext()` returning null outside a Field)
-- `src/components/ui/input-group.tsx` (InputGroup: size = prop ?? join ?? field ?? "40", same for shape; provide an `InputGroupContext` {size, shape}; InputGroupButton/Tag/Avatar/Swatch default size/shape from it)
-- `src/components/ui/input.tsx` (if it has size/shape props: default from field context)
-- consumers to sanity-check: `src/components/auth/auth-field.tsx`, `src/components/projects/FormField.tsx`, `src/components/ui/input-otp.tsx`, `src/components/ui/navbar.tsx`
-- `design/known-gaps.md` (drop "Field/InputGroup size/shape must match (no context)" and "InputGroupSwatch shape must match" fragments from the Input / Color Input lines; Button Group note stays: no ButtonGroup component exists in `src/components/ui`)
+- `src/components/ui/dropdown-menu.tsx` (change)
+- `src/components/ui/{avatar,checkbox,switch}.tsx`, `icon.tsx` (read; reuse)
+- `src/components/dashboard/language.tsx` (read: existing flag use via Addon; optionally adopt `DropdownMenuItemFlag`)
+- `design/known-gaps.md` line "- Dropdown:" (edit: drop "lead/trail slots not built" part, keep asset/guess notes)
+- new `scripts/dropdown-slots-smoke.mts` (optional if no pure logic; skip if nothing testable)
 
 ## Steps
-1. Read the three ui files and the consumers.
-2. Field: context provider (client-safe, no "use client" needed unless hooks require it — `React.createContext`/`useContext` in a file without "use client" breaks Server Components; if so add `"use client"` only if field.tsx has no server-only use, else put context in a small `field-context.ts` marked "use client"-free via a client file `field-context.tsx`).
-3. InputGroup + slots read contexts. Slot size mapping: per-input-size Button/Tag/Avatar sizes are currently defaults ("24"); keep the defaults as they are (sizes of slots are guesses, not tied to input size) — only `shape` is inherited for Button/Tag/Avatar/Swatch; Swatch size remains its own prop.
-4. Do not touch ButtonGroup (does not exist).
-5. Update known-gaps.md.
-6. Smoke: add `scripts/field-context-smoke.mts` that renders (react-dom/server `renderToStaticMarkup`) Field size=48 shape=pill > InputGroup and asserts `data-size="48"` on the group and a pill class present; and explicit prop override; prints PASS lines. Run with `pnpm exec tsx scripts/field-context-smoke.mts` (add `--conditions=react-server` only if needed).
+1. Read spec.md lines 60-100 and the existing Addon/cva in dropdown-menu.tsx.
+2. Add slots, each a wrapper over `DropdownMenuItemAddon` taking `side` (default "start"):
+   - `DropdownMenuItemAvatar`: Avatar size 24, rounded shape (32 in double layout via `useDropdownMenuLayout()`; shape from `useDropdownMenuShape()`: pilled → circle). Pass-through Avatar props.
+   - `DropdownMenuItemFlag`: 24x24 box (rounded-full image child: children are provided by caller, e.g. `next/image`); frame 32x24 start / 32x24 end.
+   - `DropdownMenuItemCheckbox`, `DropdownMenuItemRadio`, `DropdownMenuItemSwitch`: wrap `Checkbox` (20), Switch (36x20 track), and a Radio. If no Radio primitive exists in `src/components/ui`, check with shadcn skill (`pnpm dlx shadcn@latest docs radio-group`, add base if reasonable: `pnpm exec shadcn add radio-group`, fix `cn` import to `@/lib/utils`); if too heavy, skip Radio and record in known-gaps. Invoke the shadcn skill before writing (CLAUDE.md rule).
+   - `DropdownMenuItemPayment`: 32x20 frame, bg-background-0, outline base-100 (-outline-offset-1), rounded-r6, `children` = logo (no assets exist; do not create SVGs).
+   - Controls are non-interactive visuals inside a menuitem: pass `tabIndex={-1}`, `aria-hidden`/`pointer-events-none` so the item click handles toggling (caller controls `checked`).
+3. Export them. Keep all colors as tokens; no `space-*`, no `dark:`, no hex.
+4. Update known-gaps Dropdown line.
 
 ## Acceptance
-- `pnpm exec tsc --noEmit` clean; `pnpm lint` 0 errors; `pnpm build` ok.
-- `pnpm exec tsx scripts/field-context-smoke.mts` prints only PASS lines, exit 0.
-- grep new/changed files: no hex colors, `space-[xy]-`, `dark:`.
-- Existing usages (auth-field, FormField, otp, navbar) still compile and pass the same props.
+- `pnpm exec tsc --noEmit` clean; `pnpm lint` 0 errors; `pnpm build` OK.
+- `grep -nE "space-[xy]-|dark:|#[0-9a-fA-F]{3,6}" src/components/ui/dropdown-menu.tsx` → no new hits (existing comments with hex excluded).
+- Every new slot exported from dropdown-menu.tsx; each composes an existing ui primitive (no styled bare span for the control).
+- Language menu in `language.tsx` still works (type-checks; adoption of `DropdownMenuItemFlag` optional).
 
 ## Decisions
-- Precedence: explicit prop > InputGroupJoin > Field > default (40 / rounded).
-- Only shape (not size) flows to slot Button/Tag/Avatar/Swatch: Figma slot sizes per input size are unreadable, current defaults kept.
-- ButtonGroup skipped: component not in repo.
+- Slots are thin wrappers over the existing Addon so existing callers do not change.
+- Payment logos/flags assets are not created (user asset); slot takes children.
+- Radio: add shadcn radio-group only if it is a clean base; otherwise gap.
+- No preview page (design-system routes do not exist in src/app).
 
 ## Don't
-- No new UI, no visual change, no new Figma reads.
-- Don't rewrite variant tables; don't edit consumers unless types break.
+- No new SVG files. No edits outside the files above. No Figma changes. No DB changes.

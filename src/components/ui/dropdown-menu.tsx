@@ -5,7 +5,11 @@ import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { Avatar } from "@/components/ui/avatar"
+import { Checkbox } from "@/components/ui/checkbox"
+import { RadioGroupItem } from "@/components/ui/radio-group"
 import { Separator } from "@/components/ui/separator"
+import { Switch } from "@/components/ui/switch"
 
 // Figma Dropdown page (4290:12174). Every set comes in two shape families, Rounded and Pilled:
 // Item (2692:137241 / 16281:15167), Item-2 (12855:24785 / 16292:266882), Menu (4292:13287 /
@@ -297,6 +301,102 @@ function DropdownMenuItemAddon({
   )
 }
 
+// Typed slots over the Addon. Start frames add 8px after the control; end frames are right-aligned
+// in the Right row and carry the same 8px on their left, so frame widths match Figma (Avatar/Flag
+// 32x24, Checkbox/Radio 28x20, Switcher 44x20, Payment 32x20 end). Controls are visuals only:
+// the menu item handles the click, the caller drives `checked`.
+type DropdownMenuItemSlotProps = { side?: "start" | "end" }
+
+const slotSideClass = (side: "start" | "end" | undefined) => (side === "end" ? "pl-2" : undefined)
+
+const inertControl = { tabIndex: -1, "aria-hidden": true } as const
+
+/** Figma Avatar slot: 24 avatar (32 in Item-2), circle in Pilled menus, rounded corners otherwise. */
+function DropdownMenuItemAvatar({
+  side,
+  size,
+  shape,
+  ...props
+}: React.ComponentProps<typeof Avatar> & DropdownMenuItemSlotProps) {
+  const menuShape = useDropdownMenuShape()
+  const layout = useDropdownMenuLayout()
+  return (
+    <DropdownMenuItemAddon side={side} className={slotSideClass(side)}>
+      <Avatar
+        size={size ?? (layout === "double" ? "32" : "24")}
+        shape={shape ?? (menuShape === "pilled" ? "circle" : "rounded")}
+        {...props}
+      />
+    </DropdownMenuItemAddon>
+  )
+}
+
+/** Figma Flag slot: 24x24 round box for the caller's flag image (`next/image`, `<img>`). */
+function DropdownMenuItemFlag({
+  side,
+  className,
+  ...props
+}: React.ComponentProps<typeof Avatar> & DropdownMenuItemSlotProps) {
+  return (
+    <DropdownMenuItemAddon side={side} className={slotSideClass(side)}>
+      <Avatar size="24" shape="circle" className={cn("overflow-hidden", className)} {...props} />
+    </DropdownMenuItemAddon>
+  )
+}
+
+function DropdownMenuItemCheckbox({
+  side,
+  ...props
+}: React.ComponentProps<typeof Checkbox> & DropdownMenuItemSlotProps) {
+  return (
+    <DropdownMenuItemAddon side={side} className={slotSideClass(side)}>
+      <Checkbox {...inertControl} className="pointer-events-none" {...props} />
+    </DropdownMenuItemAddon>
+  )
+}
+
+function DropdownMenuItemRadio({
+  side,
+  ...props
+}: React.ComponentProps<typeof RadioGroupItem> & DropdownMenuItemSlotProps) {
+  return (
+    <DropdownMenuItemAddon side={side} className={slotSideClass(side)}>
+      <RadioGroupItem {...inertControl} className="pointer-events-none" {...props} />
+    </DropdownMenuItemAddon>
+  )
+}
+
+function DropdownMenuItemSwitch({
+  side,
+  ...props
+}: React.ComponentProps<typeof Switch> & DropdownMenuItemSlotProps) {
+  return (
+    <DropdownMenuItemAddon side={side} className={slotSideClass(side)}>
+      <Switch {...inertControl} className="pointer-events-none" {...props} />
+    </DropdownMenuItemAddon>
+  )
+}
+
+/** Figma Payment slot: 32x20 white tile, 1px inside stroke base-100, radius 6. `children` = card logo. */
+function DropdownMenuItemPayment({
+  side,
+  className,
+  ...props
+}: React.ComponentProps<"span"> & DropdownMenuItemSlotProps) {
+  return (
+    <DropdownMenuItemAddon side={side} className={slotSideClass(side)}>
+      <span
+        data-slot="dropdown-menu-item-payment"
+        className={cn(
+          "flex h-5 w-8 shrink-0 items-center justify-center overflow-hidden rounded-r6 bg-background-0 outline -outline-offset-1 outline-base-100",
+          className
+        )}
+        {...props}
+      />
+    </DropdownMenuItemAddon>
+  )
+}
+
 // Item title: Inter Bold 11/20, text starts 4px after the lead frame. Item-2 title: Bold 12/20.
 const dropdownMenuItemTitleVariants = cva("truncate font-bold text-(--dd-title)", {
   variants: {
@@ -548,6 +648,12 @@ export {
   DropdownMenuItemLeft,
   DropdownMenuItemRight,
   DropdownMenuItemAddon,
+  DropdownMenuItemAvatar,
+  DropdownMenuItemFlag,
+  DropdownMenuItemCheckbox,
+  DropdownMenuItemRadio,
+  DropdownMenuItemSwitch,
+  DropdownMenuItemPayment,
   DropdownMenuItemTitle,
   DropdownMenuItemText,
   DropdownMenuItemDescription,
