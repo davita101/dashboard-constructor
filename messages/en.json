@@ -340,7 +340,11 @@
       "saved": "Project saved",
       "delete": "Delete",
       "deleteTitle": "Delete {name}?",
-      "deleteDescription": "Stages, tasks, members and events of this project are deleted for everyone. This cannot be undone."
+      "deleteDescription": "Stages, tasks, members and events of this project are deleted for everyone. This cannot be undone.",
+      "logo": "Project logo",
+      "clientLogo": "Client logo",
+      "logoHint": "PNG, JPG, WEBP or GIF up to 2MB",
+      "logoChosen": "{name} selected"
     },
     "stage": {
       "createTitle": "Add stage",
@@ -401,6 +405,24 @@
       "added": "Member added",
       "roleOf": "Role of {name}",
       "remove": "Remove {name}"
+    },
+    "files": {
+      "title": "Upload files",
+      "description": "Files are shared with every member of the project.",
+      "project": "Project",
+      "projectPlaceholder": "Choose a project",
+      "dropTitle": "Drag & Drop Files or",
+      "browse": "browse files",
+      "hint": "Max file size 50MB",
+      "chooseProject": "Choose a project first",
+      "list": "Uploaded files",
+      "uploading": "Uploading…",
+      "tooLarge": "Larger than 50MB",
+      "failed": "Upload failed",
+      "remove": "Remove {name}",
+      "dismiss": "Dismiss {name}",
+      "retry": "Retry {name}",
+      "done": "Done"
     }
   }
 }

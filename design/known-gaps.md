@@ -101,4 +101,6 @@ One line per component: what could not be matched to Figma. Update when fixed.
 - ComingSoon: Base UI toast (ui/toast.tsx) drawn as the Alert-Default black pill; Figma has no motion/position spec for transient toasts, so it slides up bottom-center (same spot as the widget undo toast).
 - ProjectForms (ActionDialog, ProjectFormDialog, StageFormDialog, TaskFormDialog, AddMemberDialog, MembersDialog): no Figma frames; built from the Modal-* dialog parts + Field/Input (size 40). Stage reorder is up/down buttons in the edit dialog (no drag), nested confirm dialogs have no second overlay.
 - NativeSelect / Textarea: shadcn native-select / textarea restyled with the Figma Input box (inputSizeVariants + inputVariants); chevron is material-keyboard-arrow-down. No Figma select component read.
-- QuickAddCard: Message (Phase 5) and File (Phase 4) still "Coming soon"; ProjectSummaryCard "+" (add member) still "Coming soon".
+- QuickAddCard: Message (Phase 5) still "Coming soon".
+- UploadFilesDialog: no Figma frame; Modal-* dialog parts + Add-Files-Card pieces (FileUpload, FileUploadListLabel/List, FileUploadItem). No upload progress (supabase-js upload has no progress events): rows show "Uploading…" text instead of the Figma progress bar. The Add-Files-Card "Or" + URL input is left out (no import-from-URL). Uploaded file names link to /api/files/<id> with a plain hover underline.
+- ProjectFormDialog logos: two Form-Upload-Files-Images drop areas (200px each) make the dialog scroll; no preview of the current logo, no "remove logo".

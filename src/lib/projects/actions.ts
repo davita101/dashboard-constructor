@@ -86,14 +86,30 @@ const projectPath = (slug: string) => `/dashboard/projects/${slug}/dashboard`
 
 // --- projects ---
 
+/** A client logo needs a client to belong to. */
+function requireClientForLogo(input: z.output<typeof s.projectFields>) {
+  if (input.clientLogo && !input.clientName) throw new m.MutationError("invalid", "Add a client name first", "clientLogo")
+}
+
 export async function createProjectAction(_: ActionState, form: FormData): Promise<ActionState> {
-  const r = await run(s.createProjectInput, fromForm(form), m.createProject)
+  const r = await run(s.createProjectInput, fromForm(form), async (userId, input) => {
+    requireClientForLogo(input)
+    const result = await m.createProject(userId, input)
+    // The project exists now: a failed logo upload must not turn into an error that invites a duplicate create.
+    await m.setLogos(userId, result.projectId, input).catch((error) => console.error("[projects action] logo upload", error))
+    return result
+  })
   if (!r.ok) return r.state
   redirect(projectPath(r.result.slug!))
 }
 
 export async function updateProjectAction(_: ActionState, form: FormData): Promise<ActionState> {
-  const r = await run(s.updateProjectInput, fromForm(form), m.updateProject)
+  const r = await run(s.updateProjectInput, fromForm(form), async (userId, input) => {
+    requireClientForLogo(input)
+    const result = await m.updateProject(userId, input)
+    await m.setLogos(userId, input.projectId, input)
+    return result
+  })
   if (!r.ok) return r.state
   // A rename changes the slug: move to the new URL.
   if (r.result.slugsChanged) redirect(projectPath(r.result.slug!))
@@ -172,6 +188,19 @@ export async function moveTaskAction(input: z.input<typeof s.moveTaskInput>): Pr
 
 export async function setTaskStatusAction(input: z.input<typeof s.setTaskStatusInput>): Promise<ActionState> {
   const r = await run(s.setTaskStatusInput, input, m.setTaskStatus)
+  return r.ok ? ok : r.state
+}
+
+// --- files ---
+
+/** Called by the upload dialog after the browser put the object in Storage. */
+export async function registerFileAction(input: z.input<typeof s.registerFileInput>): Promise<ActionState & { fileId?: string }> {
+  const r = await run(s.registerFileInput, input, m.registerFile)
+  return r.ok ? { ...ok, fileId: r.result.fileId } : r.state
+}
+
+export async function deleteFileAction(input: z.input<typeof s.deleteFileInput>): Promise<ActionState> {
+  const r = await run(s.deleteFileInput, input, m.deleteFile)
   return r.ok ? ok : r.state
 }
 

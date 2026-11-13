@@ -59,9 +59,14 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
 - [ ] Task board actions once the Tasks tab is designed
 
 ## Phase 4 — Files (`feat/backend-files`)
-- [ ] Supabase Storage bucket `project-files` + policies
-- [ ] Upload (file-upload component) → `files` row; download via signed URL
-- [ ] Project logos / client logos to storage
+- [x] Custom migration `0001_storage_buckets.sql`: buckets `project-files` (private, 50 MB) and `logos` (public read, 2 MB, png/jpeg/webp/gif) + storage.objects RLS (select/insert/delete for project members via `viewer_project_ids()` / `viewer_client_ids()`, Clerk JWT `sub`). No service-role key needed
+- [x] Upload: Quick Add "File" → `UploadFilesDialog` (FileUpload + FileUploadItem rows). Browser uploads to `<projectId>/<uuid>/<name>` with the Clerk token, then `registerFileAction` checks path + membership, reads size/mime from `storage.objects`, inserts `files` + "file" event; failed register removes the object. Remove = `deleteFileAction` (row + object in one tx)
+- [x] Download: `GET /api/files/<id>` → membership check → 60 s signed URL (`download` = original name)
+- [x] Logos: Project form "Project logo" / "Client logo" (FileUpload images, posted through the Server Action, `bodySizeLimit` 5 MB) → `logos/projects|clients/<id>/<uuid>.<ext>`; replaced/pruned logos deleted when no row uses them; `images.remotePatterns` allows the bucket
+- [x] Project delete removes its storage objects (inside the tx, while the storage policy still sees the member)
+- [x] Verified: storage policy smoke test with a real Clerk session JWT (member upload/download/remove, non-member + wrong mime refused, logo public read), tsc/lint/build
+- [ ] Browser check of the upload dialog + logo fields (needs a signed-in session)
+- [ ] Files list UI (project "files" tab, task attachments) once designed
 
 ## Phase 5 — Chat & realtime (`feat/backend-chat`)
 - [ ] `conversations`, `conversation_members`, `messages` (project chat + direct Messenger)

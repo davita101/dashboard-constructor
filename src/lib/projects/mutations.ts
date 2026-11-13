@@ -4,16 +4,21 @@ import { and, asc, count, eq, inArray, max, ne, sql } from "drizzle-orm"
 import type { z } from "zod"
 
 import { db } from "@/db"
-import { clients, projectEvents, projectMembers, projects, projectStages, taskAssignees, tasks, users } from "@/db/schema"
+import { clients, files, projectEvents, projectMembers, projects, projectStages, taskAssignees, tasks, users } from "@/db/schema"
+import { LOGOS_BUCKET, PROJECT_FILES_BUCKET, projectIdOfPath } from "@/lib/files/paths"
+import { logoKeyOf, removeObjects, uploadLogo } from "@/lib/files/storage"
 import type {
   addMemberInput,
   createProjectInput,
   createStageInput,
   createTaskInput,
+  deleteFileInput,
   deleteProjectInput,
   deleteStageInput,
   deleteTaskInput,
   moveTaskInput,
+  projectFields,
+  registerFileInput,
   removeMemberInput,
   reorderStagesInput,
   setTaskAssigneesInput,
@@ -40,6 +45,8 @@ export type WriteResult = {
   slug?: string
   /** The slug list changed (create/delete): expire `project-slugs`. */
   slugsChanged?: boolean
+  /** registerFile: the new `files` row. */
+  fileId?: string
 }
 
 export class MutationError extends Error {
@@ -77,7 +84,7 @@ async function userName(tx: Tx, userId: string) {
   return u?.name ?? userId
 }
 
-function logEvent(tx: Tx, e: { projectId: string; actorId: string; kind: "member" | "stage" | "task"; title: string }) {
+function logEvent(tx: Tx, e: { projectId: string; actorId: string; kind: "member" | "stage" | "task" | "file"; title: string }) {
   return tx.insert(projectEvents).values(e)
 }
 
@@ -150,12 +157,28 @@ async function upsertClient(
   return c.id
 }
 
-/** Drop a client no project points at any more. */
+/** Drop a client no project points at any more (and its logo, if nothing else uses it). */
 async function pruneClient(tx: Tx, clientId: string | null) {
   if (!clientId) return
-  await tx
+  const [gone] = await tx
     .delete(clients)
     .where(and(eq(clients.id, clientId), sql`not exists (select 1 from ${projects} where ${projects.clientId} = ${clientId})`))
+    .returning({ logo: clients.logo })
+  if (gone) await removeLogoIfUnused(tx, gone.logo)
+}
+
+/**
+ * Delete a logo object once no project or client row points at it (a copied client shares its URL).
+ * Runs inside the write transaction, before commit: the storage policy still sees the user as a member.
+ */
+async function removeLogoIfUnused(tx: Tx, url: string | null) {
+  const key = logoKeyOf(url)
+  if (!key || !url) return
+  const [{ n }] = await tx
+    .select({ n: count() })
+    .from(projects)
+    .where(sql`${projects.logo} = ${url} or exists (select 1 from ${clients} where ${clients.logo} = ${url})`)
+  if (n === 0) await removeObjects(LOGOS_BUCKET, [key], true)
 }
 
 async function taskProject(tx: Tx, userId: string, taskId: string) {
@@ -279,9 +302,15 @@ export function deleteProject(userId: string, input: z.output<typeof deleteProje
   return db.transaction(async (tx) => {
     await requireMember(tx, userId, input.projectId)
     const before = await projectMemberIds(tx, input.projectId)
-    const [p] = await tx.delete(projects).where(eq(projects.id, input.projectId)).returning({ clientId: projects.clientId })
+    const fileKeys = await tx.select({ key: files.storagePath }).from(files).where(eq(files.projectId, input.projectId))
+    const [p] = await tx
+      .delete(projects)
+      .where(eq(projects.id, input.projectId))
+      .returning({ clientId: projects.clientId, logo: projects.logo })
     await pruneClient(tx, p.clientId)
-    // Stages, tasks, members, events, files rows cascade. Storage objects: Phase 4.
+    // Stages, tasks, members, events, files rows cascade; storage objects go before commit (policy = member).
+    await removeLogoIfUnused(tx, p.logo)
+    await removeObjects(PROJECT_FILES_BUCKET, fileKeys.map((f) => f.key), true)
     return { projectId: input.projectId, memberIds: before, slugsChanged: true } satisfies WriteResult
   })
 }
@@ -505,5 +534,79 @@ export function deleteTask(userId: string, input: z.output<typeof deleteTaskInpu
     await writeColumn(tx, await columnIds(tx, projectId, status))
     await touch(tx, projectId)
     return result(tx, projectId)
+  })
+}
+
+// --- logos ---
+
+/**
+ * Upload the project / client logo picked in the project form. Runs after create/update committed, so the storage
+ * policy sees the user as a member and the project's current client. Replaced logos are deleted when unused.
+ */
+export async function setLogos(userId: string, projectId: string, input: Pick<z.output<typeof projectFields>, "logo" | "clientLogo">) {
+  if (!input.logo && !input.clientLogo) return
+  const [current] = await db
+    .select({ logo: projects.logo, clientId: projects.clientId, clientLogo: clients.logo })
+    .from(projects)
+    .innerJoin(projectMembers, and(eq(projectMembers.projectId, projects.id), eq(projectMembers.userId, userId)))
+    .leftJoin(clients, eq(clients.id, projects.clientId))
+    .where(eq(projects.id, projectId))
+    .limit(1)
+  if (!current) throw new MutationError("not_found", "Project not found")
+  if (input.clientLogo && !current.clientId) throw new MutationError("invalid", "Add a client name first", "clientLogo")
+
+  const logo = input.logo ? await uploadLogo("projects", projectId, input.logo) : undefined
+  const clientLogo = input.clientLogo && current.clientId ? await uploadLogo("clients", current.clientId, input.clientLogo) : undefined
+  await db.transaction(async (tx) => {
+    if (logo) await tx.update(projects).set({ logo }).where(eq(projects.id, projectId))
+    if (clientLogo && current.clientId) await tx.update(clients).set({ logo: clientLogo }).where(eq(clients.id, current.clientId))
+    if (logo) await removeLogoIfUnused(tx, current.logo)
+    if (clientLogo) await removeLogoIfUnused(tx, current.clientLogo)
+  })
+}
+
+// --- files ---
+
+/** Record a file the browser just uploaded (storage RLS already checked membership; checked again here). */
+export function registerFile(userId: string, input: z.output<typeof registerFileInput>) {
+  return db.transaction(async (tx) => {
+    if (projectIdOfPath(input.path) !== input.projectId) throw new MutationError("invalid", "Invalid upload path")
+    await requireMember(tx, userId, input.projectId)
+    await assertStageIn(tx, input.projectId, input.stageId)
+    // Size and type come from Storage, not from the client.
+    const [object] = await tx.execute<{ size: string | null; mime: string | null }>(
+      sql`select metadata->>'size' as size, metadata->>'mimetype' as mime from storage.objects where bucket_id = ${PROJECT_FILES_BUCKET} and name = ${input.path} limit 1`,
+    )
+    if (!object) throw new MutationError("not_found", "Upload not found, try again")
+    const [f] = await tx
+      .insert(files)
+      .values({
+        projectId: input.projectId,
+        stageId: input.stageId,
+        uploaderId: userId,
+        name: input.name,
+        storagePath: input.path,
+        size: Number(object.size ?? 0),
+        mime: object.mime,
+      })
+      .onConflictDoNothing()
+      .returning({ id: files.id })
+    if (!f) throw new MutationError("conflict", "File already added")
+    await logEvent(tx, { projectId: input.projectId, actorId: userId, kind: "file", title: input.name })
+    await touch(tx, input.projectId)
+    return result(tx, input.projectId, { fileId: f.id })
+  })
+}
+
+export function deleteFile(userId: string, input: z.output<typeof deleteFileInput>) {
+  return db.transaction(async (tx) => {
+    const [row] = await tx.select({ projectId: files.projectId }).from(files).where(eq(files.id, input.fileId)).limit(1)
+    if (!row) throw new MutationError("not_found", "File not found")
+    await requireMember(tx, userId, row.projectId)
+    const [f] = await tx.delete(files).where(eq(files.id, input.fileId)).returning({ key: files.storagePath })
+    // Not best-effort: if Storage refuses, the row comes back (rollback) instead of pointing at nothing.
+    await removeObjects(PROJECT_FILES_BUCKET, [f.key])
+    await touch(tx, row.projectId)
+    return result(tx, row.projectId)
   })
 }
