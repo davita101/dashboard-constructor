@@ -132,4 +132,25 @@ function FieldError({ className, ...props }: React.ComponentProps<"p">) {
   )
 }
 
-export { Field, FieldDescription, FieldError, FieldHeader, FieldHint, FieldLabel, FieldLabelIcon, fieldVariants, type FieldSize }
+/** Stack of Fields in a form (shadcn FieldGroup). */
+function FieldGroup({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="field-group" className={cn("flex w-full flex-col gap-4", className)} {...props} />
+}
+
+/** Group of related checkboxes / radios (shadcn FieldSet). */
+function FieldSet({ className, ...props }: React.ComponentProps<"fieldset">) {
+  return <fieldset data-slot="field-set" className={cn("flex min-w-0 flex-col gap-2", className)} {...props} />
+}
+
+/** Heading of a FieldSet, styled like FieldLabel. */
+function FieldLegend({ className, ...props }: React.ComponentProps<"legend">) {
+  return (
+    <legend
+      data-slot="field-legend"
+      className={cn("pb-2 font-default text-11 leading-20 font-bold tracking-default text-base-700", className)}
+      {...props}
+    />
+  )
+}
+
+export { Field, FieldGroup, FieldLegend, FieldSet, FieldDescription, FieldError, FieldHeader, FieldHint, FieldLabel, FieldLabelIcon, fieldVariants, type FieldSize }

@@ -301,7 +301,8 @@
       "members": "Members",
       "files": "Files",
       "start": "Start date",
-      "end": "End date"
+      "end": "End date",
+      "edit": "Edit stage {name}"
     },
     "events": {
       "title": "Latest events"
@@ -315,5 +316,91 @@
     "description": "This page does not exist yet or was moved. Go back or head to the dashboard.",
     "back": "Back Screen",
     "home": "Go to Dashboard"
+  },
+  "forms": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "saving": "Saving…",
+    "project": {
+      "createTitle": "New project",
+      "createDescription": "Name it now; stages, tasks and members come next.",
+      "editTitle": "Edit project",
+      "editDescription": "Changes are visible to every member.",
+      "name": "Project name",
+      "namePlaceholder": "Website redesign",
+      "client": "Client",
+      "clientPlaceholder": "Company name",
+      "clientDescription": "About the client",
+      "clientDescriptionPlaceholder": "What the company does",
+      "deadline": "Deadline",
+      "income": "Income (USD)",
+      "cost": "Cost (USD)",
+      "create": "Create project",
+      "save": "Save changes",
+      "saved": "Project saved",
+      "delete": "Delete",
+      "deleteTitle": "Delete {name}?",
+      "deleteDescription": "Stages, tasks, members and events of this project are deleted for everyone. This cannot be undone."
+    },
+    "stage": {
+      "createTitle": "Add stage",
+      "editTitle": "Edit stage",
+      "project": "Project",
+      "projectPlaceholder": "Choose a project",
+      "name": "Stage name",
+      "namePlaceholder": "Design",
+      "start": "Start date",
+      "end": "End date",
+      "create": "Add stage",
+      "created": "Stage added",
+      "save": "Save",
+      "saved": "Stage saved",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "delete": "Delete",
+      "deleteTitle": "Delete this stage?",
+      "deleteDescription": "Its tasks and files stay in the project without a stage.",
+      "deleted": "Stage deleted"
+    },
+    "task": {
+      "createTitle": "Add task",
+      "project": "Project",
+      "projectPlaceholder": "Choose a project",
+      "title": "Title",
+      "titlePlaceholder": "Write the brief",
+      "description": "Description",
+      "descriptionPlaceholder": "Details, links, acceptance criteria",
+      "stage": "Stage",
+      "noStage": "No stage",
+      "status": "Status",
+      "statuses": {
+        "new": "New",
+        "in_work": "In work",
+        "done": "Done",
+        "failed": "Failed"
+      },
+      "start": "Start date",
+      "due": "Due date",
+      "assignees": "Assignees",
+      "create": "Add task",
+      "created": "Task added"
+    },
+    "members": {
+      "title": "Manage members",
+      "addTitle": "Add member",
+      "description": "Invite people who already have an account, by their email.",
+      "close": "Close",
+      "project": "Project",
+      "projectPlaceholder": "Choose a project",
+      "email": "Email",
+      "emailPlaceholder": "name@company.com",
+      "role": "Role",
+      "rolePlaceholder": "Designer",
+      "add": "Add",
+      "adding": "Adding…",
+      "added": "Member added",
+      "roleOf": "Role of {name}",
+      "remove": "Remove {name}"
+    }
   }
 }

@@ -12,8 +12,9 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { TableCell, TableCellContent, TableCellIcon, TableCellTitle } from "@/components/ui/table-cell"
 
-/** Figma card Head (60): Text-Cell with optional icon + optional more menu (Icon-Cell). */
-async function ProjectCardHead({ title, icon, menu = true }: { title: string; icon?: string; menu?: boolean }) {
+/** Figma card Head (60): Text-Cell with optional icon + optional more menu (Icon-Cell): `true` = the default
+ * "View all" menu, a node = a custom menu (e.g. ProjectStagesMenu). */
+async function ProjectCardHead({ title, icon, menu = true }: { title: string; icon?: string; menu?: boolean | React.ReactNode }) {
   const t = await getTranslations("projectPage.card")
 
   return (
@@ -24,7 +25,7 @@ async function ProjectCardHead({ title, icon, menu = true }: { title: string; ic
           <TableCellTitle>{title}</TableCellTitle>
         </TableCellContent>
       </TableCell>
-      {menu ? (
+      {menu !== true ? (menu || null) : (
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
@@ -43,7 +44,7 @@ async function ProjectCardHead({ title, icon, menu = true }: { title: string; ic
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-      ) : null}
+      )}
     </div>
   )
 }

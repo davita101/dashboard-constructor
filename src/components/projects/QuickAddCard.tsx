@@ -1,38 +1,51 @@
 import Link from "next/link"
 import { getTranslations } from "next-intl/server"
 
+import { AddMemberDialog } from "@/components/projects/AddMemberDialog"
+import { StageFormDialog } from "@/components/projects/StageFormDialog"
+import { TaskFormDialog } from "@/components/projects/TaskFormDialog"
 import { Button, ButtonIcon } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import type { ProjectOption } from "@/lib/projects/types"
 
 // Figma Add 14061:68511.
-const actions = [
-  { key: "project", icon: "/icons/material/material-assignment.svg", href: "/dashboard/projects/new" },
-  { key: "stages", icon: "/icons/material/material-short-text.svg" },
-  { key: "task", icon: "/icons/material/material-restore.svg" },
-  { key: "member", icon: "/icons/material/material-person-add.svg" },
-  { key: "message", icon: "/icons/material/material-message.svg" },
-  { key: "file", icon: "/icons/material/material-cloud-done.svg" },
-] as const satisfies readonly { key: string; icon: string; href?: string }[]
+const icons = {
+  project: "/icons/material/material-assignment.svg",
+  stages: "/icons/material/material-short-text.svg",
+  task: "/icons/material/material-restore.svg",
+  member: "/icons/material/material-person-add.svg",
+  message: "/icons/material/material-message.svg",
+  file: "/icons/material/material-cloud-done.svg",
+} as const
 
-/** Projects Quick Add: 2x3 grid of create actions. Only Project has a flow so far (open question Q4 for the rest). */
-async function QuickAddCard() {
+type Key = keyof typeof icons
+
+/**
+ * Projects Quick Add: 2x3 grid of create actions. Project opens the editor page; Stages, Task and Member open
+ * their dialogs (with a project picker); Message (Phase 5) and File (Phase 4) are not built yet.
+ */
+async function QuickAddCard({ projects }: { projects: ProjectOption[] }) {
   const t = await getTranslations("projects.quickAdd")
+
+  const tile = (key: Key, extra?: Record<string, unknown>) => (
+    <Button variant="plain" size="tile-20" shape="rounded" {...extra}>
+      <ButtonIcon src={icons[key]} />
+      {t(key)}
+    </Button>
+  )
+  // Without a project there is nothing to add a stage, task or member to: those tiles lead to the editor.
+  const needsProject = (key: Key, dialog: React.ReactNode) =>
+    projects.length ? dialog : tile(key, { nativeButton: false, render: <Link href="/dashboard/projects/new" /> })
 
   return (
     <Card variant="panel">
       <div className="grid grid-cols-2 gap-x-10 gap-y-2 p-5">
-        {actions.map((action) => (
-          <Button
-            key={action.key}
-            variant="plain"
-            size="tile-20"
-            shape="rounded"
-            {...("href" in action ? { nativeButton: false, render: <Link href={action.href} /> } : { "data-soon": "" })}
-          >
-            <ButtonIcon src={action.icon} />
-            {t(action.key)}
-          </Button>
-        ))}
+        {tile("project", { nativeButton: false, render: <Link href="/dashboard/projects/new" /> })}
+        {needsProject("stages", <StageFormDialog trigger={tile("stages")} projects={projects} />)}
+        {needsProject("task", <TaskFormDialog trigger={tile("task")} projects={projects} />)}
+        {needsProject("member", <AddMemberDialog trigger={tile("member")} projects={projects} />)}
+        {tile("message", { "data-soon": "" })}
+        {tile("file", { "data-soon": "" })}
       </div>
     </Card>
   )

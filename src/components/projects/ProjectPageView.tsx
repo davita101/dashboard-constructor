@@ -21,6 +21,20 @@ async function ProjectPageView({
 }) {
   const [tNav, tHead] = await Promise.all([getTranslations("nav"), getTranslations("projectPage.head")])
   const name = detail.project.name || tHead("untitled")
+  const { project, company } = detail
+  // id "new" = the blank editor (/dashboard/projects/new): the head creates instead of editing.
+  const values =
+    project.id === "new"
+      ? undefined
+      : {
+          projectId: project.id,
+          name: project.name,
+          clientName: company.name,
+          clientDescription: company.description,
+          deadline: project.deadline.slice(0, 10),
+          income: project.income,
+          cost: project.cost,
+        }
 
   return (
     <DashboardPage
@@ -28,7 +42,7 @@ async function ProjectPageView({
       crumbs={[{ label: tNav("projects"), icon: "/icons/material-home.svg", href: "/dashboard/projects" }, { label: name }]}
       topBar="full"
       panel={false}
-      head={<ProjectPageHead name={name} logo={detail.project.logo} />}
+      head={<ProjectPageHead name={name} logo={project.logo} values={values} />}
     >
       <ProjectDashboardCard detail={detail} events={events} projects={projects} tab={isProjectTab(tab) ? tab : "dashboard"} />
     </DashboardPage>

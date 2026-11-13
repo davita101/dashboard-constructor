@@ -5,12 +5,15 @@ import { cacheLife, cacheTag } from "next/cache"
 
 import { db } from "@/db"
 import { clients, projectEvents, projectMembers, projects, projectStages, projectStats, stageStats, users } from "@/db/schema"
-import type { Member, Project, ProjectDetail, ProjectEvent, ProjectFinance, ProjectTotals } from "@/lib/projects/types"
+import type { Member, Project, ProjectOption, ProjectDetail, ProjectEvent, ProjectFinance, ProjectTotals } from "@/lib/projects/types"
 import { projectTag, userProjectsTag } from "@/lib/projects/tags"
 
 // Cached Drizzle reads. Every function takes the Clerk user id as an argument (it is part of the cache key) and
 // only returns projects that user is a member of. Drizzle bypasses RLS, so this scoping is the access check.
 // Callers get the id from auth() (./data.ts); never pass an id that came from the client.
+
+/** Placeholder for projects / clients without a logo yet (upload comes with Storage, Phase 4). */
+const DEFAULT_LOGO = "/icons/material-default-icon.svg"
 
 /** Project ids the user belongs to. */
 const memberProjectIds = (userId: string) =>
@@ -55,7 +58,7 @@ function toProject(row: ProjectRow, members: Member[]): Project {
     id: row.id!,
     slug: row.slug!,
     name: row.name!,
-    logo: row.logo ?? "",
+    logo: row.logo || DEFAULT_LOGO,
     members: members.map(({ id, name, avatar }) => ({ id, name, avatar })),
     progress: row.progress ?? 0,
     stages: row.stages ?? 0,
@@ -209,7 +212,7 @@ export async function queryProjectDetail(userId: string, slug: string): Promise<
     project,
     company: {
       name: row.company?.name ?? "",
-      logo: row.company?.logo ?? "",
+      logo: row.company?.logo || DEFAULT_LOGO,
       description: row.company?.description ?? "",
     },
     implementation: project.progress,
@@ -226,4 +229,32 @@ export async function queryProjectDetail(userId: string, slug: string): Promise<
     })),
     team,
   }
+}
+
+export async function queryProjectOptions(userId: string): Promise<ProjectOption[]> {
+  "use cache"
+  cacheLife("hours")
+  cacheTag(userProjectsTag(userId))
+
+  const rows = await db
+    .select({ id: projects.id, name: projects.name })
+    .from(projects)
+    .where(inArray(projects.id, memberProjectIds(userId)))
+    .orderBy(asc(projects.name))
+  const ids = rows.map((r) => r.id)
+  const [members, stages] = await Promise.all([
+    membersByProject(ids),
+    ids.length
+      ? db
+          .select({ projectId: projectStages.projectId, id: projectStages.id, name: projectStages.name })
+          .from(projectStages)
+          .where(inArray(projectStages.projectId, ids))
+          .orderBy(asc(projectStages.position))
+      : [],
+  ])
+  return rows.map((r) => ({
+    ...r,
+    stages: stages.filter((s) => s.projectId === r.id).map(({ id, name }) => ({ id, name })),
+    members: (members.get(r.id) ?? []).map(({ id, name, avatar }) => ({ id, name, avatar })),
+  }))
 }
