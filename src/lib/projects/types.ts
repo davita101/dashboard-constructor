@@ -76,6 +76,12 @@ export type ProjectDetail = {
   team: TeamMember[]
 }
 
+export type DashboardCharts = {
+  /** Last 9 months, oldest first, ending with the current month. */
+  months: { month: string; label: string; income: number; cost: number }[]
+  tasksByStatus: { new: number; inWork: number; done: number; failed: number }
+}
+
 export type ProjectFinance = {
   income: number
   /** Percent change, signed. */

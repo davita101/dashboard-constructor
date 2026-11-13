@@ -5,6 +5,7 @@ import { cacheLife } from "next/cache"
 import { getViewerId } from "@/lib/auth/viewer"
 import {
   queryAllProjectSlugs,
+  queryDashboardCharts,
   queryProjectDetail,
   queryProjectEvents,
   queryProjectFinance,
@@ -12,7 +13,7 @@ import {
   queryProjects,
   queryProjectTotals,
 } from "@/lib/projects/queries"
-import type { ProjectOption, ProjectDetail, ProjectEvent, ProjectFinance, ProjectTotals, Project } from "@/lib/projects/types"
+import type { DashboardCharts, ProjectOption, ProjectDetail, ProjectEvent, ProjectFinance, ProjectTotals, Project } from "@/lib/projects/types"
 
 // Projects section data for the signed-in user. Signatures match the old mock getters; the bodies read the
 // database through cached, user-scoped queries (./queries.ts). They read auth(): call them inside Suspense.
@@ -35,6 +36,10 @@ export async function getProjectTotals(): Promise<ProjectTotals> {
 
 export async function getProjectFinance(): Promise<ProjectFinance> {
   return queryProjectFinance(await getViewerId())
+}
+
+export async function getDashboardCharts(): Promise<DashboardCharts> {
+  return queryDashboardCharts(await getViewerId())
 }
 
 /** Project / stage / member pickers for the create dialogs. */

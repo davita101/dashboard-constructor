@@ -39,3 +39,17 @@ Transcript started, output file is design/todo-loop/console.log
 [13:43] build3-1 (todo-builder) -> design/agent-logs/20261113-134334-todo-build3-1.log
   BUILT
 [13:46] review3-1 (todo-director) -> design/agent-logs/20261113-134615-todo-review3-1.log
+  API error. Retrying in 2 min.
+[13:49] review3-1 (todo-director) -> design/agent-logs/20261113-134927-todo-review3-1.log
+  API error. Retrying in 2 min.
+[13:51] review3-1 (todo-director) -> design/agent-logs/20261113-135135-todo-review3-1.log
+  API error. Retrying in 2 min.
+[13:53] review3-1 (todo-director) -> design/agent-logs/20261113-135342-todo-review3-1.log
+  APPROVED
+  APPROVED
+=== Item 4 ===
+[13:54] plan4 (todo-director) -> design/agent-logs/20261113-135408-todo-plan4.log
+  TASK READY
+[13:56] build4-1 (todo-builder) -> design/agent-logs/20261113-135607-todo-build4-1.log
+  BUILT
+[13:58] review4-1 (todo-director) -> design/agent-logs/20261113-135802-todo-review4-1.log

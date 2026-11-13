@@ -1,33 +1,31 @@
 # Task
-Add a client hook `useMessageStream` that subscribes to new chat messages via Supabase Realtime (no UI).
+Phase 6a: user-scoped dashboard chart data query (monthly income/cost, tasks by status) + smoke script. No UI.
 
 ## TODO item
-- [ ] Supabase Realtime subscription for new messages
+  - [ ] 6a Query `queryDashboardCharts` (monthly income+cost, tasks by status) in `src/lib/projects/queries.ts` + `getDashboardCharts` in data.ts + types + smoke script
 
 ## Goal
-A reusable hook for the future chat UI: given a conversation id, it delivers newly inserted `messages` rows live (RLS applies via the Clerk token), cleans up on unmount. Plus a node smoke test proving realtime delivery and RLS filtering.
+Server-side data for chart widgets, scoped to the signed-in user's projects, cached like the other queries.
 
 ## Files
-- read: `src/lib/supabase/client.ts` (`useSupabase`), `src/lib/chat/{types,queries,actions}.ts`, `src/db/migrations/0003_chat.sql` (messages in `supabase_realtime`, RLS), `scripts/chat-schema-smoke.mjs`
-- new: `src/lib/chat/realtime.ts` (client-only, `"use client"`): `useMessageStream(conversationId, onMessage)` + exported pure `parseMessageRow(row)`
-- new: `scripts/chat-realtime-smoke.mjs`
+- `src/lib/projects/types.ts` (add `DashboardCharts`)
+- `src/lib/projects/queries.ts` (add `queryDashboardCharts(userId)`; follow `queryProjectFinance`: `"use cache"`, `cacheLife("hours")`, `cacheTag(userProjectsTag(userId))`, `memberProjectIds`)
+- `src/lib/projects/data.ts` (add `getDashboardCharts()` wrapper with `getViewerId()`)
+- `scripts/dashboard-charts-smoke.mts` (model on `scripts/chat-actions-smoke.mts`)
 
 ## Steps
-1. `parseMessageRow(payload.new)`: maps snake_case row (`id, conversation_id, author_id, body, created_at, edited_at`) to `{ id, conversationId, authorId, body, createdAt: Date, editedAt: Date|null }`. Author name/avatar are NOT in the row; the consumer resolves via a members list or refetches (document in a comment). Export type `StreamedMessage`.
-2. `useMessageStream(conversationId: string | null, onMessage: (m: StreamedMessage) => void)`: `useSupabase()`; effect creates channel `messages:<conversationId>` with `postgres_changes` INSERT on `public.messages` filter `conversation_id=eq.<id>`; subscribes; cleanup `supabase.removeChannel`. Keep `onMessage` in a ref so the effect depends only on client + id. Skip when id null. Also handle Clerk token refresh: `supabase.realtime.setAuth()` is handled by `accessToken` option; do not add extra code unless needed.
-3. Smoke script (node, `.env.local` via `process.loadEnvFile`): create temp users/project/conversation with unique `smoke_<tag>` prefix via `postgres` (like chat-schema-smoke). Two supabase-js clients with `accessToken` returning a JWT. Mint the JWT the same way earlier smoke tests did for Phase 4 (Clerk Backend API session token using `CLERK_SECRET_KEY`: create a session + token for a real Clerk user who is a temp member) — if that is impractical for temp `smoke_` users, use a real existing Clerk user and add them as temp conversation member, removed at the end. Assert: member client receives INSERT within 10 s (PASS); a client for a non-member user receives nothing within 3 s (PASS). Clean up only its own rows.
-4. Do not add UI. Do not touch existing chat files except exporting types if needed.
+1. Type: `DashboardCharts = { months: { month: string /* "YYYY-MM" */; label: string /* "Jan" */; income: number; cost: number }[]; tasksByStatus: { new: number; inWork: number; done: number; failed: number } }`.
+2. Query: exactly 9 months ending with the current month (oldest first, zero-filled via `generate_series`), income/cost = sum of `projects.income` / `projects.cost` grouped by `date_trunc('month', created_at)`, only the user's projects. `tasksByStatus` = sums from `projectStats` (tasksNew, tasksInWork, tasksDone, tasksFailed) for the user's projects.
+3. Wrapper in data.ts.
+4. Smoke script: calls the uncached SQL logic or the query for a seed user (pattern from existing smokes; if `"use cache"` blocks running under tsx, extract the SQL into a plain exported `loadDashboardCharts(userId)` that the cached query calls, and test that). Asserts 9 months, ascending, numbers finite, tasksByStatus sum equals `queryProjectTotals`-style total from `project_stats`, and a user with no projects gets zeros.
 
 ## Acceptance
-- `pnpm exec tsc --noEmit` clean; `pnpm lint` 0 errors; `pnpm build` ok
-- `node scripts/chat-realtime-smoke.mjs` prints `PASS member receives insert` and `PASS non-member receives nothing`, exits 0, leaves no `smoke_` rows
-- grep new files: no hex colors, `space-[xy]-`, `dark:`
-- If realtime delivery cannot be proven (token minting impossible), report exactly why in report.md and still ship the hook with a `parseMessageRow` unit-style assertion in the script.
+- `pnpm exec tsc --noEmit` clean; `pnpm lint` 0 errors; `pnpm build` passes.
+- `pnpm exec tsx scripts/dashboard-charts-smoke.mts` prints PASS lines and exits 0.
+- No UI files changed; no migration needed.
 
 ## Decisions
-- Hook delivers raw row (no author join): realtime payloads carry only the table row; chat UI will merge author info from the already-loaded members. Chosen over a refetch-per-message for fewer round trips.
-- Filter by conversation_id server-side in the channel; RLS still enforces access.
-- Lives in `src/lib/chat/realtime.ts` (no `src/hooks` dir in repo).
+Charts show the user's projects: months = income vs cost by project start month; share charts = tasks by status. Nine months matches the Figma x axis (Jan–Sep). Wiring into widgets is 6b.
 
 ## Don't
-- No chat UI, no new Figma-less components, no migration (messages already in `supabase_realtime`), no service-role key in the browser, no edits to `.env.local`.
+Touch widgets/chart components, add tables/migrations, or edit `.env*`.

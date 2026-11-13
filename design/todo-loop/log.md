@@ -5,3 +5,5 @@
 2026-11-13 APPROVED 5b chat queries+actions
 2026-11-13 PLAN Phase 5 Realtime subscription hook (useMessageStream) + smoke
 2026-11-13 APPROVED Realtime subscription hook (live delivery unproven)
+2026-11-13 PLAN Phase 6a dashboard chart data query (ff development to chat tip; branch feat/backend-widgets; chat parent ticked; live board blocked)
+2026-11-13 APPROVED 6a dashboard charts query

@@ -69,11 +69,11 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
 - [ ] Files list UI (project "files" tab, task attachments) once designed (blocked: needs Figma project files tab)
 
 ## Phase 5 — Chat & realtime (`feat/backend-chat`)
-- [ ] `conversations`, `conversation_members`, `messages` (project chat + direct Messenger)
+- [x] `conversations`, `conversation_members`, `messages` (project chat + direct Messenger)
   - [x] 5a Schema: tables + RLS select policies + migration `0003_chat.sql` applied + smoke test — one shared `conversations` (kind project|direct), project chat access via project membership, SELECT-only RLS through SECURITY DEFINER `viewer_conversation_ids()`, `messages` in supabase_realtime, `scripts/chat-schema-smoke.mjs`
   - [x] 5b Queries (`src/lib/chat/queries.ts`) + Zod schemas + Server Actions (start direct conversation, send message, mark read) — built `src/lib/chat/{schemas,tags,types,queries,mutations,actions}.ts` + `scripts/chat-actions-smoke.mts`; uncached reads, project chat lazily created via `ensureProjectConversation`, advisory lock on direct start, access checked in code (Drizzle bypasses RLS)
 - [x] Supabase Realtime subscription for new messages — `useMessageStream` hook + `parseMessageRow` in `src/lib/chat/realtime.ts`; raw row, no author join. Live delivery/RLS not proven (Clerk token minting denied); smoke asserts parser only
-- [ ] Live task board updates (optional)
+- [ ] Live task board updates (optional) (blocked: needs Figma Tasks tab/board)
 
 ## Phase 6 — User settings (`feat/backend-settings`)
 - [x] `user_settings` (user_id PK → users cascade, theme enum, locale, widget_layout jsonb; RLS select self), migration `0002_user_settings.sql`
@@ -84,6 +84,9 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
 - Sidebar collapsed state stays per device (localStorage `dashboard-sidebar-collapsed`): it depends on screen size
 - [x] Dashboard metric tiles show the user's project numbers: Projects, Income (30-day trend), Tasks, Tasks done (ring = done ÷ all). `/dashboard` reads totals + finance and provides them through `WidgetDataProvider`; picker previews keep the Figma placeholders. `ProjectTotals.tasksDone` added
 - [ ] Chart / large metric widgets and the product table still show Figma demo data. The app has no products and the 21 chart templates have no data source: needs a per-widget "what does it show" decision (e.g. income vs cost per month, tasks by status) and data props on `CartesianChart` / `RadialChart`
+  - Decision: charts show the user's projects. Monthly series (last 9 months by `projects.created_at`): income and cost per month. Share charts (donut/pie/progress): tasks by status (new / in work / done / failed). Others keep demo data.
+  - [x] 6a Query `queryDashboardCharts` + `getDashboardCharts` + `DashboardCharts` type — uncached SQL in `loadDashboardCharts` (generate_series 9 months, zero-filled), cached wrapper; `scripts/dashboard-charts-smoke.mts` (run with `tsx --conditions=react-server`)
+  - [ ] 6b Provide it via `WidgetDataProvider`; add data props to `CartesianChart` / `RadialChart`; wire line/area/column/donut/pie/progress widgets
 
 ## Later — unbuilt sections (need Figma pages first)
 - [ ] Notes · Mail · Calendar (events) · Knowledge Base (articles) · Clients page · Users page

@@ -5,7 +5,7 @@ import { cacheLife, cacheTag } from "next/cache"
 
 import { db } from "@/db"
 import { clients, projectEvents, projectMembers, projects, projectStages, projectStats, stageStats, users } from "@/db/schema"
-import type { Member, Project, ProjectOption, ProjectDetail, ProjectEvent, ProjectFinance, ProjectTotals } from "@/lib/projects/types"
+import type { DashboardCharts, Member, Project, ProjectOption, ProjectDetail, ProjectEvent, ProjectFinance, ProjectTotals } from "@/lib/projects/types"
 import { projectTag, userProjectsTag } from "@/lib/projects/tags"
 
 // Cached Drizzle reads. Every function takes the Clerk user id as an argument (it is part of the cache key) and
@@ -162,6 +162,54 @@ export async function queryProjectFinance(userId: string): Promise<ProjectFinanc
     incomeTrend: trend(row.incomeCur, row.incomePrev),
     profitTrend: trend(row.profitCur, row.profitPrev),
   }
+}
+
+const CHART_MONTHS = 9
+const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+/** Uncached SQL behind queryDashboardCharts (exported so the smoke script can run it outside Next). */
+export async function loadDashboardCharts(userId: string): Promise<DashboardCharts> {
+  const mine = memberProjectIds(userId)
+  const monthRows = await db.execute<{ month: string; income: number; cost: number }>(sql`
+    select to_char(m.month, 'YYYY-MM') as month,
+      coalesce(sum(p.income), 0)::float8 as income,
+      coalesce(sum(p.cost), 0)::float8 as cost
+    from generate_series(
+      date_trunc('month', now()) - make_interval(months => ${CHART_MONTHS - 1}),
+      date_trunc('month', now()),
+      interval '1 month'
+    ) as m(month)
+    left join ${projects} p
+      on date_trunc('month', p.created_at) = m.month and p.id in (${mine})
+    group by m.month
+    order by m.month
+  `)
+  const [stats] = await db
+    .select({
+      new: sql<number>`coalesce(sum(${projectStats.tasksNew}), 0)::int`,
+      inWork: sql<number>`coalesce(sum(${projectStats.tasksInWork}), 0)::int`,
+      done: sql<number>`coalesce(sum(${projectStats.tasksDone}), 0)::int`,
+      failed: sql<number>`coalesce(sum(${projectStats.tasksFailed}), 0)::int`,
+    })
+    .from(projectStats)
+    .where(inArray(projectStats.projectId, mine))
+  return {
+    months: Array.from(monthRows).map((r) => ({
+      month: r.month,
+      label: MONTH_LABELS[Number(r.month.slice(5, 7)) - 1],
+      income: Number(r.income),
+      cost: Number(r.cost),
+    })),
+    tasksByStatus: stats,
+  }
+}
+
+/** Monthly income / cost (by project start month) and tasks by status over the user's projects. */
+export async function queryDashboardCharts(userId: string): Promise<DashboardCharts> {
+  "use cache"
+  cacheLife("hours")
+  cacheTag(userProjectsTag(userId))
+  return loadDashboardCharts(userId)
 }
 
 export async function queryProjectDetail(userId: string, slug: string): Promise<ProjectDetail | undefined> {
