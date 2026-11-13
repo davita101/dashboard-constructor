@@ -1,38 +1,35 @@
 # Task
-9c-1: shared token-colored mask `Icon` component; replace ad-hoc inline mask spans in 5 files.
+9d-1: fix four small Figma value gaps (Badge, Button icon-16, Button Group, Textarea text size).
 
 ## TODO item
-  - [ ] 9c Icon dark mode: shared token-colored mask Icon component replacing hardcoded #808080 `<img>` icons
+  - [ ] 9d Token/variant fixes: Badge/Button/Textarea/Tooltip/Counter/Link/Double Input small Figma value fixes, shadow/blur constants, date formatting
+(planned sub-item: 9d-1 Badge/Button/Button Group/Textarea values)
 
 ## Goal
-Finding: no `<img src=/icons/...>` remains. Icons already render as CSS masks (`bg-current mask-...`) in many places, so dark mode works. What is left: ~20 copies of the same mask recipe (inline `<span className="size-4 bg-base-500 mask-[url(...)] ...">`, `maskIcon` const in chart-metric). Add one shared `Icon` in `src/components/ui/icon.tsx` and use it in the inline-span sites below. Existing `ButtonIcon`, `InputGroupIcon`, `EmptyIcon` etc. stay as they are (they are slots). Pixel output must not change.
+Match Figma values already recorded in known-gaps.md for:
+1. Badge-Square-Rounded size 60: text 11/20 (now 14/24).
+2. Badge-Icon-Rounded size 16: radius r4 (now r6).
+3. Button `icon-16`: radius r6 (now r4) — Figma Icon-type 16 uses r6. Check that no Round-type consumer relies on r4; if `icon-16` is the Round type used elsewhere, add a distinct variant/size instead of changing it.
+4. Button Group Rounded Default 60: 1px gap instead of 1px overlap (group 10px narrower).
+5. Textarea Default size Top/Bottom helper text 12/20 (now 11/20 via `textareaFieldSize`).
 
 ## Files
-- new `src/components/ui/icon.tsx`
-- `src/components/ui/chart-metric.tsx` (const `maskIcon`, spans at ~84, 387, 409, 511, 514, 567, 589, 592)
-- `src/components/ui/chart-parts.tsx` (~267, ~311-315)
-- `src/components/ui/breadcrumb.tsx` (~152, ~198)
-- `src/components/ui/native-select.tsx` (~33)
-- `src/components/ui/field.tsx` (~90)
-- `design/known-gaps.md` (lines 5-7)
+src/components/ui/badge.tsx, button.tsx, button-group.tsx (find it), textarea.tsx, design/known-gaps.md; usages via grep.
 
 ## Steps
-1. `icon.tsx`: `Icon({ src, size, className, style, ...props }: React.ComponentProps<"span"> & { src: string; size?: ... })`. Renders `<span data-slot="icon" aria-hidden className={cn("shrink-0 bg-current mask-contain mask-center mask-no-repeat", iconVariants({size}), className)} style={{ maskImage: `url(${src})`, WebkitMaskImage: `url(${src})`, ...style }} />`. `cva` sizes: 4 → `size-4`, 5 → `size-5`, 6 → `size-6`; no default size (callers may pass className with a size or var). Color = `bg-current`, caller sets `text-*` (or `bg-<token>` via className; `cn` merges).
-2. Replace the inline mask spans in the 5 component files with `<Icon src=... />`, keeping the exact same size and color classes (translate `bg-X` to className `bg-X`, it overrides bg-current). Dynamic classes using arbitrary-value masks (chart-parts ternaries) become `src` ternaries. Remove `maskIcon` const in chart-metric if unused.
-3. Do not touch `checkbox.tsx`, `alert.tsx` (they use CSS-var colors in pseudo/variant contexts; fine as is).
-4. `design/known-gaps.md`: delete lines "shadcn vars not mapped…", "Fonts not loaded…", "Figma icon SVGs have a hardcoded fill…" (fixed by 9b-1, 9b-2 and the mask approach). Add at end: `- Icon: all glyphs render as CSS masks (token color, dark-mode safe); some components still have their own mask slot (ButtonIcon, InputGroupIcon, …) instead of the shared Icon.`
-5. `pnpm exec tsc --noEmit && pnpm lint && pnpm build`.
+1. Read each gap line (`grep "^- Badge:" design/known-gaps.md` etc.) and the code.
+2. Apply fixes via `cva` variants/compound variants, tokens only (no hex, no `space-[xy]-`, no `dark:`).
+3. If a fix is not feasible without Figma (ambiguous), skip that one and say so in the report.
+4. Remove/trim fixed sentences from the gap lines in known-gaps.md.
+5. Write design/todo-loop/report.md.
 
 ## Acceptance
-- `pnpm exec tsc --noEmit` clean; `pnpm lint` 0 errors (known command.tsx warning ok); `pnpm build` ok.
-- `grep -rn "mask-\[url" src/components/ui/{chart-metric,chart-parts,breadcrumb,native-select,field}.tsx` → no matches (all through `Icon`).
-- `grep -rnE "#[0-9a-fA-F]{3,8}\b|space-[xy]-|dark:" src/components/ui/icon.tsx` → no matches.
-- `grep -rn "<img" src --include=*.tsx` only task.tsx cover + notification image (photos).
-- Visual: code-read only is acceptable; sizes/colors per call site unchanged.
+- `pnpm exec tsc --noEmit` clean; `pnpm lint` 0 errors; `pnpm build` passes.
+- grep new/changed lines: no hex, `space-[xy]-`, `dark:`.
+- Gap lines updated for fixed items.
 
 ## Decisions
-- Scope kept to 5 consumers (+ new file) to stay in one session; other sites (navbar, card, alert, checkbox, link, table-cell…) left, noted in known-gaps. Reason: they are already correct (masked, tokened); this is dedupe not a bug fix.
-- No SVG creation or edits (project rule).
+- Only values stated in the gap text are applied (no Figma re-read: TalkToFigma may be down). Other 9d items (Tooltip, Counter, Link, Double Input, blur/shadow constants, dates) become 9d-2/9d-3 later.
 
 ## Don't
-- Don't edit `public/icons/*`. Don't change visuals, props of existing exported components, or the slot components (`ButtonIcon` etc.). No design-system pages.
+- No new UI, no unrelated refactors, no SVG creation, no touching other 9d items.

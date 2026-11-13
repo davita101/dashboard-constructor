@@ -51,3 +51,5 @@
 2026-11-13 APPROVED 9b-2 shadcn vars
 2026-11-13 PLAN 9c-1 shared Icon mask component (icons already masked; dedupe 5 files + stale gaps)
 2026-11-13 APPROVED 9c-1 Icon
+2026-11-13 PLAN split 9d into 9d-1..3; planned 9d-1 Badge/Button/ButtonGroup/Textarea values
+2026-11-13 APPROVED 9d-1 values

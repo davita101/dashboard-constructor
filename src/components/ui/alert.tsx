@@ -129,7 +129,7 @@ function AlertClose({ className, ...props }: React.ComponentProps<typeof Button>
     <Button
       data-slot="alert-close"
       variant="bare"
-      size="icon-16"
+      size="icon-16-round"
       aria-label="Close"
       className={cn(
         "group-data-[layout=card]/alert:mt-2 group-data-[layout=list]/alert:mt-3",

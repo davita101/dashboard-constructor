@@ -1,26 +1,17 @@
-# Report: 9c-1 shared Icon
+# Report 9d-1
 
 ## Changed
-- new `src/components/ui/icon.tsx`: `Icon` (span, `data-slot="icon"`, aria-hidden, `bg-current` + mask classes, inline `maskImage`/`WebkitMaskImage` from `src`), `iconVariants` cva sizes 4/5/6, no default size.
-- `chart-metric.tsx`: all 8 spans -> `Icon`, `maskIcon` const removed.
-- `chart-parts.tsx`: chevron + `ChartTrend` glyph -> `Icon` (class ternaries became `src`/`size` ternaries).
-- `breadcrumb.tsx`: separator + ellipsis -> `Icon`.
-- `native-select.tsx`, `field.tsx` (`FieldLabelIcon`) -> `Icon`.
-- `design/known-gaps.md`: removed 3 lines, added Icon line at end.
+- `src/components/ui/badge.tsx`: `square-60` text 11/20; `square-16` radius r4.
+- `src/components/ui/button.tsx`: `icon-16` now r6; new size `icon-16-round` (r4), added to icon compound variant.
+- `src/components/ui/alert.tsx`: `AlertClose` uses `icon-16-round` (Round-type consumer, keeps r4).
+- `design/known-gaps.md`: Badge and Button lines trimmed/updated.
 
-## Decisions
-- `breadcrumbSeparatorVariants` (still exported, unused elsewhere) now only holds color/opacity; mask + size moved to `Icon`.
-- `BreadcrumbIcon` uses `mask-(--breadcrumb-icon)` (CSS var, not `mask-[url`), left as is (not in task list).
-- `Icon` spreads `...props` after style, so callers can override `data-slot` (native-select, field keep theirs).
+## Skipped
+- Item 4 (Button Group 1px gap): no Button Group component exists in `src/` (only mentioned in comments). Nothing to change; gap line left as is.
+- Item 5 (Textarea helper 12/20): no `textareaFieldSize` exists. Textarea uses `inputSizeVariants`, and the helper text is in `field.tsx` with no size-specific hook. The Textarea gap line doesn't mention it either. Not feasible without Figma, so left.
 
 ## Commands
-- `pnpm exec tsc --noEmit` PASS
-- `pnpm lint` PASS (0 errors, 1 known command.tsx warning)
-- `pnpm build` PASS
-- grep `mask-[url` in the 5 files: PASS (none)
-- grep hex/space-xy/dark: in icon.tsx: PASS (none)
-- grep `<img` in src: PASS (only notification.tsx, task.tsx)
-- Visual: code-read only.
-
-## Undone
-Nothing.
+- `pnpm exec tsc --noEmit`: PASS
+- `pnpm lint`: PASS (0 errors, 1 existing warning)
+- `pnpm build`: PASS
+- grep of changed lines: no hex, `space-[xy]-` or `dark:`.

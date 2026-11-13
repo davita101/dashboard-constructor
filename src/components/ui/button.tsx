@@ -94,7 +94,9 @@ const buttonVariants = cva(
         "icon-28": "size-7 rounded-r6 text-11 leading-20 [--btn-icon:--spacing(3.5)]",
         "icon-24": "size-6 rounded-r6 text-10 leading-16 [--btn-icon:--spacing(3)]",
         "icon-20": "size-5 rounded-r6 text-10 leading-16 [--btn-icon:--spacing(4)]",
-        "icon-16": "size-4 rounded-r4 text-9 leading-16 [--btn-icon:--spacing(3)]",
+        "icon-16": "size-4 rounded-r6 text-9 leading-16 [--btn-icon:--spacing(3)]",
+        // Round-type 16 icon button (Alert close): r4
+        "icon-16-round": "size-4 rounded-r4 text-9 leading-16 [--btn-icon:--spacing(3)]",
         // Figma 20-high action: 20px icon, 12px gap, no side padding (Projects Quick Add)
         "tile-20": "h-5 gap-3 rounded-r6 px-0 text-10 leading-16 [--btn-icon:--spacing(5)] [--btn-px:0px]",
         // Icon fills the whole 20px box (Figma 20x20 toolbar icons)
@@ -106,7 +108,7 @@ const buttonVariants = cva(
       },
     },
     compoundVariants: [
-      { size: ["icon-60", "icon-48", "icon-40", "icon-32", "icon-28", "icon-24", "icon-20", "icon-16"], className: "p-0 [--btn-px:0px] [--btn-tx:0px]" },
+      { size: ["icon-60", "icon-48", "icon-40", "icon-32", "icon-28", "icon-24", "icon-20", "icon-16", "icon-16-round"], className: "p-0 [--btn-px:0px] [--btn-tx:0px]" },
       // Pilled buttons get more padding than Rounded ones
       { shape: "pill", size: "60", className: "[--btn-px:--spacing(6)] [--btn-tx:--spacing(3)]" },
       { shape: "pill", size: "48", className: "[--btn-px:--spacing(5)]" },
