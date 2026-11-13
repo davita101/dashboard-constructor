@@ -1,6 +1,7 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
+import { FieldProvider, useFieldContext } from "@/components/ui/field-context"
 import { Icon } from "@/components/ui/icon"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
@@ -53,13 +54,15 @@ function Field({
   ...props
 }: React.ComponentProps<"div"> & VariantProps<typeof fieldVariants>) {
   return (
-    <div
-      role="group"
-      data-slot="field"
-      data-size={size}
-      className={cn(fieldVariants({ size, shape, tone }), className)}
-      {...props}
-    />
+    <FieldProvider size={size ?? "40"} shape={shape ?? "rounded"}>
+      <div
+        role="group"
+        data-slot="field"
+        data-size={size}
+        className={cn(fieldVariants({ size, shape, tone }), className)}
+        {...props}
+      />
+    </FieldProvider>
   )
 }
 
@@ -151,4 +154,4 @@ function FieldLegend({ className, ...props }: React.ComponentProps<"legend">) {
   )
 }
 
-export { Field, FieldGroup, FieldLegend, FieldSet, FieldDescription, FieldError, FieldHeader, FieldHint, FieldLabel, FieldLabelIcon, fieldVariants, type FieldSize }
+export { Field, useFieldContext, FieldGroup, FieldLegend, FieldSet, FieldDescription, FieldError, FieldHeader, FieldHint, FieldLabel, FieldLabelIcon, fieldVariants, type FieldSize }

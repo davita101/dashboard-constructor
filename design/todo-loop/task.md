@@ -1,40 +1,38 @@
 # Task
-Avatar: add Figma "Progress" ring (`progress` prop) and `AvatarCounter` overlay slot in `src/components/ui/avatar.tsx`.
+9f-3: Field → InputGroup/Input → slots inherit size/shape from context (no more repeating them).
 
 ## TODO item
-    - [ ] 9f-2 Avatar progress ring + counter overlay (+ ContentCard)
+    - [ ] 9f-3 Size/shape context for Field / InputGroup / ButtonGroup / InputGroupSwatch
 
 ## Goal
-Figma Avatar-Image/Avatar-Text (60px) carry a 66x66 `Progress` frame (track ellipse blue-alpha-20 + arc blue-600, same 66 box as `Story`: 2px stroke, 1px gap) and a `Badge-Square-Pilled` counter (16x16, danger gradient, text "1"). Make both available as shadcn-style parts of `Avatar`, no new wrappers.
+`<Field size="48" shape="pill"><InputGroup>…<InputGroupButton/><InputGroupSwatch/></InputGroup></Field>` gets size/shape everywhere with no repeated props. Explicit props still win. Existing usages render identically (no visual change).
 
 ## Files
-- `src/components/ui/avatar.tsx` (change)
-- `src/components/ui/badge.tsx` (read: `square-16`/`square-12` sizes, danger/red variant name)
-- `design/handoff/card-content/figma.md` lines ~125-145 (Figma layers)
-- `design/known-gaps.md` (edit lines 5, 58: remove the Progress/counter parts)
-- NO ContentCard exists in `src/` (grep) → nothing to adopt there; note it in the TODO line.
+- `src/components/ui/field.tsx` (add `FieldContext` {size, shape}; Field provides; export `useFieldContext()` returning null outside a Field)
+- `src/components/ui/input-group.tsx` (InputGroup: size = prop ?? join ?? field ?? "40", same for shape; provide an `InputGroupContext` {size, shape}; InputGroupButton/Tag/Avatar/Swatch default size/shape from it)
+- `src/components/ui/input.tsx` (if it has size/shape props: default from field context)
+- consumers to sanity-check: `src/components/auth/auth-field.tsx`, `src/components/projects/FormField.tsx`, `src/components/ui/input-otp.tsx`, `src/components/ui/navbar.tsx`
+- `design/known-gaps.md` (drop "Field/InputGroup size/shape must match (no context)" and "InputGroupSwatch shape must match" fragments from the Input / Color Input lines; Button Group note stays: no ButtonGroup component exists in `src/components/ui`)
 
 ## Steps
-1. `Avatar` gets optional `progress?: number` (0-100). When set, render ring as an absolutely positioned overlay (`-inset-1.5`, `pointer-events-none`, `aria-hidden`, rounded-[inherit] or full for circle; shape rounded uses `--avatar-r` + 2px) using: track = `outline-primary-alpha-20`-style ring, arc = `conic-gradient(var(--primary-600) calc(var(--avatar-progress)*1%), transparent 0)` masked to a 2px ring via `mask: radial/ (mask-composite exclude)` — or an inline SVG circle with `stroke-dasharray` using token colors via `stroke-primary-600` / `stroke-primary-alpha-20` classes. Prefer SVG for circle; for rounded shape use conic mask. Start at 12 o'clock, clockwise. Clamp 0-100. Expose via `role`-less decorative element; set `data-progress`.
-   Story and progress share the 66px box: if both set, progress wins (Figma shows them as alternatives); document in a comment.
-2. Add `AvatarCounter` (slot, `data-slot="avatar-counter"`): wraps existing `Badge` (shape square, red/danger gradient variant already in badge.tsx; size `square-16`, `square-12` when avatar size <= 32 via `group-data-[size=...]/avatar`), absolutely positioned top-right (`-top-1 -right-1`, `z-10`) — position is assumed (Figma image hides it); record in known-gaps as assumed. Export it.
-3. Update known-gaps lines: remove "Progress ring and counter not implemented" parts; add one short line "- Avatar: counter overlay position top-right assumed; progress ring stroke 2px assumed (arc ends not rounded verified?)".
-4. Smoke usage: temporarily none. No design-system page exists, so verify by a tsc + a tiny render check in node is not needed; just ensure types and build.
+1. Read the three ui files and the consumers.
+2. Field: context provider (client-safe, no "use client" needed unless hooks require it — `React.createContext`/`useContext` in a file without "use client" breaks Server Components; if so add `"use client"` only if field.tsx has no server-only use, else put context in a small `field-context.ts` marked "use client"-free via a client file `field-context.tsx`).
+3. InputGroup + slots read contexts. Slot size mapping: per-input-size Button/Tag/Avatar sizes are currently defaults ("24"); keep the defaults as they are (sizes of slots are guesses, not tied to input size) — only `shape` is inherited for Button/Tag/Avatar/Swatch; Swatch size remains its own prop.
+4. Do not touch ButtonGroup (does not exist).
+5. Update known-gaps.md.
+6. Smoke: add `scripts/field-context-smoke.mts` that renders (react-dom/server `renderToStaticMarkup`) Field size=48 shape=pill > InputGroup and asserts `data-size="48"` on the group and a pill class present; and explicit prop override; prints PASS lines. Run with `pnpm exec tsx scripts/field-context-smoke.mts` (add `--conditions=react-server` only if needed).
 
 ## Acceptance
-- `pnpm exec tsc --noEmit` → 0 errors
-- `pnpm lint` → 0 errors (command.tsx warning known)
-- `pnpm build` → success
-- `grep -nE "#[0-9a-fA-F]{3,8}\b|space-[xy]-|dark:" src/components/ui/avatar.tsx` → no matches
-- `grep -n "progress\|AvatarCounter" src/components/ui/avatar.tsx` shows prop, ring, slot, export
-- Existing Avatar usages unchanged (no new required props).
+- `pnpm exec tsc --noEmit` clean; `pnpm lint` 0 errors; `pnpm build` ok.
+- `pnpm exec tsx scripts/field-context-smoke.mts` prints only PASS lines, exit 0.
+- grep new/changed files: no hex colors, `space-[xy]-`, `dark:`.
+- Existing usages (auth-field, FormField, otp, navbar) still compile and pass the same props.
 
 ## Decisions
-- Progress ring is a prop on `Avatar` (variant-like), counter is a slot, per CLAUDE.md shadcn rules.
-- Progress beats story when both set. Ring/counter geometry from Figma layer sizes (66 box, 16 badge); counter corner assumed top-right.
-- ContentCard component does not exist in code: that part of the item is moot.
+- Precedence: explicit prop > InputGroupJoin > Field > default (40 / rounded).
+- Only shape (not size) flows to slot Button/Tag/Avatar/Swatch: Figma slot sizes per input size are unreadable, current defaults kept.
+- ButtonGroup skipped: component not in repo.
 
 ## Don't
-- Don't create a design-system page or new domain components.
-- Don't hand-write icon SVGs files; inline ring SVG circle is fine (geometry, not an icon).
-- Don't change Avatar's existing variants/sizes.
+- No new UI, no visual change, no new Figma reads.
+- Don't rewrite variant tables; don't edit consumers unless types break.

@@ -67,3 +67,5 @@
 2026-11-13 APPROVED 9f-1 Tabs pill slots
 2026-11-13 PLAN 9f-2 Avatar progress ring + counter slot
 2026-11-13 APPROVED 9f-2 Avatar progress + counter
+2026-11-13 PLAN 9f-3 Field/InputGroup size-shape context
+2026-11-13 APPROVED 9f-3 Field/InputGroup context

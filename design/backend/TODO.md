@@ -133,7 +133,7 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
   - [ ] 9f Missing variants and slots: Avatar ring + counter overlay, size/shape context, Tabs pill slots, Calendar year view, Date-Range/Select in Modal, Dropdown slots, WidgetBoard layout (split by component)
     - [x] 9f-1 Tabs pill icon + counter slots (`TabsIcon`, `TabsCounter` in `ui/tabs.tsx`): Icon/Badge-pill composed, trigger size rules size the icon, counter default `square-16` + `gray` (assumed)
     - [x] 9f-2 Avatar progress ring + counter overlay: `Avatar progress` (0-100 conic ring, wins over story) + `AvatarCounter` slot (Badge red, square-16/12); no ContentCard in src/, nothing to adopt
-    - [ ] 9f-3 Size/shape context for Field / InputGroup / ButtonGroup / InputGroupSwatch
+    - [x] 9f-3 Size/shape context: `FieldProvider`/`useFieldContext` (field-context.tsx), InputGroup + Input inherit size/shape (prop > Join > Field > default), group slots Button/Tag/Avatar/Swatch inherit shape; cva split to input-variants.ts; ButtonGroup not in repo, skipped
     - [ ] 9f-4 Dropdown lead/trail slots
     - [ ] 9f-5 WidgetBoard layout fixes
     - [ ] 9f-6 Calendar year view; Date-Range calendar + Select in Modal
