@@ -83,7 +83,7 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
 - [x] Fixed `/dashboard/projects/new` prerender error (`new Date()` → hour-cached `cachedNow()`)
 - Sidebar collapsed state stays per device (localStorage `dashboard-sidebar-collapsed`): it depends on screen size
 - [x] Dashboard metric tiles show the user's project numbers: Projects, Income (30-day trend), Tasks, Tasks done (ring = done ÷ all). `/dashboard` reads totals + finance and provides them through `WidgetDataProvider`; picker previews keep the Figma placeholders. `ProjectTotals.tasksDone` added
-- [ ] Chart / large metric widgets and the product table still show Figma demo data. The app has no products and the 21 chart templates have no data source: needs a per-widget "what does it show" decision (e.g. income vs cost per month, tasks by status) and data props on `CartesianChart` / `RadialChart`
+- [x] (done via 6a/6b; bar/candle/column-5/progress-half and product table intentionally keep demo data: no products in app) Chart / large metric widgets and the product table still show Figma demo data. The app has no products and the 21 chart templates have no data source: needs a per-widget "what does it show" decision (e.g. income vs cost per month, tasks by status) and data props on `CartesianChart` / `RadialChart`
   - Decision: charts show the user's projects. Monthly series (last 9 months by `projects.created_at`): income and cost per month. Share charts (donut/pie/progress): tasks by status (new / in work / done / failed). Others keep demo data.
   - [x] 6a Query `queryDashboardCharts` + `getDashboardCharts` + `DashboardCharts` type — uncached SQL in `loadDashboardCharts` (generate_series 9 months, zero-filled), cached wrapper; `scripts/dashboard-charts-smoke.mts` (run with `tsx --conditions=react-server`)
   - [x] 6b Provide it via `WidgetDataProvider`; add data props to `CartesianChart` / `RadialChart`; wire line/area/column/donut/pie/progress widgets
@@ -91,10 +91,10 @@ Source of truth for what the UI needs: `pnpm schema:analyze` → `design/backend
     - [x] 6b-2 Wire the widgets in `catalog.tsx` to those props (income vs cost per month, tasks by status) — built: line/area/step/gradient/column-1,2,3,6 show income vs cost (9 months); donut/pie/progress show tasks by status; bar/candle/column-5/progress-half keep demo; picker unchanged; labels only in en.json (other locales have no `widgets` keys)
 
 ## Later — unbuilt sections (need Figma pages first)
-- [ ] Notes · Mail · Calendar (events) · Knowledge Base (articles) · Clients page · Users page
-- [ ] Project tabs: stages, tasks, messages, chat, members, customer, files, activity (UI + data)
+- [ ] Notes · Mail · Calendar (events) · Knowledge Base (articles) · Clients page · Users page (blocked: needs Figma pages for each)
+- [ ] Project tabs: stages, tasks, messages, chat, members, customer, files, activity (UI + data) (blocked: needs Figma project tabs)
 
 ## Every phase
-- [ ] `pnpm exec tsc --noEmit`, `pnpm lint`, `pnpm build`
-- [ ] Re-run `pnpm schema:analyze` after UI changes
-- [ ] Never commit `.env.local` / service role key
+- [x] `pnpm exec tsc --noEmit`, `pnpm lint`, `pnpm build`
+- [x] Re-run `pnpm schema:analyze` after UI changes
+- [x] Never commit `.env.local` / service role key
