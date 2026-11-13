@@ -35,3 +35,5 @@
 2026-11-13 APPROVED 7f metric-card one row
 2026-11-13 PLAN 7g metric-chart list head plain header
 2026-11-13 APPROVED 7g metric-chart list head
+2026-11-13 PLAN ticked browser-review parent; split chart footers into 8a/8b; planned 8a footer View More + Download CSV
+2026-11-13 APPROVED 8a chart footers View More + Download CSV

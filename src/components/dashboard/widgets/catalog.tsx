@@ -37,6 +37,7 @@ import {
 import { useWidgetData, type WidgetData } from "@/components/dashboard/widgets/widget-data"
 import { useWidgetFluid } from "@/components/dashboard/widgets/widget-fluid"
 import { ProgressCircle } from "@/components/ui/progress-circle"
+import { downloadCsv, type CsvCell } from "@/lib/csv"
 import { cn } from "@/lib/utils"
 
 type WidgetSize = "sm" | "md" | "lg" | "wide" | "full"
@@ -79,6 +80,9 @@ const halfLegend = [
 const liveCartesianKinds = new Set<CartesianKind>(["line", "line-area", "line-step", "line-gradient", "column-1", "column-2", "column-3", "column-5", "column-6"])
 
 const statusKeys = ["new", "inWork", "done", "failed"] as const
+
+const VIEW_MORE_HREF = "/dashboard/projects"
+type CsvExport = { file: string; data: CsvCell[][] }
 
 /** Signed percent → ChartCardMetrics trend fields ("" when flat). */
 const trendOf = (pct: number) => ({
@@ -133,6 +137,22 @@ function CartesianCardPreview({
         { tone: "green", heading: t("profit"), value: formatUsd(finance.profit), ...trendOf(finance.profitTrend), additionalText: t("last30") },
       ]
     : undefined
+  const rows: CsvExport | null = liveBars
+    ? {
+        file: "tasks-by-project.csv",
+        data: [
+          ["Project", ...statusKeys.map((k) => t(`status.${k}`)), "Total"],
+          ...liveBars.map((p) => [p.name, ...statusKeys.map((k) => p[k]), p.total]),
+        ],
+      }
+    : live
+      ? {
+          file: isIncomeOnly ? "income-per-month.csv" : "income-cost.csv",
+          data: isIncomeOnly
+            ? [["Month", t("income")], ...live.map((m) => [m.label, m.income])]
+            : [["Month", t("income"), t("cost")], ...live.map((m) => [m.label, m.income, m.cost])],
+        }
+      : null
   return (
     <ChartCard>
       <ChartCardHead>
@@ -169,7 +189,11 @@ function CartesianCardPreview({
         </ChartCardPlot>
         {(legend !== "none" || legendItems) && <ChartCardLegend items={legendItems} />}
       </ChartCardContent>
-      <ChartCardFooter />
+      <ChartCardFooter
+        {...(rows
+          ? { viewMoreHref: VIEW_MORE_HREF, onDownload: () => downloadCsv(rows.file, rows.data) }
+          : {})}
+      />
     </ChartCard>
   )
 }
@@ -197,6 +221,22 @@ function RadialCardPreview({ kind }: { kind: "donut" | "pie" | "progress" | "pro
       ? [...halfLegend]
       : [...sliceLegend]
   const liveProps = live ? { total: sum, totalLabel: t("tasks") } : {}
+  const rows: CsvExport | null =
+    data && counts
+      ? half
+        ? {
+            file: "task-completion.csv",
+            data: [
+              ["Metric", t("tasks")],
+              [t("done"), data.totals.tasksDone],
+              [t("remaining"), data.totals.tasks - data.totals.tasksDone],
+            ],
+          }
+        : {
+            file: "tasks-by-status.csv",
+            data: [["Status", t("tasks")], ...statusKeys.map((k, i) => [t(`status.${k}`), counts[i]])],
+          }
+      : null
   return (
     <ChartCard>
       <ChartCardHead>
@@ -239,7 +279,11 @@ function RadialCardPreview({ kind }: { kind: "donut" | "pie" | "progress" | "pro
         )}
         <ChartCardLegend type={kind === "progress" ? "vertical" : undefined} items={legendItems} />
       </ChartCardContent>
-      <ChartCardFooter />
+      <ChartCardFooter
+        {...(rows
+          ? { viewMoreHref: VIEW_MORE_HREF, onDownload: () => downloadCsv(rows.file, rows.data) }
+          : {})}
+      />
     </ChartCard>
   )
 }
@@ -355,7 +399,18 @@ function MetricLine2Preview() {
           )}
         </ChartMetricPlot>
       </div>
-      <ChartMetricActions />
+      <ChartMetricActions
+        {...(data
+          ? {
+              viewMoreHref: VIEW_MORE_HREF,
+              onDownload: () =>
+                downloadCsv("income-cost.csv", [
+                  ["Month", t("income"), t("cost")],
+                  ...data.charts.months.map((m) => [m.label, m.income, m.cost]),
+                ]),
+            }
+          : {})}
+      />
     </ChartMetricCard>
   )
 }
@@ -391,7 +446,17 @@ function MetricLargePreview({ kind }: { kind: "chart" | "map" }) {
           </ChartMetricAmounts>
           {items.length ? <ChartMetricList items={items} heading={t("tasksByProject")} countHeading={t("tasks")} /> : null}
         </ChartMetricBody>
-        <ChartMetricActions size="lg" divider={false} />
+        <ChartMetricActions
+          size="lg"
+          divider={false}
+          viewMoreHref={VIEW_MORE_HREF}
+          onDownload={() =>
+            downloadCsv("tasks-by-project.csv", [
+              ["Project", t("tasks")],
+              ...charts.tasksByProject.map((p) => [p.name, p.total]),
+            ])
+          }
+        />
       </ChartMetricCard>
     )
   }

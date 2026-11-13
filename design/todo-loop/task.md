@@ -1,34 +1,47 @@
 # Task
-7g: Metric chart live list header ("Tasks by project / Tasks") must be a plain list header, not an empty bordered box.
+Make "View More" and "Download" in chart card footers work on live dashboard widgets (8a).
 
 ## TODO item
-  - [ ] 7g Metric chart: the "Tasks by project / Tasks" list header sits in an empty bordered box: make it a plain list header like the Figma ChartMetricList head
+  - [ ] 8a View More + Download in `ChartCardFooter` / `ChartMetricActions` on live widgets (props `viewMoreHref`, `onDownload`; CSV helper `src/lib/csv.ts`); picker previews keep the Figma look
 
 ## Goal
-In the live metric-chart widget the Head row of `ChartMetricList` renders with an outline box (`outline outline-background-100`, `pb-4`) around only the two labels. Make it read as a plain header row like Figma's ChartMetricList head (labels left/right, no visible empty box).
+On the live board (inside `WidgetDataProvider`, `useWidgetData()` non-null):
+- View More = real link to `/dashboard/projects`.
+- Download = browser downloads a CSV of the data the widget plots.
+Outside the provider (picker preview) footers look and behave as now (`data-soon` stays).
 
 ## Files
-- `src/components/ui/chart-parts.tsx` (`ChartProgressCard` type="head", ~line 377; `chartProgressCardVariants`)
-- `src/components/ui/chart-metric.tsx` (`ChartMetricList`, ~line 310)
-- `design/handoff/chart-metric/figma.md` + `img/metric-chart-card.png` (compare the Head row; check whether Figma Head really has a stroke and where it sits)
-- `src/components/dashboard/widgets/catalog.tsx` (live metric-chart usage; only if needed)
-- `src/app/design-system/chart-metric/page.tsx` (preview, if exists)
+- `src/lib/csv.ts` (new): `toCsv(rows: (string|number)[][]): string` (RFC 4180 quoting, `\n`, escape `"`, prefix BOM not needed) and `downloadCsv(filename, rows)` (client only: Blob + temporary `<a download>`).
+- `src/components/ui/card.tsx`: `ChartCardFooter` gets optional `viewMoreHref?: string` and `onDownload?: () => void`. With them: View More `Link href={viewMoreHref}` (next/link-based `Link` ui comp, check it supports href), Download rendered as a `button type="button"` with the same Link look (check `Link` ui part for a `render`/`asChild` or build the button using the same cva classes; no hand-styled new div). Without them: current markup unchanged.
+- `src/components/ui/chart-metric.tsx`: `ChartMetricActions` same two optional props; when set, View More is an `<a>`/next Link and the buttons lose `data-soon`.
+- `src/components/dashboard/widgets/catalog.tsx`: pass props from `CartesianPreview` (line ~172), `RadialCardPreview` (~242), `MetricLine2Preview` (~358), `MetricLargePreview` live branch (~394). Not the demo branch at ~414.
+- `messages/en.json` (find via `grep -rn '"widgets"' src messages`): add `widgets.data.viewMore`? Only if text is wired through i18n; footer labels are currently hard-coded English, keep that.
 
 ## Steps
-1. Read figma.md Head frame of the chart-metric list + the PNG. Determine what the stroke is in Figma (likely a bottom divider under the head, or none).
-2. Fix the `head` variant so the stroke matches Figma: if Figma has only a bottom line, render it as a bottom-only divider (use `Separator` below the labels, or a bottom border-equivalent via variant) instead of a full 4-side outline box; if no stroke, drop it. Keep spacing identical otherwise.
-3. Do it inside the `cva` variant / slot in `ui/`, not via consumer className. Keep picker preview and other uses (`ChartProgressCard type="head"` elsewhere: grep) visually unchanged unless Figma says otherwise.
-4. Check `/design-system/chart-metric` renders (dev server or just build).
+1. Read `card.tsx` ChartCardFooter, `ui/link.tsx`, `ChartMetricActions`.
+2. Write `src/lib/csv.ts`.
+3. Add the optional props to both footers.
+4. In catalog build rows per widget:
+   - Cartesian live months (line/area/step/gradient/column-1,2,3,6): header `Month,Income,Cost`, one row per `data.charts.months` item (`label, income, cost`); column-5: `Month,Income`.
+   - Bar / bar-stacked (`liveBars`): `Project,New,In work,Done,Failed,Total` from `tasksByProject` (`statusKeys` order, `total`). Use the translated status labels as header like the legend.
+   - Radial (donut/pie/progress): `Status,Tasks` from `tasksByStatus` (statusKeys); progress-half: `Metric,Tasks` rows Done = `totals.tasksDone`, Remaining = `totals.tasks - totals.tasksDone`.
+   - metric-line-2: same as line (Month,Income,Cost). metric-chart live: `Project,Tasks` from `tasksByProject` plus nothing else.
+   File names: `income-cost.csv`, `income-per-month.csv`, `tasks-by-project.csv`, `tasks-by-status.csv`, `task-completion.csv`.
+5. Live detection = `data` non-null; pass `viewMoreHref="/dashboard/projects"` and `onDownload` only then. Widgets are client components already (hooks used); `downloadCsv` runs in the click handler only.
+6. Add a node smoke script `scripts/csv-smoke.mts` (run with `pnpm exec tsx scripts/csv-smoke.mts`) testing `toCsv`: plain row, value with comma, with quote (`"` → `""`), with newline, numbers; print PASS/FAIL lines, exit 1 on failure. Put pure `toCsv` in a file with no DOM access at import time.
 
 ## Acceptance
-- `pnpm exec tsc --noEmit` clean; `pnpm lint` 0 errors; `pnpm build` passes.
-- `grep -n "outline" src/components/ui/chart-parts.tsx` shows the head variant no longer draws a full 4-side outline (unless Figma proves it does; then explain in report).
-- No new hex colors, `space-[xy]-`, `dark:` in changed lines.
-- Report states what Figma showed for the Head stroke.
+- `pnpm exec tsx scripts/csv-smoke.mts` prints only PASS lines, exit 0.
+- `pnpm exec tsc --noEmit` clean; `pnpm lint` 0 errors (known `command.tsx` warning only); `pnpm build` ok.
+- Grep of new/changed lines: no hex colors, `space-[xy]-`, `dark:`.
+- Read-through: with provider, footer View More has `href="/dashboard/projects"` and Download has an onClick; picker preview (no provider) footers unchanged (`data-soon`, `href="#"`).
+- `/design-system` pages using these cards still compile (default props unchanged).
 
 ## Decisions
-- Header = plain row; a bottom divider only if Figma has one. Decided because the user complaint is the empty box, and Figma is source of truth.
+- View More goes to `/dashboard/projects` (the only place the plotted data lives).
+- CSV = exactly the plotted series, English headers (status headers translated via existing `widgets.data.status.*`), no locale number formatting (raw numbers) so it opens anywhere.
+- Head "…" action is a separate task (8b).
 
 ## Don't
-- No new UI or Figma-less features; don't touch other widgets, data, or queries.
-- Don't change the `progress` type of ChartProgressCard.
+- Don't touch the head `ChartCardAction`, the demo-only widgets, DB, or other widgets' footers (`ChartMetricFooter` in metric-card is already live).
+- No new UI design, no new dependency, no new menu.

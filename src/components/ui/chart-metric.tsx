@@ -356,25 +356,47 @@ const chartMetricActionsVariants = cva("flex items-center justify-between", {
 })
 
 type ChartMetricActionsProps = React.ComponentProps<"div"> &
-  VariantProps<typeof chartMetricActionsVariants> & { divider?: boolean }
+  VariantProps<typeof chartMetricActionsVariants> & {
+    divider?: boolean
+    viewMoreHref?: string
+    onDownload?: () => void
+  }
+
+const chartMetricViewMoreClass =
+  "flex items-center gap-4 rounded-r4 text-11 leading-20 font-bold text-base-700 outline-none focus-visible:ring-2 focus-visible:ring-primary-500 group-data-[appearance=image]/metric:text-white-alpha-50"
 
 /** Figma Footer with View More (chevron) and Download (icon) actions. */
-function ChartMetricActions({ className, size = "md", divider = true, ...props }: ChartMetricActionsProps) {
+function ChartMetricActions({
+  className,
+  size = "md",
+  divider = true,
+  viewMoreHref,
+  onDownload,
+  ...props
+}: ChartMetricActionsProps) {
+  const viewMoreContent = (
+    <>
+      View More
+      <span aria-hidden className={cn("size-4 mask-[url(/icons/material-chevron-right.svg)]", maskIcon)} />
+    </>
+  )
   return (
     <div data-slot="chart-metric-actions" className="flex flex-col">
       {divider ? <Separator className="group-data-[appearance=image]/metric:bg-white-alpha-10" /> : null}
       <div className={cn(chartMetricActionsVariants({ size }), className)} {...props}>
+        {viewMoreHref ? (
+          <Link href={viewMoreHref} className={chartMetricViewMoreClass}>
+            {viewMoreContent}
+          </Link>
+        ) : (
+          <button type="button" data-soon className={chartMetricViewMoreClass}>
+            {viewMoreContent}
+          </button>
+        )}
         <button
           type="button"
-          data-soon
-          className="flex items-center gap-4 rounded-r4 text-11 leading-20 font-bold text-base-700 outline-none focus-visible:ring-2 focus-visible:ring-primary-500 group-data-[appearance=image]/metric:text-white-alpha-50"
-        >
-          View More
-          <span aria-hidden className={cn("size-4 mask-[url(/icons/material-chevron-right.svg)]", maskIcon)} />
-        </button>
-        <button
-          type="button"
-          data-soon
+          data-soon={onDownload ? undefined : true}
+          onClick={onDownload}
           className="flex items-center gap-2 rounded-r4 text-11 leading-20 font-bold text-base-700 outline-none focus-visible:ring-2 focus-visible:ring-primary-500 group-data-[appearance=image]/metric:text-background-0"
         >
           <span aria-hidden className={cn("size-4 mask-[url(/icons/material-file-download.svg)]", maskIcon)} />
